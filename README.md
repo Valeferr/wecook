@@ -1,1 +1,9 @@
-# wecook
+![WeCook Logo](./web/public/logo/900x300/white.png)
+
+WeCook is a social media platform that allows users to share and discover recipes while connecting with other cooking enthusiasts. By creating an account, users can personalize their profiles, share their favorite recipes, and engage with the community through comments, likes, and shares. The platform offers a recipe search feature with filters for ingredients and categories, and also allows users to report recipes for review. Admins have access to a dashboard for managing reports and monitoring platform activity, ensuring a smooth and enjoyable experience for all users.
+
+## The team behind WeCook
+WeCook is a project developed by three students from the University of Salerno, with the ambition of evolving into a fully accessible platform for all cooking enthusiasts. While it began as a university initiative, our goal is to continuously improve and expand the platform over time, incorporating new features and enhancing the user experience. We are committed to growing WeCook step by step, transforming it from a student project into a widely accessible and engaging social network for sharing and discovering recipes.
+
+## Our technology stack
+The WeCook platform is built using a modern technology stack to ensure performance, scalability, and a smooth user experience. The front-end is developed with Angular, utilizing HTML, CSS, and TypeScript to create a responsive and interactive user interface. For the back-end, we rely on Java, ensuring robust server-side logic and seamless handling of user requests. Data management is handled by MySQL, providing a reliable and efficient database solution to store and manage user accounts, recipes, and interactions.
