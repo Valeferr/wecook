@@ -1,8 +1,10 @@
 package com.wecook.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.User;
+import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -18,9 +20,13 @@ public class UserResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context, User inputUser) {
-        User user = new User();
-        user.setUsername(inputUser.getUsername());
+    public Response post(@Context Request context) {
+        User user;
+        try {
+            user = RequestParser.parseJsonRequest(context, User.class);
+        } catch (JsonSyntaxException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
 
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -31,8 +37,7 @@ public class UserResource {
             if (transaction != null) {
                 transaction.rollback();
             }
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .build();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         Gson gson = new Gson();
