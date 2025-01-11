@@ -15,7 +15,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Path("/users")
 public class UserResource {
@@ -94,8 +93,8 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@Context Request context, @PathParam("id") int id) {
         User user;
-        Transaction transaction = null;
 
+        Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             user = session.get(User.class, id);
             transaction = session.beginTransaction();
