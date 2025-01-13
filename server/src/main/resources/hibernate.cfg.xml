@@ -15,5 +15,7 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <mapping class="com.wecook.model.User"/>
+        <mapping class="com.wecook.model.StandardUser"/>
+        <mapping class="com.wecook.model.ModeratorUser"/>
     </session-factory>
 </hibernate-configuration>
