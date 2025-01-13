@@ -33,7 +33,7 @@ public class Recipe {
     @Column(name = "category", nullable = false)
     private FoodCategories category;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Step> steps = new ArrayList<>();
 
     public Long getId() {

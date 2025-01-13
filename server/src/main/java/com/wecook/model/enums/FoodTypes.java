@@ -11,5 +11,6 @@ public enum FoodTypes {
     CONDIMENTS,
     EGGS,
     SPICES,
-    BEVERAGES
+    BEVERAGES,
+    OTHER
 }

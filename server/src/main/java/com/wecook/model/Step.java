@@ -51,7 +51,7 @@ public class Step {
     @JoinColumn(name = "recipe")
     private Recipe recipe;
 
-    @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     public long getId() {
