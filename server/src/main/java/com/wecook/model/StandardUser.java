@@ -3,6 +3,8 @@ package com.wecook.model;
 import com.google.gson.annotations.SerializedName;
 import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -36,11 +38,11 @@ public class StandardUser extends User {
     @SerializedName("favorite_dish")
     private String favoriteDish;
 
-    @Transient
-    private long followersAmount;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Like> likes = new HashSet<>();
 
-    @Transient
-    private long followedAmount;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<SavedPost> savedPosts = new HashSet<>();
 
     public Set<Allergy> getAllergies() {
         return allergies;
@@ -66,19 +68,19 @@ public class StandardUser extends User {
         this.favoriteDish = favoriteDish;
     }
 
-    public long getFollowersAmount() {
-        return followersAmount;
+    public Set<Like> getLikes() {
+        return likes;
     }
 
-    public void setFollowersAmount(long followersAmount) {
-        this.followersAmount = followersAmount;
+    public void setLikes(Set<Like> likes) {
+        this.likes = likes;
     }
 
-    public long getFollowedAmount() {
-        return followedAmount;
+    public Set<SavedPost> getSavedPosts() {
+        return savedPosts;
     }
 
-    public void setFollowedAmount(long followedAmount) {
-        this.followedAmount = followedAmount;
+    public void setSavedPosts(Set<SavedPost> savedPosts) {
+        this.savedPosts = savedPosts;
     }
 }

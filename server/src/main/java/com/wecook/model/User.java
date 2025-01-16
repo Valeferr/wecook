@@ -2,6 +2,11 @@ package com.wecook.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "users")
@@ -49,6 +54,9 @@ public class User {
     @Column(name = "profile_picture")
     private byte[] profilePicture;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Report> users = new HashSet<>();
+
     public int getId() {
         return id;
     }
@@ -95,5 +103,13 @@ public class User {
 
     public void setProfilePicture(byte[] profilePicture) {
         this.profilePicture = profilePicture;
+    }
+
+    public Set<Report> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<Report> users) {
+        this.users = users;
     }
 }

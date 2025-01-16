@@ -14,8 +14,20 @@
         <property name="hibernate.format_sql">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping class="com.wecook.model.User"/>
-        <mapping class="com.wecook.model.StandardUser"/>
+        <mapping class="com.wecook.model.Comment"/>
+        <mapping class="com.wecook.model.CommentReport"/>
+        <mapping class="com.wecook.model.Ingredient"/>
+        <mapping class="com.wecook.model.Like"/>
         <mapping class="com.wecook.model.ModeratorUser"/>
+        <mapping class="com.wecook.model.Post"/>
+        <mapping class="com.wecook.model.PostReport"/>
+        <mapping class="com.wecook.model.Recipe"/>
+        <mapping class="com.wecook.model.RecipeIngredient"/>
+        <mapping class="com.wecook.model.Report"/>
+        <mapping class="com.wecook.model.SavedPost"/>
+        <mapping class="com.wecook.model.StandardUser"/>
+        <mapping class="com.wecook.model.Step"/>
+        <mapping class="com.wecook.model.User"/>
+
     </session-factory>
 </hibernate-configuration>

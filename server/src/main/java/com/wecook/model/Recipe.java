@@ -4,7 +4,9 @@ import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
@@ -34,7 +36,10 @@ public class Recipe {
     private FoodCategories category;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Step> steps = new ArrayList<>();
+    private Set<Step> steps = new HashSet<>();
+
+    @OneToOne(mappedBy = "post")
+    private Post post;
 
     public Long getId() {
         return id;
@@ -76,15 +81,19 @@ public class Recipe {
         this.category = category;
     }
 
-    public List<Step> getSteps() {
+    public Set<Step> getSteps() {
         return steps;
     }
 
-    public void addStep(Step step) {
-        this.steps.add(step);
+    public void setSteps(Set<Step> steps) {
+        this.steps = steps;
     }
 
-    public void removeStep(Step step) {
-        this.steps.remove(step);
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 }
