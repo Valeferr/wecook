@@ -1,13 +1,16 @@
 package com.wecook.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.ModeratorUser;
 import com.wecook.model.StandardUser;
 import com.wecook.model.User;
+import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -27,7 +30,7 @@ public class UserResource {
         User requestUser;
 
         try {
-            requestUser = RequestParser.parseJsonRequest(context, User.class);
+            requestUser = RequestParser.jsonRequestToClass(context, User.class);
             String passwordHash = SecurityUtils.sha256(requestUser.getPassword());
             requestUser.setPassword(passwordHash);
         } catch (JsonSyntaxException e) {
@@ -52,6 +55,8 @@ public class UserResource {
             try {
                 session.persist(user);
                 transaction.commit();
+            } catch (ConstraintViolationException e) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
             } catch (Exception e) {
                 transaction.rollback();
                 throw new Exception(e.getMessage());
@@ -72,7 +77,7 @@ public class UserResource {
         List<User> users;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            users= session.createNamedQuery(User.GET_ALL, User.class).getResultList();
+            users = session.createNamedQuery(User.GET_ALL, User.class).getResultList();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
@@ -99,6 +104,55 @@ public class UserResource {
             Gson gson = new Gson();
             return Response.ok(gson.toJson(user)).build();
         }
+    }
+
+    @PATCH
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response patch(@Context Request context, @PathParam("id") int id) {
+        JsonObject jsonUser = RequestParser.jsonRequestToGson(context);
+
+        User user = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            try {
+                user = session.get(User.class, id);
+                if (user == null) {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+
+                if (!user.getRole().equals(User.Roles.STANDARD)) {
+                    return Response.status(Response.Status.BAD_REQUEST).build();
+                }
+
+                try {
+                    if (jsonUser.has("favorite_dish")) {
+                        ((StandardUser) user).setFavoriteDish(jsonUser.get("favorite_dish").getAsString());
+                    }
+
+                    if (jsonUser.has("food_preference")) {
+                        ((StandardUser) user).setFoodPreference(
+                            Enum.valueOf(
+                                FoodCategories.class,
+                                jsonUser.get("food_preference").getAsString()
+                            )
+                        );
+                    }
+                    session.merge(user);
+                    transaction.commit();
+                } catch (Exception e) {
+                    transaction.rollback();
+                    throw new Exception(e.getMessage());
+                }
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+
+        Gson gson = new Gson();
+        return Response.ok(gson.toJson(user)).build();
     }
 
     @DELETE

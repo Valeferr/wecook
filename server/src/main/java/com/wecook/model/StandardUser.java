@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
 import java.util.Set;
@@ -23,13 +24,16 @@ public class StandardUser extends User {
     @CollectionTable(name = "user_allergies", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "allergy")
+    @SerializedName("allergies")
     private Set<Allergy> allergies;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "food_preference")
+    @SerializedName("food_preference")
     private FoodCategories foodPreference;
 
     @Column(name = "favorite_dish")
+    @SerializedName("favorite_dish")
     private String favoriteDish;
 
     @Transient
