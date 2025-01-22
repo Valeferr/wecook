@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class RequestParser {
-    private static Gson gson = new Gson();
+    private static final Gson gson = CustomGson.getInstance().getGson();
 
     public static <E> E jsonRequestToClass(Request request, Class<E> type) throws JsonSyntaxException {
         String jsonBody;

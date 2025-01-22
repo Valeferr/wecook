@@ -38,7 +38,7 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Step> steps = new HashSet<>();
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "recipe")
     private Post post;
 
     public Long getId() {

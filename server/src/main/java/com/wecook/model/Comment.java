@@ -24,11 +24,12 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
-    @Column(name = "standard_user")
-    private StandardUser standardUser;
-
     @Column(name = "content_state")
     private States contentStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "standard_user", nullable = false)
+    private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post")

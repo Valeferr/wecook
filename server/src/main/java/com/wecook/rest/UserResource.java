@@ -1,6 +1,5 @@
 package com.wecook.rest;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
@@ -22,7 +21,7 @@ import org.hibernate.Transaction;
 import java.util.List;
 
 @Path("/users")
-public class UserResource {
+public class UserResource extends GenericResource{
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -65,7 +64,6 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        Gson gson = new Gson();
         return Response.status(Response.Status.CREATED)
                 .entity(gson.toJson(user))
                 .build();
@@ -82,7 +80,6 @@ public class UserResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        Gson gson = new Gson();
         return Response.ok(gson.toJson(users)).build();
     }
 
@@ -101,7 +98,6 @@ public class UserResource {
         if (user == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
-            Gson gson = new Gson();
             return Response.ok(gson.toJson(user)).build();
         }
     }
@@ -151,7 +147,6 @@ public class UserResource {
             }
         }
 
-        Gson gson = new Gson();
         return Response.ok(gson.toJson(user)).build();
     }
 
@@ -179,7 +174,6 @@ public class UserResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        Gson gson = new Gson();
         return Response.ok(gson.toJson(user)).build();
     }
 }
