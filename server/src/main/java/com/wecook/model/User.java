@@ -2,6 +2,7 @@ package com.wecook.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Set;
                 query = "FROM User AS u WHERE u.username = :username"
         )
 })
-public class User {
+public class User implements Serializable {
     public enum Roles {
         STANDARD,
         MODERATOR

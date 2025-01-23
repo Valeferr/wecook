@@ -1,5 +1,7 @@
 package com.wecook.rest;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
@@ -18,7 +20,11 @@ import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 @Path("/users")
 public class UserResource extends GenericResource{
@@ -176,4 +182,65 @@ public class UserResource extends GenericResource{
 
         return Response.ok(gson.toJson(user)).build();
     }
+
+    @PATCH
+    @Path("/{id}/allergies")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response putAllergies(@Context Request context, @PathParam("id") int id) {
+        User user = null;
+
+        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+        JsonArray jsonAllergies = jsonObject.get("allergies").getAsJsonArray();
+
+        List<StandardUser.Allergy> allergies = new ArrayList<>();
+        for (JsonElement jsonElement : jsonAllergies) {
+            allergies.add(
+                Enum.valueOf(
+                    StandardUser.Allergy.class,
+                    jsonElement.getAsString()
+                )
+            );
+        }
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+            user = session.get(User.class, id);
+
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            if (!user.getRole().equals(User.Roles.STANDARD)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            if(jsonObject.has("operation")) {
+                if (jsonObject.get("operation").getAsString().equals("add")) {
+                    for (StandardUser.Allergy allergy : allergies) {
+                        ((StandardUser) user).getAllergies().add(allergy);
+                    }
+                } else if (jsonObject.get("operation").getAsString().equals("delete")) {
+                    for (StandardUser.Allergy allergy : allergies) {
+                        ((StandardUser) user).getAllergies().remove(allergy);
+                    }
+                }
+            } else {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            try {
+                session.merge(user);
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw new Exception(e.getMessage());
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
+        return Response.ok(gson.toJson(user)).build();
+    }
+
 }
