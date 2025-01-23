@@ -1,0 +1,40 @@
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100dvh;
+  width: 100%;
+}
+
+#left-container,
+#right-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#left-container {
+  width: 40%;
+  background-color: var(--alizarin-crimson);
+}
+
+#right-container {
+  width: 60%;
+  background-color: var(--cultured);
+}
+
+#logo-container {
+  height: 400px;
+  width: 400px;
+}
+
+#logo-container > img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+#login-container {
+  width: 80%;
+}

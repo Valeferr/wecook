@@ -1,1 +1,25 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pure-white: #FFFFFF;
+  --cultured: #FAF9F6;
+  --alizarin-crimson: #D72638;
+  --cardinal: #C92334;
+  --light-silver: #D1D5DB;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  background-color: var(--alizarin-crimson);
+}
+
+button[type="submit"]:hover {
+  background-color: var(--cardinal);
+}
