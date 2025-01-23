@@ -44,8 +44,8 @@ public class Step {
     @Column(name ="action")
     private Actions action;
 
-    @Column(name = "index")
-    private int index;
+    @Column(name = "step_index")
+    private int stepIndex;
 
     @ManyToOne
     @JoinColumn(name = "recipe")
@@ -86,12 +86,12 @@ public class Step {
         this.action = action;
     }
 
-    public int getIndex() {
-        return index;
+    public int getStepIndex() {
+        return stepIndex;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setStepIndex(int index) {
+        this.stepIndex = index;
     }
 
     public Recipe getRecipe() {
