@@ -1,0 +1,16 @@
+<div id="error-container">
+  <div id="logo-container">
+    <img src="logo/900x300/black.png" alt="logo">
+  </div>
+  <div id="error-type-title">
+    <p>{{ statusCode }}</p>
+    <h2>{{ getError(statusCode).title }}</h2>
+    <p>{{ getError(statusCode).message }}</p>
+  </div>
+  <div>
+    <button id="back-home-button">
+      <span class="material-icons-outlined">west</span>
+      Back home
+    </button>
+  </div>
+</div>

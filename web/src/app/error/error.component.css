@@ -1,0 +1,68 @@
+#error-container {
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background-color: var(--cultured);
+  color: #333;
+  text-align: center;
+}
+
+#logo-container img {
+  height: auto;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+/* TODO: trovare i colori */
+#error-type-title p {
+  font-size: 90px;
+  font-weight: bold;
+  color: var(--alizarin-crimson);
+}
+
+#error-type-title h2 {
+  font-size: 32px;
+  margin: 10px 0;
+  color: #555;
+}
+
+#error-type-title p:last-of-type {
+  font-size: 18px;
+  color: #777;
+  margin-top: 5px;
+}
+
+#back-home-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  margin-top: 20px;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  color: var(--cultured);
+  background-color: var(--alizarin-crimson);
+  border: none;
+  border-radius: 5px;
+
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+/* TODO: trovare i colori nuovi */
+#back-home-button:hover {
+  background-color: rgb(84, 7, 7);
+}
+
+#back-home-button span {
+  font-size: 20px;
+}

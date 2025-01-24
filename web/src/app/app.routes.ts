@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { AuthComponent } from './auth/auth.component';
+import { ErrorComponent } from './error/error.component';
 
 export const routes: Routes = [
   {
@@ -17,8 +18,9 @@ export const routes: Routes = [
   //   redirectTo: '/home',
   //   pathMatch: 'full'
   // },
-  // {
-  //   path: '**',
-  //   component: PageNotFoundComponent
-  // }
+  {
+    path: '**',
+    component: ErrorComponent,
+    data: { statusCode: '404' }
+  }
 ];
