@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -37,19 +38,24 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private int id;
 
     @Column(name = "email", nullable = false, unique = true)
+    @Expose
     private String email;
 
     @Column(name = "username", nullable = false, unique = true)
+    @Expose
     private String username;
 
     @Column(name = "password", nullable = false, length = 256)
+    @Expose(serialize = false, deserialize = true)
     private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
+    @Expose
     private Roles role;
 
     @Column(name = "profile_picture")
