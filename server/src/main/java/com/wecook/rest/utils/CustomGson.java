@@ -14,6 +14,7 @@ public class CustomGson {
     private CustomGson() {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
+                .excludeFieldsWithoutExposeAnnotation()
                 .create();
     }
 
