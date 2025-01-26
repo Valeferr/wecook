@@ -2,7 +2,8 @@ package com.wecook.rest.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.wecook.model.serializers.LocalDateSerializer;
+import com.wecook.rest.serializers.LocalDateSerializer;
+import com.wecook.rest.serializers.PostSerializer;
 
 import java.time.LocalDate;
 
@@ -14,6 +15,7 @@ public class CustomGson {
     private CustomGson() {
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateSerializer())
+                .registerTypeAdapter(PostSerializer.class, new PostSerializer())
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
     }

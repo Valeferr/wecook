@@ -1,6 +1,7 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -9,11 +10,19 @@ import java.util.Set;
 
 @Entity
 @Table(name = "posts")
+@org.hibernate.annotations.NamedQueries({
+        @org.hibernate.annotations.NamedQuery(
+                name = Post.GET_ALL,
+                query = "From Post"
+        )
+})
 public class Post {
     public enum States {
         ACTIVE,
         DELETED
     }
+
+    public static final String GET_ALL = "Post_All";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +30,7 @@ public class Post {
     private Long id;
 
     @Column(name = "publication_date")
+    @SerializedName("publication_date")
     @Expose
     private LocalDate publicationDate;
 
@@ -29,28 +39,24 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_state", nullable = false)
+    @SerializedName("post_state")
     @Expose
     private States status;
 
     @OneToOne
     @JoinColumn(name = "post", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private Recipe recipe;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<PostReport> postReports = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<SavedPost> savedPosts = new HashSet<>();
 
     public Long getId() {

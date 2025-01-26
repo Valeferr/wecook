@@ -70,11 +70,9 @@ public class Step {
 
     @ManyToOne
     @JoinColumn(name = "recipe")
-    @Expose(serialize = false, deserialize = true)
     private Recipe recipe;
 
     @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
     public long getId() {
