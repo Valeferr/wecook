@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -9,17 +10,21 @@ import java.time.LocalDate;
 public class SavedPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "save_date", nullable = false)
+    @Expose
     private LocalDate saveDate;
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     public Long getId() {

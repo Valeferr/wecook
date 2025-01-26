@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 @Entity
@@ -7,14 +8,17 @@ import jakarta.persistence.*;
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     public Long getId() {

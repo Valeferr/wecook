@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,26 +17,33 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "publication_date")
+    @Expose
     private LocalDate publicationDate;
 
     @Column(name = "text")
+    @Expose
     private String text;
 
     @Column(name = "content_state")
+    @Expose
     private States contentStatus;
 
     @ManyToOne
     @JoinColumn(name = "standard_user", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post")
+    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<CommentReport> commentReports = new HashSet<>();
 
     public LocalDate getPublicationDate() {

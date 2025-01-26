@@ -1,23 +1,41 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.wecook.model.enums.FoodTypes;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ingredients")
+@org.hibernate.annotations.NamedQueries ({
+        @org.hibernate.annotations.NamedQuery (
+                name = Ingredient.GET_ALL,
+                query = "From Ingredient"
+        ),
+        @org.hibernate.annotations.NamedQuery (
+                name = Ingredient.GET_BY_FOODTYPES_AND_NAME,
+                query = "From Ingredient As i Where i.type = :type AND i.name = :name"
+        )
+})
 public class Ingredient {
+    public static final String GET_ALL = "Ingredients_All";
+    public static final String GET_BY_FOODTYPES_AND_NAME = "Ingredients_FoodTypes_Name";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "name")
+    @Expose
     private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
+    @Expose
     private FoodTypes type;
 
     @OneToOne(mappedBy = "ingredient")
+    @SerializedName("recipe_ingredient")
     private RecipeIngredient recipeIngredient;
 
     public Long getId() {

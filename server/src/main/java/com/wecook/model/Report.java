@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -34,24 +35,30 @@ public class Report {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "date", nullable = false)
+    @Expose
     private LocalDate date;
 
     @Column(name = "type", nullable = false)
+    @Expose
     private Types contentType;
 
     @Enumerated(EnumType.STRING) 
     @Column(name = "reason", nullable = false)
+    @Expose
     private Reasons reason;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
+    @Expose
     private States status = States.OPEN;
 
     @ManyToOne
     @JoinColumn(name = "user")
+    @Expose(serialize = false, deserialize = true)
     private StandardUser user;
 
     public Long getId() {

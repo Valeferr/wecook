@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,9 +17,11 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "publication_date")
+    @Expose
     private LocalDate publicationDate;
 
     @Column(name = "post_picture", nullable = false)
@@ -26,22 +29,28 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_state", nullable = false)
+    @Expose
     private States status;
 
     @OneToOne
     @JoinColumn(name = "post", nullable = false)
+    @Expose(serialize = false, deserialize = true)
     private Recipe recipe;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<PostReport> postReports = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<SavedPost> savedPosts = new HashSet<>();
 
     public Long getId() {

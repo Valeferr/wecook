@@ -1,5 +1,6 @@
 package com.wecook.model;
 
+import com.google.gson.annotations.Expose;
 import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
 
@@ -10,6 +11,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "recipes")
+@org.hibernate.annotations.NamedQueries({
+        @org.hibernate.annotations.NamedQuery(
+                name = Recipe.GET_ALL,
+                query = "From Recipe"
+        )
+})
 public class Recipe {
     public enum Difficulties {
         EASY,
@@ -17,28 +24,37 @@ public class Recipe {
         HARD
     }
 
+    public static final String GET_ALL = "Recipe_All";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Long id;
 
     @Column(name = "title", nullable = false)
+    @Expose
     private String title;
 
     @Column(name = "description", nullable = false)
+    @Expose
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "difficulty", nullable = false)
+    @Expose
     private Difficulties difficulty;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
+    @Expose
     private FoodCategories category;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Expose(serialize = false, deserialize = true)
     private Set<Step> steps = new HashSet<>();
 
     @OneToOne(mappedBy = "recipe")
+    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     public Long getId() {
