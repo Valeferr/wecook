@@ -1,0 +1,69 @@
+<main>
+  <div id="sidebar">
+    <div id="logo-container">
+      <img src="logo/900x300/white.png" alt="logo">
+    </div>
+
+    <!-- TODO Change home redirecting based on role -->
+    <div id="options-container">
+      <div class="sidebar-option">
+        <a routerLink="/home" routerLinkActive="active">
+          <span class="material-icons-outlined">home</span>
+          Home
+        </a>
+      </div>
+
+      @switch (auth.getRole()) {
+        @case (Roles.Standard) {
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">turned_in_not</span>
+              Saved recipes
+            </a>
+          </div>
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">add_circle_outline</span>
+              New recipe
+            </a>
+          </div>
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">search</span>
+              Search
+            </a>
+          </div>
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">person</span>
+              Account
+            </a>
+          </div>
+        }
+        @case (Roles.Moderator) {
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">forum</span>
+              Comments
+            </a>
+          </div>
+          <div class="sidebar-option">
+            <a routerLink="/home" routerLinkActive="active">
+              <span class="material-icons-outlined">image</span>
+              Posts
+            </a>
+          </div>
+        }
+      }
+    </div>
+    <div id="logout-option" class="sidebar-option">
+      <a routerLink="/home" routerLinkActive="active">
+        <span class="material-icons-outlined">logout</span>
+        Log out
+      </a>
+    </div>
+  </div>
+  <div id="content">
+    <ng-content></ng-content>
+  </div>
+</main>

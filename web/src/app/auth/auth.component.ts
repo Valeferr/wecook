@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+
 import { AuthFormComponent } from "./auth-form/auth-form.component";
 
 @Component({

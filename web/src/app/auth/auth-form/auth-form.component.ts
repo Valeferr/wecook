@@ -12,7 +12,14 @@ import { RegisterFormComponent } from "../register-form/register-form.component"
 export class AuthFormComponent {
   @Input({required: true}) formType!: 'login' | 'register';
 
+  protected authError: string = '';
+
   setFormType(formType: 'login' | 'register') {
+    this.authError = '';
     this.formType = formType;
+  }
+
+  showErrorMessage(message: string) {
+    this.authError = message;
   }
 }

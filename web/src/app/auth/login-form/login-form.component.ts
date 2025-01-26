@@ -1,13 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
+import { AuthService } from '../../services/auth.service';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { StandardUser } from '../../model/StandardUser.model';
+import { ModeratorUser } from '../../model/ModeratorUser.model';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-form',
   standalone: true,
-  imports: [],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './login-form.component.html',
   styleUrl: './login-form.component.css'
 })
 export class LoginFormComponent {
+  private auth = inject(AuthService);
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  protected loginForm: FormGroup;
+  public email: string = '';
+  public password: string = '';
+
+  invalidCredentials = output<string>();
+
+  constructor() {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],
+    });
+  }
+
   public togglePassword() {
     const passwordElement = document.getElementById('password')!;
 
@@ -17,5 +41,28 @@ export class LoginFormComponent {
     } else {
       passwordElement.setAttribute('type', 'password');
     }
+  }
+
+  public onSubmit() {
+    if (this.loginForm.invalid) {
+      return;
+    }
+    
+    this.auth.login({
+      email: this.email,
+      password: this.password,
+    }).subscribe({
+      next: (user: StandardUser | ModeratorUser) => {
+        const navigateTo = this.route.snapshot.queryParams['returnUrl'] || '/home';
+        this.router.navigate([navigateTo]);  
+      },
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          this.invalidCredentials.emit('Invalid username or password');
+        } else {
+          this.router.navigate(['/error'], { queryParams: { statusCode: error.status } });
+        }
+      }
+    });
   }
 }

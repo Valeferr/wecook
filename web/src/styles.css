@@ -24,3 +24,8 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: var(--cardinal);
 }
+
+button[type="submit"]:disabled {
+  background-color: var(--light-silver);
+  color: var(--pure-white);
+}

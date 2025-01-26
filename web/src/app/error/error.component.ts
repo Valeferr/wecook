@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -11,7 +11,13 @@ import { ActivatedRoute } from '@angular/router';
 export class ErrorComponent implements OnInit {
   @Input({required: true}) statusCode!: string;
 
+  private route = inject(ActivatedRoute);
+
   private errors: { [key: string]: { title: string; message: string } } = {
+    '400': {
+      title: 'Bad request',
+      message: 'Sorry, we could not process your request'
+    },
     '404': {
       title: 'Page not found',
       message: "Sorry, we couldn't find the page you're looking for."
@@ -22,10 +28,10 @@ export class ErrorComponent implements OnInit {
     }
   };
 
-  constructor(private route: ActivatedRoute) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.statusCode = this.route.snapshot.data['statusCode'];
+    this.statusCode = this.route.snapshot?.data['statusCode'] ?? '400';
   }
 
   public getError(statusCode: string): {title: string, message: string} {
