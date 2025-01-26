@@ -1,0 +1,45 @@
+<div class="post-container">
+  <div class="profile-container">
+    <div class="profile-info">
+      <div class="profile-picture-container">
+        <img src="logo/persona.png" alt="Foto profilo" />
+      </div>
+      <div class="profile-username">
+        <span>_.valeferr._</span>
+      </div>
+    </div>
+    <div class="profile-menu">
+      <span class="material-icons-outlined medium-icon">feedback</span>
+    </div>
+  </div>
+  <div class="recipe-image-container">
+    <img src="logo/food.jpg" alt="Foto ricetta" />
+  </div>
+  <div class="actions-container">
+    <div class="interactions-container">
+      <span class="material-icons-outlined">favorite_border</span>
+      <span class="material-icons-outlined">chat_bubble_outline</span>
+      <span class="material-icons-outlined">share</span>
+    </div>
+    <span class="material-icons-outlined">bookmark_border</span>
+  </div>
+  <div class="description-container">
+    <details (toggle)="onToggleSummary($event)">
+      <summary #summary>
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+      </summary>
+      <p (click)="onToggleSummary($event)">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+        when an unknown printer took a galley of type and scrambled it to make a type
+        specimen book. It has survived not only five centuries, but also the leap
+        into electronic typesetting, remaining essentially unchanged. It was
+        popularised in the 1960s with the release of Letraset sheets containing
+        Lorem Ipsum passages, and more recently with desktop publishing software like
+        Aldus PageMaker including versions of Lorem Ipsum.
+      </p>
+    </details>
+    <span>Continua a leggere</span>
+  </div>
+</div>
