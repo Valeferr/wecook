@@ -5,6 +5,7 @@ import com.wecook.model.Post;
 import com.wecook.rest.utils.CustomGson;
 
 import java.lang.reflect.Type;
+import java.util.Base64;
 
 public class PostSerializer implements JsonSerializer<Post> {
 
@@ -15,6 +16,11 @@ public class PostSerializer implements JsonSerializer<Post> {
 
         jsonObject.remove("recipe");
         jsonObject.addProperty("recipe", post.getRecipe().getId());
+
+        byte[] postPicture = post.getPostPicture();
+        String postPictureEncoded = Base64.getEncoder().encodeToString(postPicture);
+        jsonObject.remove("postPicture");
+        jsonObject.addProperty("postPicture", postPictureEncoded);
 
         return jsonObject;
     }

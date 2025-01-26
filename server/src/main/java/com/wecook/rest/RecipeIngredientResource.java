@@ -11,9 +11,7 @@ import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.query.Query;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Path("/post/{postId}/recipe/{recipeId}/step/{stepId}/recipeIngredient")
