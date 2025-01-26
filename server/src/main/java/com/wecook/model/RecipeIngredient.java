@@ -57,12 +57,10 @@ public class RecipeIngredient {
 
     @ManyToOne
     @JoinColumn(name = "step", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private Step step;
 
     @OneToOne
     @JoinColumn(name = "ingredient", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private Ingredient ingredient;
 
     public Long getId() {

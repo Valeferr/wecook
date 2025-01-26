@@ -15,6 +15,10 @@ import java.util.Set;
         @org.hibernate.annotations.NamedQuery(
                 name = Recipe.GET_ALL,
                 query = "From Recipe"
+        ),
+        @org.hibernate.annotations.NamedQuery(
+                name = Recipe.GET_RECIPE_POST,
+                query = "From Recipe r Where r.post = :post"
         )
 })
 public class Recipe {
@@ -25,6 +29,7 @@ public class Recipe {
     }
 
     public static final String GET_ALL = "Recipe_All";
+    public static final String GET_RECIPE_POST = "Recipe_Post";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,11 +55,9 @@ public class Recipe {
     private FoodCategories category;
 
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<Step> steps = new HashSet<>();
 
     @OneToOne(mappedBy = "recipe")
-    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     public Long getId() {
