@@ -3,7 +3,6 @@ package com.wecook.rest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.ModeratorUser;
 import com.wecook.model.StandardUser;
@@ -28,16 +27,12 @@ public class UserResource extends GenericResource{
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context) {
+    public Response post(@Context Request context) throws ConstraintViolationException {
         User requestUser;
 
-        try {
-            requestUser = RequestParser.jsonRequestToClass(context, User.class);
-            String passwordHash = SecurityUtils.sha256(requestUser.getPassword());
-            requestUser.setPassword(passwordHash);
-        } catch (JsonSyntaxException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        requestUser = RequestParser.jsonRequestToClass(context, User.class);
+        String passwordHash = SecurityUtils.sha256(requestUser.getPassword());
+        requestUser.setPassword(passwordHash);
 
         User user = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -58,13 +53,9 @@ public class UserResource extends GenericResource{
                 session.persist(user);
                 transaction.commit();
             } catch (ConstraintViolationException e) {
-                return Response.status(Response.Status.CONFLICT).build();
-            } catch (Exception e) {
                 transaction.rollback();
-                throw new Exception(e.getMessage());
+                throw e;
             }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         return Response.status(Response.Status.CREATED)
@@ -79,8 +70,6 @@ public class UserResource extends GenericResource{
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             users = session.createNamedQuery(User.GET_ALL, User.class).getResultList();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         return Response.ok(gson.toJson(users)).build();
@@ -94,87 +83,51 @@ public class UserResource extends GenericResource{
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             user = session.get(User.class, id);
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        } else {
-            return Response.ok(gson.toJson(user)).build();
-        }
+        return Response.ok(gson.toJson(user)).build();
+
     }
 
     @PATCH
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response patch(@Context Request context, @PathParam("id") int id) {
+    public Response patch(@Context Request context, @PathParam("id") int id) throws ConstraintViolationException {
         JsonObject jsonUser = RequestParser.jsonRequestToGson(context);
 
         User user = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            try {
-                user = session.get(User.class, id);
-                if (user == null) {
-                    return Response.status(Response.Status.NOT_FOUND).build();
-                }
-
-                if (!user.getRole().equals(User.Roles.STANDARD)) {
-                    return Response.status(Response.Status.BAD_REQUEST).build();
-                }
-
-                try {
-                    if (jsonUser.has("favorite_dish")) {
-                        ((StandardUser) user).setFavoriteDish(jsonUser.get("favorite_dish").getAsString());
-                    }
-
-                    if (jsonUser.has("food_preference")) {
-                        ((StandardUser) user).setFoodPreference(
-                            Enum.valueOf(
-                                FoodCategories.class,
-                                jsonUser.get("food_preference").getAsString()
-                            )
-                        );
-                    }
-                    session.merge(user);
-                    transaction.commit();
-                } catch (Exception e) {
-                    transaction.rollback();
-                    throw new Exception(e.getMessage());
-                }
-            } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-            }
-        }
-
-        return Response.ok(gson.toJson(user)).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("id") int id) {
-        User user;
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             user = session.get(User.class, id);
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.remove(user);
-                transaction.commit();
-            } catch (Exception e) {
-                transaction.rollback();
-                throw new Exception(e.getMessage());
+            if (user == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
 
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            if (!user.getRole().equals(User.Roles.STANDARD)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            try {
+                if (jsonUser.has("favorite_dish")) {
+                    ((StandardUser) user).setFavoriteDish(jsonUser.get("favorite_dish").getAsString());
+                }
+
+                if (jsonUser.has("food_preference")) {
+                    ((StandardUser) user).setFoodPreference(
+                        Enum.valueOf(
+                            FoodCategories.class,
+                            jsonUser.get("food_preference").getAsString()
+                        )
+                    );
+                }
+                session.merge(user);
+                transaction.commit();
+            } catch (ConstraintViolationException e) {
+                transaction.rollback();
+                throw e;
+            }
         }
 
         return Response.ok(gson.toJson(user)).build();
@@ -204,10 +157,6 @@ public class UserResource extends GenericResource{
             Transaction transaction = session.beginTransaction();
             user = session.get(User.class, id);
 
-            if (user == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-
             if (!user.getRole().equals(User.Roles.STANDARD)) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
@@ -229,15 +178,33 @@ public class UserResource extends GenericResource{
             try {
                 session.merge(user);
                 transaction.commit();
-            } catch (Exception e) {
+            } catch (ConstraintViolationException e) {
                 transaction.rollback();
-                throw new Exception(e.getMessage());
+                throw e;
             }
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         return Response.ok(gson.toJson(user)).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@Context Request context, @PathParam("id") int id) {
+        User user;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            user = session.get(User.class, id);
+            Transaction transaction = session.beginTransaction();
+            try {
+                session.remove(user);
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+
+        return Response.ok(gson.toJson(user)).build();
+    }
 }

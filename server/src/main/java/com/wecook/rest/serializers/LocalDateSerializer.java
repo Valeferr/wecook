@@ -1,4 +1,4 @@
-package com.wecook.model.serializers;
+package com.wecook.rest.serializers;
 
 import com.google.gson.*;
 

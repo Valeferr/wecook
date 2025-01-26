@@ -1,11 +1,9 @@
 package com.wecook.rest;
 
-import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.User;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
-import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -16,7 +14,6 @@ import org.hibernate.query.Query;
 
 @Path("/")
 public class LoginResource extends GenericResource {
-
     @Path("/login")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -25,44 +22,37 @@ public class LoginResource extends GenericResource {
         User userRequest;
         String password, email;
 
-        try {
-            userRequest = RequestParser.jsonRequestToClass(context, User.class);
-            password = SecurityUtils.sha256(userRequest.getPassword());
-            email = userRequest.getEmail().trim();
-        } catch (JsonSyntaxException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        userRequest = RequestParser.jsonRequestToClass(context, User.class);
+        password = SecurityUtils.sha256(userRequest.getPassword());
+        email = userRequest.getEmail().trim();
 
         if (password.isEmpty() || email.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        User user = null;
+        User user;
+
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createNamedQuery(User.GET_BY_EMAIL, User.class);
             query.setParameter("email", email);
             user = query.getSingleResult();
-        } catch (NoResultException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
-        if (user.getPassword().equals(password)) {
-            org.glassfish.grizzly.http.server.Session httpSession = context.getSession(true);
-            httpSession.setAttribute("user", user);
-            return Response.ok(gson.toJson(user)).build();
-        } else {
+        if (!user.getPassword().equals(password)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+
+        org.glassfish.grizzly.http.server.Session httpSession = context.getSession(true);
+        httpSession.setAttribute("user", user);
+        httpSession.setSessionTimeout(1440);
+
+        return Response.ok(gson.toJson(user)).build();
     }
 
     @Path("/logout")
     @GET
     public Response logout(@Context Request context) {
-        org.glassfish.grizzly.http.server.Session httpSession = context.getSession();
-        httpSession.setValid(false);
+        context.getSession().setValid(false);
         return Response.ok().build();
     }
-
 }
