@@ -11,7 +11,6 @@ import com.wecook.model.User;
 import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -19,12 +18,10 @@ import jakarta.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
 
 @Path("/users")
 public class UserResource extends GenericResource{
@@ -61,7 +58,7 @@ public class UserResource extends GenericResource{
                 session.persist(user);
                 transaction.commit();
             } catch (ConstraintViolationException e) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.CONFLICT).build();
             } catch (Exception e) {
                 transaction.rollback();
                 throw new Exception(e.getMessage());

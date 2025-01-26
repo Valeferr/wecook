@@ -1,11 +1,11 @@
 package com.wecook.rest;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.User;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
+import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -42,12 +42,10 @@ public class LoginResource extends GenericResource {
             Query<User> query = session.createNamedQuery(User.GET_BY_EMAIL, User.class);
             query.setParameter("email", email);
             user = query.getSingleResult();
+        } catch (NoResultException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
-
-        if (user == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
         }
 
         if (user.getPassword().equals(password)) {
@@ -55,7 +53,7 @@ public class LoginResource extends GenericResource {
             httpSession.setAttribute("user", user);
             return Response.ok(gson.toJson(user)).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.UNAUTHORIZED).build();
         }
     }
 
