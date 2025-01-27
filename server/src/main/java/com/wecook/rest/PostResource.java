@@ -14,12 +14,10 @@ import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Path("/post")
 public class PostResource extends GenericResource{
