@@ -10,17 +10,15 @@ main {
   width: 250px;
   padding: 20px 10px;
   background-color: var(--alizarin-crimson);
+  border-right: solid 2px var(--cardinal);
 }
 
 #content {
   position: relative;
   height: 100%;
   width: calc(100% - 250px);
-
   background-color: var(--cultured);
-
   overflow: scroll;
-
 }
 
 #logo-container {
@@ -51,4 +49,14 @@ main {
 .sidebar-option > a {
   display: flex;
   align-items: center;
+}
+
+.sidebar-option {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.sidebar-option:hover {
+  background-color: var(--cardinal);
+  cursor: pointer;
 }

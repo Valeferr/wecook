@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Post } from '../model/Post.model';
 
 @Component({
   selector: 'app-post',
@@ -9,7 +8,6 @@ import { Post } from '../model/Post.model';
   styleUrl: './post.component.css'
 })
 export class PostComponent {
-  post: Post[] = [];
 
   public onToggleSummary(event: Event): void {
     const detailsElement = (event.target as HTMLDetailsElement);
