@@ -9,7 +9,7 @@ import jakarta.persistence.Table;
 @Table(name = "post_reports")
 public class PostReport extends Report {
     @ManyToOne
-    @JoinColumn(name = "post", nullable = false)
+    @JoinColumn(name = "post")
     private Post post;
 
     public Post getPost() {

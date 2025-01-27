@@ -1,6 +1,7 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -8,6 +9,12 @@ import java.time.LocalDate;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "reports")
+@org.hibernate.annotations.NamedQueries(
+        @org.hibernate.annotations.NamedQuery(
+                name = Report.GET_ALL,
+                query = "From Report"
+        )
+)
 public class Report {
     public enum Types {
         POST,
@@ -33,6 +40,8 @@ public class Report {
         CLOSED
     }
 
+    public static final String GET_ALL = "Report_All";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
@@ -43,6 +52,7 @@ public class Report {
     private LocalDate date;
 
     @Column(name = "type", nullable = false)
+    @SerializedName("type")
     @Expose
     private Types contentType;
 
@@ -58,7 +68,6 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "user")
-    @Expose(serialize = false, deserialize = true)
     private StandardUser user;
 
     public Long getId() {

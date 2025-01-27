@@ -43,11 +43,9 @@ public class StandardUser extends User {
     private String favoriteDish;
 
     @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<SavedPost> savedPosts = new HashSet<>();
 
     public Set<Allergy> getAllergies() {
