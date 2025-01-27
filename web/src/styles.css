@@ -32,3 +32,57 @@ button[type="submit"]:disabled {
   background-color: var(--light-silver);
   color: var(--pure-white);
 }
+
+h1 {
+  font-size: 30px;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--alizarin-crimson); 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cardinal);
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: var(--quartz);
+  color: var(--pure-white);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  font-family: 'Rubik', sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  border: solid 2px #000;
+}
+
+.toast-success {
+  background-color: #4caf50;
+}
+
+.toast-warning {
+  background-color: #ff9800;
+}
+
+.toast-error {
+  background-color: var(--cardinal);
+}
+
+.toast span {
+  margin-left: 10px;
+}
+
+.material-icons-round {
+  font-size: 18px;
+}
+

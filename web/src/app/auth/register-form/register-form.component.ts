@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { StandardUser } from '../../model/StandardUser.model';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-register-form',
@@ -14,6 +15,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrl: './register-form.component.css'
 })
 export class RegisterFormComponent {
+  private toast = inject(ToastService);
+
   public invalidCredentials = output<string>();
   public success = output<void>();
 
@@ -78,6 +81,7 @@ export class RegisterFormComponent {
       role: Roles.Standard
     }).subscribe({
       next: (user: StandardUser) => {
+        this.toast.showToast('Utente registrato con successo', 'SUCCESS');
         this.success.emit();
       },
       error: (error: HttpErrorResponse) => {

@@ -1,0 +1,176 @@
+#profile-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#profile-info {
+  height: 250px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--alizarin-crimson);
+  color: var(--cultured);
+}
+
+#profile-photo img {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+#personal-info {
+  height: 100%;
+  width: 35%;
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#personal-info h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: var(--cultured);
+}
+
+#preferences p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+#user-profile {
+  height: 100%;
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+#user-statistics {
+  height: 70%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.statistic-item {
+  text-align: center;
+}
+
+.statistic-item h4 {
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.statistic-item p {
+  font-size: 20px;
+}
+
+/* Button styles */
+#follow-button {
+  display: flex;
+  justify-content: center;
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--cultured);
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+#follow-button:hover {
+  background-color: rgb(58, 53, 53);
+}
+
+#follow-button span {
+  font-size: 20px;
+}
+
+#follow-button:hover {
+  background-color: #1a1f1c;
+}
+
+.post-images {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+}
+
+.post-image {
+  height: 250px;
+  min-width: 200px;
+}
+
+.post-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 2%;
+}
+
+@media (max-width: 768px) {
+  #profile-info {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+  }
+
+  #personal-info {
+    width: 100%;
+  }
+
+  .post-images {
+    flex-direction: column;
+  }
+
+  #profile-photo img {
+    height: 100px;
+    width: 100px;
+    margin-bottom: 5px;
+  }
+
+  #user-statistics {
+    gap: 10px;
+  }
+}
+
+#graph-container {
+  margin: 20px;
+  padding: 10px;
+  background-color: var(--cultured);
+  border: 1px solid var(--alizarin-crimson);
+  border-radius: 10px;
+}
+
+#graph-container h4 {
+  text-align: center;
+  font-size: 20px;
+  color: var(--alizarin-crimson);
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+@media (max-width: 900px) {
+  .post-images {
+    flex-direction: column;
+  }
+}
