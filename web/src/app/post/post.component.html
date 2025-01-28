@@ -1,45 +1,58 @@
-<div class="post-container">
-  <div class="profile-container">
-    <div class="profile-info">
-      <div class="profile-picture-container">
-        <img src="logo/persona.png" alt="Foto profilo" />
+<main>
+  <div class="post-container">
+    <div class="profile-container">
+      <div class="profile-info">
+        <div class="profile-picture-container">
+          <img src="assets/2.png" alt="Foto profilo" />
+        </div>
+        <div class="profile-username">
+          <span>_.valeferr._</span>
+        </div>
       </div>
-      <div class="profile-username">
-        <span>_.valeferr._</span>
+      <div class="profile-menu">
+        <span class="material-icons-outlined medium-icon">feedback</span>
       </div>
     </div>
-    <div class="profile-menu">
-      <span class="material-icons-outlined medium-icon">feedback</span>
+    <div class="recipe-image-container">
+      <img src="assets/food.jpg" alt="Foto ricetta" />
+    </div>
+    <div class="actions-container">
+      <div class="interactions-container">
+        <span class="material-icons-outlined">favorite_border</span>
+        <span class="material-icons-outlined">chat_bubble_outline</span>
+        <span class="material-icons-outlined">share</span>
+      </div>
+      <span class="material-icons-outlined">bookmark_border</span>
+    </div>
+    <div class="description-container">
+      <details (toggle)="onToggleSummary($event)">
+        <summary #summary>
+          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+        </summary>
+        <p (click)="onToggleSummary($event)">
+          Lorem ipsum odor amet, consectetuer adipiscing elit.
+          Sociosqu eleifend cursus efficitur erat etiam pulvinar.
+          Tempor aliquet conubia litora sodales condimentum.
+          Varius at quis vel fames consequat maecenas sociosqu nisi.
+          Augue aliquet condimentum at fermentum taciti.
+          Vel non turpis non quam convallis mus aliquam felis.
+          Orci orci id dignissim eros accumsan. Inceptos varius nec
+          platea gravida curabitur facilisis vestibulum quis.
+          
+          Curabitur amet fusce ligula feugiat himenaeos sollicitudin
+          augue porttitor. Facilisi mollis lectus nisl orci pretium
+          suscipit. Dictum suspendisse diam velit mi euismod lacinia
+          tellus. Ac cras sapien tristique placerat nibh torquent risus.
+          Nibh maecenas mauris; purus tempus ac a. Vestibulum lectus aenean
+          mi tristique mattis nisl mauris nascetur. Facilisi iaculis aenean
+          euismod dapibus mi tortor. Nulla non imperdiet dictum sed suscipit;
+          tortor fringilla orci ex. Natoque porttitor habitasse; lobortis
+          neque commodo placerat tempor.
+        </p>
+      </details>
+      <span>Continua a leggere</span>
     </div>
   </div>
-  <div class="recipe-image-container">
-    <img src="logo/food.jpg" alt="Foto ricetta" />
-  </div>
-  <div class="actions-container">
-    <div class="interactions-container">
-      <span class="material-icons-outlined">favorite_border</span>
-      <span class="material-icons-outlined">chat_bubble_outline</span>
-      <span class="material-icons-outlined">share</span>
-    </div>
-    <span class="material-icons-outlined">bookmark_border</span>
-  </div>
-  <div class="description-container">
-    <details (toggle)="onToggleSummary($event)">
-      <summary #summary>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-      </summary>
-      <p (click)="onToggleSummary($event)">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-        when an unknown printer took a galley of type and scrambled it to make a type
-        specimen book. It has survived not only five centuries, but also the leap
-        into electronic typesetting, remaining essentially unchanged. It was
-        popularised in the 1960s with the release of Letraset sheets containing
-        Lorem Ipsum passages, and more recently with desktop publishing software like
-        Aldus PageMaker including versions of Lorem Ipsum.
-      </p>
-    </details>
-    <span>Continua a leggere</span>
-  </div>
-</div>
+  <app-post-details></app-post-details>
+</main>

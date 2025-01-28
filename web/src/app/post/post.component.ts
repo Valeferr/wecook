@@ -1,16 +1,14 @@
 import { Component, Input } from '@angular/core';
-import { Post } from '../model/Post.model';
+import { PostDetailsComponent } from "./post-details/post-details.component";
 
 @Component({
   selector: 'app-post',
   standalone: true,
-  imports: [],
+  imports: [PostDetailsComponent],
   templateUrl: './post.component.html',
   styleUrl: './post.component.css'
 })
 export class PostComponent {
-  post: Post[] = [];
-
   public onToggleSummary(event: Event): void {
     const detailsElement = (event.target as HTMLDetailsElement);
     const summaryElement = detailsElement.querySelector('summary');

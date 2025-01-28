@@ -1,0 +1,37 @@
+main {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+#profile-picture-container {
+  width: 50px;
+  min-width: 50px;
+  height: 50px;
+  min-height: 50px;
+
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+#profile-picture-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#comment-container {
+  width: 100%;
+}
+
+#username {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--quartz);
+}
+
+#comment-container span {
+  color: var(--quartz);
+  font-size: 0.9rem;
+}
