@@ -13,12 +13,10 @@ public class Like {
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     public Long getId() {

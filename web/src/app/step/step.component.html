@@ -1,0 +1,30 @@
+<main>
+  <div class="step-slit">
+    <span id="icon-slit" class="material-icons-outlined">drag_handle</span>
+  </div>
+  <div>
+    <div class="step-header">
+      <span class="step-number">{{ count }}</span>
+      <select class="step-title">
+        <option class="ingredient-item">Mescolare</option>
+        <option class="ingredient-item">Infornare</option>
+        <option class="ingredient-item">Sciogliere</option>
+        <option class="ingredient-item">Grattuggiare</option>
+        <option class="ingredient-item">Impastare</option>
+      </select>
+    </div>
+    
+    <div class="step-body">
+      <textarea class="step-description" placeholder="Descrivi il passaggio qui..."></textarea>
+      <span (click)="delete()" class="material-icons-outlined step-delete-icon">delete</span>
+    </div>
+    
+    <div class="step-ingredients-container">
+      <div class="step-ingredients-list">
+        <span class="ingredient-item">Uovo (x2)</span>
+        <span class="ingredient-item">Sale</span>
+      </div>
+      <span mat-raised-button id="add-ingredient-icon" class="material-icons-outlined">add_circle_outline</span>
+    </div>
+  </div>
+</main>

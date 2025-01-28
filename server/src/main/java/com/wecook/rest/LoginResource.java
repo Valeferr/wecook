@@ -2,6 +2,7 @@ package com.wecook.rest;
 
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.User;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
 import jakarta.ws.rs.*;
@@ -26,7 +27,7 @@ public class LoginResource extends GenericResource {
         password = SecurityUtils.sha256(userRequest.getPassword());
         email = userRequest.getEmail().trim();
 
-        if (password.isEmpty() || email.isEmpty()) {
+        if (password.isEmpty() || email.isEmpty() || !InputValidation.isEmailValid(email)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 

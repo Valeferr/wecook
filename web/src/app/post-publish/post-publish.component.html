@@ -1,0 +1,40 @@
+<main>
+  <header class="recipe-header">
+    <div class="recipe-overview">
+      <img src="logo/food.jpg" alt="Carbonara" class="recipe-image">
+      <div class="recipe-details">
+        <h1>Carbonara rivisitata</h1>
+        <div class="recipe-meta">
+          <span class="material-icons-outlined">timer</span>
+          <span>20 min</span>
+          <span class="material-icons-outlined">trending_up</span>
+          <span>Easy</span>
+        </div>
+      </div>
+    </div>
+    <button (click)="onPublish()" class="btn-publish">Pubblica</button>
+  </header>
+
+  <section class="ingredients-section">
+    <span>Ingredienti:</span>
+    <div class="ingredient-list">
+      <span class="ingredient-item">Pasta (100g)</span>
+      <span class="ingredient-item">Uovo (x2)</span>
+      <span class="ingredient-item">Sale</span>
+      <span class="ingredient-item">Olio</span>
+      <span class="ingredient-item">Pepe</span>
+      <span class="ingredient-item">Guanciale (60g)</span>
+    </div>
+  </section>
+
+  <h1>Passaggi:</h1>
+  <section class="steps-section">
+    <div class="step-list">
+      <ng-container #stepContainer></ng-container>
+    </div>
+  </section>
+
+  <div class="add-step-container">
+    <button class="btn-add-step" (click)="addStep()">Aggiungi passaggio</button>
+  </div>
+</main>

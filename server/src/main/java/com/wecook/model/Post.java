@@ -34,7 +34,10 @@ public class Post {
     @Expose
     private LocalDate publicationDate;
 
-    @Column(name = "post_picture", nullable = false)
+    @Lob
+    @Column(name = "post_picture", columnDefinition = "MEDIUMBLOB", nullable = false)
+    @SerializedName("post_picture")
+    @Expose
     private byte[] postPicture;
 
     @Enumerated(EnumType.STRING)
@@ -44,7 +47,7 @@ public class Post {
     private States status;
 
     @OneToOne
-    @JoinColumn(name = "post", nullable = false)
+    @JoinColumn(name = "recipe")
     private Recipe recipe;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

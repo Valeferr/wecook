@@ -1,5 +1,6 @@
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-error',
@@ -11,7 +12,9 @@ import { ActivatedRoute } from '@angular/router';
 export class ErrorComponent implements OnInit {
   @Input({required: true}) statusCode!: string;
 
+  private auth = inject(AuthService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   private errors: { [key: string]: { title: string; message: string } } = {
     '400': {
@@ -46,5 +49,13 @@ export class ErrorComponent implements OnInit {
     }
 
     return error;
+  }
+
+  public buttonClicked() {
+    if (this.auth.isLogged()) {
+      this.router.navigate(['/home']);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 }

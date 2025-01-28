@@ -1,7 +1,6 @@
 package com.wecook.rest;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
 import com.wecook.model.*;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;

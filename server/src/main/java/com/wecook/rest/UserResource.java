@@ -8,6 +8,7 @@ import com.wecook.model.ModeratorUser;
 import com.wecook.model.StandardUser;
 import com.wecook.model.User;
 import com.wecook.model.enums.FoodCategories;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
 import jakarta.ws.rs.*;
@@ -43,7 +44,9 @@ public class UserResource extends GenericResource{
             } else if (requestUser.getRole().equals(User.Roles.MODERATOR)) {
                 user = new ModeratorUser();
             }
-
+            if (!InputValidation.isEmailValid(requestUser.getEmail())){
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
             user.setEmail(requestUser.getEmail());
             user.setUsername(requestUser.getUsername());
             user.setPassword(requestUser.getPassword());

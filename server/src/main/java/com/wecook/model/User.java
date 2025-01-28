@@ -4,9 +4,7 @@ import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -58,7 +56,8 @@ public class User implements Serializable {
     @Expose
     private Roles role;
 
-    @Column(name = "profile_picture")
+    @Lob
+    @Column(name = "profile_picture", columnDefinition = "MEDIUMBLOB")
     private byte[] profilePicture;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
