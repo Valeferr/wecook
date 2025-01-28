@@ -4,7 +4,6 @@ import com.google.gson.*;
 import com.wecook.model.Comment;
 import com.wecook.model.Like;
 import com.wecook.model.Post;
-import com.wecook.rest.CommentResource;
 import com.wecook.rest.utils.CustomGson;
 
 import java.lang.reflect.Type;

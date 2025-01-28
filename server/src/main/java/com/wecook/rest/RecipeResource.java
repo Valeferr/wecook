@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.Post;
 import com.wecook.model.Recipe;
-import com.wecook.model.Step;
 import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
@@ -14,11 +13,9 @@ import jakarta.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 
 import java.util.List;
-import java.util.Set;
 
 @Path("/post/{postId}/recipe")
 public class RecipeResource extends GenericResource {

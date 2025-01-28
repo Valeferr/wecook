@@ -10,7 +10,6 @@ main {
   width: 250px;
   padding: 20px 10px;
   background-color: var(--alizarin-crimson);
-  border-right: solid 2px var(--cardinal);
 }
 
 #content {
@@ -18,7 +17,6 @@ main {
   height: 100%;
   width: calc(100% - 250px);
   background-color: var(--cultured);
-  overflow-y: scroll;
 }
 
 #logo-container {
@@ -49,11 +47,6 @@ main {
 .sidebar-option > a {
   display: flex;
   align-items: center;
-}
-
-.sidebar-option {
-  width: 100%;
-  border-radius: 5px;
 }
 
 .sidebar-option:hover {

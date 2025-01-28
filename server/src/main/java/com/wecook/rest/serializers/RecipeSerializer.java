@@ -6,7 +6,6 @@ import com.wecook.model.Step;
 import com.wecook.rest.utils.CustomGson;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.Set;
 
 public class RecipeSerializer implements JsonSerializer<Recipe> {
