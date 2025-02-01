@@ -23,7 +23,7 @@ public class ReportResource extends GenericResource{
     public Response post(@Context Request context) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
-        if(!jsonObject.has("type") || !jsonObject.has("reason") || !jsonObject.has("standard_user")) {
+        if(!jsonObject.has("type") || !jsonObject.has("reason") || !jsonObject.has("standardUserId")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -38,7 +38,7 @@ public class ReportResource extends GenericResource{
             if (Enum.valueOf(Report.Types.class,jsonObject.get("type").getAsString()).equals(Report.Types.COMMENT)) {
                 report = new CommentReport();
             }
-            StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standard_user").getAsInt());
+            StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
             //TODO: Rimuovere LocalDate.now()
             report.setDate(LocalDate.now());
             report.setUser(standardUser);

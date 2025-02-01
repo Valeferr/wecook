@@ -34,16 +34,13 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "standard_user", nullable = false)
-    @Expose(serialize = false, deserialize = true)
     private StandardUser standardUser;
 
     @ManyToOne
     @JoinColumn(name = "post")
-    @Expose(serialize = false, deserialize = true)
     private Post post;
 
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Expose(serialize = false, deserialize = true)
     private Set<CommentReport> commentReports = new HashSet<>();
 
     public LocalDate getPublicationDate() {

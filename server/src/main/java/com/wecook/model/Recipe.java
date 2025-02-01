@@ -13,13 +13,9 @@ import java.util.Set;
         @org.hibernate.annotations.NamedQuery(
                 name = Recipe.GET_ALL,
                 query = "From Recipe"
-        ),
-        @org.hibernate.annotations.NamedQuery(
-                name = Recipe.GET_RECIPE_POST,
-                query = "From Recipe r Where r.post = :post"
         )
 })
-public class Recipe {
+public class Recipe  {
     public enum Difficulties {
         EASY,
         MEDIUM,
@@ -27,7 +23,6 @@ public class Recipe {
     }
 
     public static final String GET_ALL = "Recipe_All";
-    public static final String GET_RECIPE_POST = "Recipe_Post";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

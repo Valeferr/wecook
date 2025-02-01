@@ -1,7 +1,6 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
 
@@ -27,18 +26,15 @@ public class StandardUser extends User {
     @CollectionTable(name = "user_allergies", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "allergy")
-    @SerializedName("allergies")
     @Expose
     private Set<Allergy> allergies;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "food_preference")
-    @SerializedName("food_preference")
     @Expose
     private FoodCategories foodPreference;
 
     @Column(name = "favorite_dish")
-    @SerializedName("favorite_dish")
     @Expose
     private String favoriteDish;
 
@@ -47,6 +43,9 @@ public class StandardUser extends User {
 
     @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<SavedPost> savedPosts = new HashSet<>();
+
+    @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Post> posts = new HashSet<>();
 
     public Set<Allergy> getAllergies() {
         return allergies;
@@ -86,5 +85,13 @@ public class StandardUser extends User {
 
     public void setSavedPosts(Set<SavedPost> savedPosts) {
         this.savedPosts = savedPosts;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 }

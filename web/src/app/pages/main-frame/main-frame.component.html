@@ -1,65 +1,73 @@
 <main>
   <div id="sidebar">
-    <div id="logo-container">
+    <div id="big-logo-container">
       <img src="logo/900x300/white.png" alt="logo">
     </div>
+    <div id="small-logo-container">
+      <img src="logo/1024x1024/white.png" alt="logo">
+    </div>
 
-    <!-- TODO Change home redirecting based on role -->
     <div id="options-container">
-      <div class="sidebar-option">
-        <a routerLink="/home" routerLinkActive="active">
-          <span class="material-icons-outlined">home</span>
-          Home
-        </a>
-      </div>
-
       @switch (auth.getRole()) {
         @case (Roles.Standard) {
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
+            <a (click)="navigateTo('/home')">
+              <span class="material-icons-outlined">home</span>
+              <label>Home</label> 
+            </a>
+          </div>
+          <!-- TODO: saved posts page -->
+          <div class="sidebar-option">
+            <a routerLink="/saved-posts" routerLinkActive="active">
               <span class="material-icons-outlined">turned_in_not</span>
-              Saved recipes
+              <label>Saved recipes</label>
             </a>
           </div>
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
+            <a (click)="navigateTo('/new-post')">
               <span class="material-icons-outlined">add_circle_outline</span>
-              New recipe
+              <label>New recipe</label>
             </a>
           </div>
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
+            <a (click)="navigateTo('/search')">
               <span class="material-icons-outlined">search</span>
-              Search
+              <label>Search</label>
             </a>
           </div>
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
+            <a (click)="navigateTo('/profile')">
               <span class="material-icons-outlined">person</span>
-              Account
+              <label>Account</label>
             </a>
           </div>
         }
         @case (Roles.Moderator) {
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
-              <span class="material-icons-outlined">forum</span>
-              Comments
+            <a (click)="navigateTo('/profile')">
+              <span class="material-icons-outlined">home</span>
+              <label>Home</label> 
             </a>
           </div>
           <div class="sidebar-option">
-            <a routerLink="/home" routerLinkActive="active">
+            <a (click)="navigateTo('/comments')">
+              <span class="material-icons-outlined">forum</span>
+              <label>Comments</label>
+            </a>
+          </div>
+          <div class="sidebar-option">
+            <a (click)="navigateTo('/posts')">
               <span class="material-icons-outlined">image</span>
-              Posts
+              <label>Posts</label>
             </a>
           </div>
         }
       }
     </div>
     <div id="logout-option" class="sidebar-option">
-      <a routerLink="/home" routerLinkActive="active">
+      <a routerLink="/login" routerLinkActive="active">
         <span class="material-icons-outlined">logout</span>
-        Log out
+        <label>Log out</label>
       </a>
     </div>
   </div>

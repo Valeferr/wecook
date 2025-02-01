@@ -1,22 +1,11 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "recipe_ingredients")
-@org.hibernate.annotations.NamedQueries({
-        @org.hibernate.annotations.NamedQuery(
-                name = RecipeIngredient.GET_ALL_STEP_RECIPE_INGREDIENTS,
-                query = "From RecipeIngredient As r Where r.step = :step"
-        ),
-        @org.hibernate.annotations.NamedQuery(
-                name =RecipeIngredient.GET_ONE_STEP_RECIPE_INGREDIENTS,
-                query = "From RecipeIngredient As r Where r.id = :id AND r.step = :step"
-        )
-})
 public class RecipeIngredient {
     public enum MeasurementUnits {
         CENTILITER,
@@ -35,9 +24,6 @@ public class RecipeIngredient {
         DASH,
         TIN,
     }
-    public static final String GET_ALL_STEP_RECIPE_INGREDIENTS = "RecipeIngredient_All";
-    public static final String GET_ONE_STEP_RECIPE_INGREDIENTS = "RecipeIngredient_One";
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +37,6 @@ public class RecipeIngredient {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "unit", nullable = false)
-    @SerializedName("unit")
     @Expose
     private MeasurementUnits measurementUnit;
 

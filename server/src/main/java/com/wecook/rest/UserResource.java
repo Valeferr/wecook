@@ -113,15 +113,15 @@ public class UserResource extends GenericResource{
             }
 
             try {
-                if (jsonUser.has("favorite_dish")) {
-                    ((StandardUser) user).setFavoriteDish(jsonUser.get("favorite_dish").getAsString());
+                if (jsonUser.has("favoriteDish")) {
+                    ((StandardUser) user).setFavoriteDish(jsonUser.get("favoriteDish").getAsString());
                 }
 
-                if (jsonUser.has("food_preference")) {
+                if (jsonUser.has("foodPreference")) {
                     ((StandardUser) user).setFoodPreference(
                         Enum.valueOf(
                             FoodCategories.class,
-                            jsonUser.get("food_preference").getAsString()
+                            jsonUser.get("foodPreference").getAsString()
                         )
                     );
                 }
