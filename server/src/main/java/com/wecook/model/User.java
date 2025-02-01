@@ -18,10 +18,6 @@ import java.util.Set;
         @org.hibernate.annotations.NamedQuery(
                 name = User.GET_BY_EMAIL,
                 query = "FROM User AS u WHERE u.email = :email"
-        ),
-        @org.hibernate.annotations.NamedQuery(
-                name = User.GET_BY_USERNAME,
-                query = "FROM User AS u WHERE u.username = :username"
         )
 })
 public class User implements Serializable {
@@ -32,7 +28,6 @@ public class User implements Serializable {
 
     public static final String GET_ALL = "User_GetAll";
     public static final String GET_BY_EMAIL = "User_GetByEmail";
-    public static final String GET_BY_USERNAME = "User_GetByUsername";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -61,7 +56,7 @@ public class User implements Serializable {
     private byte[] profilePicture;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private Set<Report> users = new HashSet<>();
+    private Set<Report> reports = new HashSet<>();
 
     public int getId() {
         return id;
@@ -111,11 +106,11 @@ public class User implements Serializable {
         this.profilePicture = profilePicture;
     }
 
-    public Set<Report> getUsers() {
-        return users;
+    public Set<Report> getReports() {
+        return reports;
     }
 
-    public void setUsers(Set<Report> users) {
-        this.users = users;
+    public void setReports(Set<Report> users) {
+        this.reports = users;
     }
 }

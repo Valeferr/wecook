@@ -1,7 +1,6 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -30,25 +29,26 @@ public class Post {
     private Long id;
 
     @Column(name = "publication_date")
-    @SerializedName("publication_date")
     @Expose
     private LocalDate publicationDate;
 
     @Lob
     @Column(name = "post_picture", columnDefinition = "MEDIUMBLOB", nullable = false)
-    @SerializedName("post_picture")
     @Expose
     private byte[] postPicture;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "post_state", nullable = false)
-    @SerializedName("post_state")
     @Expose
     private States status;
 
     @OneToOne
     @JoinColumn(name = "recipe")
     private Recipe recipe;
+
+    @ManyToOne
+    @JoinColumn(name = "standard_user")
+    private StandardUser standardUser;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Comment> comments = new HashSet<>();
@@ -100,6 +100,14 @@ public class Post {
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
+    }
+
+    public StandardUser getStandardUser() {
+        return standardUser;
+    }
+
+    public void setStandardUser(StandardUser standardUser) {
+        this.standardUser = standardUser;
     }
 
     public Set<Comment> getComments() {

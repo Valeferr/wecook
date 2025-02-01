@@ -1,7 +1,6 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -9,18 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "step")
-@org.hibernate.annotations.NamedQueries({
-        @org.hibernate.annotations.NamedQuery(
-                name = Step.GET_ALL_RECIPE_STEPS,
-                query = "From Step As s Where s.recipe = :recipe"
-        ),
-        @org.hibernate.annotations.NamedQuery(
-                name = Step.GET_ONE_RECIPE_STEP,
-                query = "From Step As s Where s.id = :id AND s.recipe = :recipe"
-        )
-
-})
-public class Step {
+public class Step  {
     public enum Actions {
         MIX,
         CUT,
@@ -42,8 +30,6 @@ public class Step {
         MELT
     }
 
-    public static final String GET_ALL_RECIPE_STEPS = "All_Step_By_Recipe";
-    public static final String GET_ONE_RECIPE_STEP = "One_Step_By_Recipe";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -64,7 +50,6 @@ public class Step {
     private Actions action;
 
     @Column(name = "step_index")
-    @SerializedName("step_index")
     @Expose
     private int stepIndex;
 
