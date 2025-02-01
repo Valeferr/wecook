@@ -13,12 +13,12 @@ public class RecipeIngredientSerializer implements JsonSerializer<RecipeIngredie
     @Override
     public JsonElement serialize(RecipeIngredient recipeIngredient, Type type, JsonSerializationContext jsonSerializationContext) {
         CustomGson customGson = CustomGson.getInstance();
-        JsonObject jsonObject = customGson.getGson().toJsonTree(recipeIngredient).getAsJsonObject();
+        JsonObject jsonObject = new JsonObject();
 
-        jsonObject.remove("step");
+        jsonObject.addProperty("id", recipeIngredient.getId());
+        jsonObject.addProperty("quantity", recipeIngredient.getQuantity());
+        jsonObject.addProperty("measurementUnit", String.valueOf(recipeIngredient.getMeasurementUnit()));
         jsonObject.addProperty("step", recipeIngredient.getStep().getId());
-
-        jsonObject.remove("ingredient");
         jsonObject.addProperty("ingredient", recipeIngredient.getIngredient().getId());
 
         return jsonObject;

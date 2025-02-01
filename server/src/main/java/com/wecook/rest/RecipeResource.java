@@ -17,19 +17,16 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-@Path("/post/{postId}/recipe")
+@Path("recipe")
 public class RecipeResource extends GenericResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context, @PathParam("postId") int postId) {
+    public Response post(@Context Request context) {
         Recipe recipeRequest = RequestParser.jsonRequestToClass(context, Recipe.class);
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
-            Post post = session.get(Post.class, postId);
-            recipeRequest.setPost(post);
 
             try {
                 session.persist(recipeRequest);
@@ -62,15 +59,11 @@ public class RecipeResource extends GenericResource {
     @GET
     @Path("/{recipeId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOne(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId) {
+    public Response getOne(@Context Request context, @PathParam("recipeId") int recipeId) {
         Recipe recipe;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Post post = session.get(Post.class, postId);
-            Query<Recipe> recipeQuery = session.createNamedQuery(Recipe.GET_RECIPE_POST, Recipe.class);
-            recipeQuery.setParameter("post", post);
-
-            recipe = recipeQuery.getSingleResult();
+            recipe = session.get(Recipe.class,recipeId);;
         }
 
         return Response.ok(gson.toJson(recipe)).build();
@@ -80,17 +73,13 @@ public class RecipeResource extends GenericResource {
     @Path("/{recipeId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response patch(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId) {
+    public Response patch(@Context Request context, @PathParam("recipeId") int recipeId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
         Recipe recipe;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            Post post = session.get(Post.class, postId);
-            Query<Recipe> recipeQuery = session.createNamedQuery(Recipe.GET_RECIPE_POST, Recipe.class);
-            recipeQuery.setParameter("post", post);
-
-            recipe = recipeQuery.getSingleResult();
+            recipe = session.get(Recipe.class,recipeId);;
 
             try {
                 if (jsonObject.has("title")) {
@@ -133,17 +122,12 @@ public class RecipeResource extends GenericResource {
     @DELETE
     @Path("/{recipeId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId) {
+    public Response delete(@Context Request context, @PathParam("recipeId") int recipeId) {
         Recipe recipe;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
-            Post post = session.get(Post.class, postId);
-            Query<Recipe> recipeQuery = session.createNamedQuery(Recipe.GET_RECIPE_POST, Recipe.class);
-            recipeQuery.setParameter("post", post);
-
-            recipe = recipeQuery.getSingleResult();
+            recipe = session.get(Recipe.class,recipeId);;
 
             try {
                 session.remove(recipe);

@@ -13,24 +13,21 @@ import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@Path("/post/{postId}/recipe/{recipeId}/step")
+@Path("/recipe/{recipeId}/step")
 public class StepResource extends GenericResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId) {
+    public Response post(@Context Request context,  @PathParam("recipeId") int recipeId) {
         Step step;
         step = RequestParser.jsonRequestToClass(context, Step.class);
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
             Recipe recipe = session.get(Recipe.class, recipeId);
-            if (recipe.getPost().getId() != postId) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
 
             recipe.getSteps().add(step);
             step.setRecipe(recipe);
@@ -48,14 +45,11 @@ public class StepResource extends GenericResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId) {
+    public Response getAll(@Context Request context, @PathParam("recipeId") int recipeId) {
         Set<Step> steps;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Recipe recipe = session.get(Recipe.class, recipeId);
-            if (recipe.getPost().getId() != postId) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
 
             steps = new HashSet<>(recipe.getSteps());
         }
@@ -66,13 +60,10 @@ public class StepResource extends GenericResource {
     @GET
     @Path("/{stepId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOne(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
+    public Response getOne(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
         Step step;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Recipe recipe = session.get(Recipe.class, recipeId);
-            if (recipe.getPost().getId() != postId) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
 
             step = recipe.getSteps().stream()
                     .filter((s) -> s.getId() == stepId)
@@ -87,17 +78,13 @@ public class StepResource extends GenericResource {
     @Path("/{stepId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response patch(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId,@PathParam("stepId") int stepId) {
+    public Response patch(@Context Request context, @PathParam("recipeId") int recipeId,@PathParam("stepId") int stepId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
         Step step;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
             Recipe recipe = session.get(Recipe.class, recipeId);
-            if (recipe.getPost().getId() != postId) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
 
             step = recipe.getSteps().stream()
                     .filter((s) -> s.getId() == stepId)
@@ -119,8 +106,8 @@ public class StepResource extends GenericResource {
                         )
                     );
                 }
-                if (jsonObject.has("step_index")) {
-                    step.setStepIndex(jsonObject.get("step_index").getAsInt());
+                if (jsonObject.has("stepIndex")) {
+                    step.setStepIndex(jsonObject.get("stepIndex").getAsInt());
                 }
 
                 session.merge(step);
@@ -137,15 +124,11 @@ public class StepResource extends GenericResource {
     @DELETE
     @Path("/{stepId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request request, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId,@PathParam("stepId") int stepId) {
+    public Response delete(@Context Request request, @PathParam("recipeId") int recipeId,@PathParam("stepId") int stepId) {
         Step step;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
             Recipe recipe = session.get(Recipe.class, recipeId);
-            if (recipe.getPost().getId() != postId) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
 
             step = recipe.getSteps().stream()
                     .filter((s) -> s.getId() == stepId)

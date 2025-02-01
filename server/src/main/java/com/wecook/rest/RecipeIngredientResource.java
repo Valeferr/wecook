@@ -14,12 +14,12 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
-@Path("/post/{postId}/recipe/{recipeId}/step/{stepId}/recipeIngredient")
+@Path("/recipe/{recipeId}/step/{stepId}/recipeIngredient")
 public class RecipeIngredientResource extends GenericResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
+    public Response post(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
         if (!jsonObject.has("quantity") || !jsonObject.has("unit") || !jsonObject.has("ingredientId")) {
@@ -29,12 +29,10 @@ public class RecipeIngredientResource extends GenericResource {
         RecipeIngredient recipeIngredient = new RecipeIngredient();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-
             Step step = session.get(Step.class, stepId);
 
             boolean recipeMatch = step.getRecipe().getId() == recipeId;
-            boolean postMatch = step.getRecipe().getPost().getId() == postId;
-            if (!postMatch || !recipeMatch) {
+            if (!recipeMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
@@ -69,15 +67,14 @@ public class RecipeIngredientResource extends GenericResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
+    public Response getAll(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
         List<RecipeIngredient> recipeIngredients;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Step step = session.get(Step.class, stepId);
 
             boolean recipeMatch = step.getRecipe().getId() == recipeId;
-            boolean postMatch = step.getRecipe().getPost().getId() == postId;
-            if (!postMatch || !recipeMatch) {
+            if (!recipeMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
@@ -90,16 +87,15 @@ public class RecipeIngredientResource extends GenericResource {
     @GET
     @Path("/{recipeIngredientId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOne(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
+    public Response getOne(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
         RecipeIngredient recipeIngredient;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             recipeIngredient = session.get(RecipeIngredient.class, recipeIngredientId);
 
-            boolean postMatch = recipeIngredient.getStep().getRecipe().getPost().getId() == postId;
             boolean recipeMatch = recipeIngredient.getStep().getRecipe().getId() == recipeId;
             boolean stepMatch = recipeIngredient.getStep().getId() == stepId;
-            if (!postMatch || !recipeMatch || !stepMatch) {
+            if (!recipeMatch || !stepMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         }
@@ -111,7 +107,7 @@ public class RecipeIngredientResource extends GenericResource {
     @Path("/{recipeIngredientId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response patch(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
+    public Response patch(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
         RecipeIngredient recipeIngredient;
@@ -120,10 +116,9 @@ public class RecipeIngredientResource extends GenericResource {
 
             recipeIngredient = session.get(RecipeIngredient.class, recipeIngredientId);
 
-            boolean postMatch = recipeIngredient.getStep().getRecipe().getPost().getId() == postId;
             boolean recipeMatch = recipeIngredient.getStep().getRecipe().getId() == recipeId;
             boolean stepMatch = recipeIngredient.getStep().getId() == stepId;
-            if (!postMatch || !recipeMatch || !stepMatch) {
+            if (!recipeMatch || !stepMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
@@ -159,7 +154,7 @@ public class RecipeIngredientResource extends GenericResource {
     @DELETE
     @Path("/{recipeIngredientId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("postId") int postId, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
+    public Response delete(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId, @PathParam("recipeIngredientId") int recipeIngredientId) {
         RecipeIngredient recipeIngredient;
 
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -167,10 +162,9 @@ public class RecipeIngredientResource extends GenericResource {
 
             recipeIngredient = session.get(RecipeIngredient.class, recipeIngredientId);
 
-            boolean postMatch = recipeIngredient.getStep().getRecipe().getPost().getId() == postId;
             boolean recipeMatch = recipeIngredient.getStep().getRecipe().getId() == recipeId;
             boolean stepMatch = recipeIngredient.getStep().getId() == stepId;
-            if (!postMatch || !recipeMatch || !stepMatch) {
+            if (!recipeMatch || !stepMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
