@@ -1,7 +1,6 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -52,7 +51,6 @@ public class Report {
     private LocalDate date;
 
     @Column(name = "type", nullable = false)
-    @SerializedName("type")
     @Expose
     private Types contentType;
 
