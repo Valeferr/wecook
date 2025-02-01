@@ -6,6 +6,7 @@ import { ErrorComponent } from './error/error.component';
 import { HomeComponent } from './pages/home/home.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PostPublishComponent } from './post-publish/post-publish.component';
+import { NewPostComponent } from './pages/new-post/new-post.component';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,11 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'new-post',
+    component: NewPostComponent,
     canActivate: [authGuard],
   },
   {

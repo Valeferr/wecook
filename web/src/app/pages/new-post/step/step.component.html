@@ -1,0 +1,57 @@
+<main>
+  <section id="step">
+    <div id="step-number">
+      <h3>{{ step().stepIndex }}</h3>
+    </div>
+    <form [formGroup]="stepForm">
+      <div id="action-container">
+        <mat-form-field id="step-action">
+          <mat-label>Action</mat-label>
+          <input type="text"
+            placeholder="Type to search..."
+            aria-label="Action"
+            matInput
+            formControlName="action"
+            [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete">
+            @for (action of filteredOptions | async; track action) {
+              <mat-option [value]="action">{{action}}</mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+  
+        <mat-form-field id="step-duration">
+          <mat-label>Duration (minutes)</mat-label>
+          <input type="number"
+            matInput
+            formControlName="duration"
+            min="1"
+            placeholder="Enter step duration"
+          >
+        </mat-form-field>
+      </div>
+  
+      <mat-form-field id="step-description" class="example-full-width">
+        <mat-label>Step description</mat-label>
+        <textarea matInput placeholder="Write a short description..."
+          cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="1"
+          cdkAutosizeMaxRows="4"
+          formControlName="description">
+        </textarea>
+      </mat-form-field>
+    </form>
+  </section>
+  <section id="actions">
+    <button id="dragger">
+      <span class="material-icons-outlined">drag_handle</span>
+    </button>
+    <button>
+      <span class="material-icons-outlined" (click)="newStep()">add</span>
+    </button>
+    <button>
+      <span class="material-icons-outlined" (click)="deleteStep()">delete</span>
+    </button>
+  </section>
+</main>

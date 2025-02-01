@@ -1,0 +1,96 @@
+<app-main-frame>
+  <main>
+    <section id="header">
+      <form [formGroup]="recipeForm">
+        <div id="overview-container">
+          <div id="recipe-image-container" (click)="fileInput.click()">
+            <img [src]="imageSrc" alt="Recipe Image" />
+            <input
+              type="file"
+              accept="image/*"
+              #fileInput
+              (change)="onFileSelected($event)" 
+              hidden
+            />
+          </div>
+          <div id="title-container">
+            <input type="text" id="title" placeholder="Recipe title..." />
+            <div id="details-container">
+              <div class="detail">
+                <span class="material-icons-outlined">timer</span>
+                <span>{{ duration }} min</span>
+              </div>
+              <div class="detail">
+                <mat-form-field id="difficulty">
+                  <mat-label>Difficulty</mat-label>
+                  <input type="text"
+                    placeholder="Difficulty"
+                    aria-label="Difficulty"
+                    matInput
+                    formControlName="difficulty"
+                    [matAutocomplete]="auto">
+                  <mat-autocomplete #auto="matAutocomplete">
+                    @for (difficulty of filteredOptions | async; track difficulty) {
+                      <mat-option [value]="difficulty">{{difficulty}}</mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="submit" id="publish-button" class="action-button">Publish</button>
+      </form>
+    </section>
+    <section id="ingredients-used">
+      <h2>Ingredients</h2>
+      <div id="ingredients-container">
+        <div class="ingredient">
+          <span>Egg</span>
+          <span>(2)</span>
+        </div>
+        <div class="ingredient">
+          <span>Bread</span>
+          <span>(13g)</span>
+        </div>
+        <div class="ingredient">
+          <span>Dried cherry tomatoes</span>
+          <span>(8)</span>
+        </div>
+        <div class="ingredient">
+          <span>Almonds</span>
+          <span>(30g)</span>
+        </div>
+        <div class="ingredient">
+          <span>Milk</span>
+          <span>(200ml)</span>
+        </div>
+        <div class="ingredient">
+          <span>Butter</span>
+          <span>(50g)</span>
+        </div>
+        <div class="ingredient">
+          <span>Salt</span>
+          <span>(to taste)</span>
+        </div>
+        <div class="ingredient">
+          <span>Black pepper</span>
+          <span>(to taste)</span>
+        </div>
+      </div>
+    </section>
+    <section id="steps">
+      <h2>Steps</h2>
+      <div cdkDropList id="steps-container" (cdkDropListDropped)="drop($event)">
+        @for (step of steps; let i = $index; track step.id) {
+          <app-step
+            cdkDrag [step]="step"
+            (onNewStep)="onNewStep($event)"
+            (onStepChange)="onStepChange($event)"
+            (onDeleteStep)="onDeleteStep($index)"
+          ></app-step>
+        }
+      </div>
+    </section>
+  </main>
+</app-main-frame>

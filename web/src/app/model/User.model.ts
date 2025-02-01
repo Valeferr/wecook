@@ -7,19 +7,19 @@ export enum Roles {
 
 export class User {
   @Expose()
-  public id!: number;
+  public id: number;
 
   @Expose()
-  public email!: string;
+  public email: string;
 
   @Expose()
-  public username!: string;
+  public username: string;
 
   @Expose()
-  public password!: string;
+  public password: string;
 
   @Expose()
-  public role!: Roles;
+  public role: Roles;
 
   constructor (
     id: number,
