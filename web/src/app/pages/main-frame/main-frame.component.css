@@ -19,11 +19,18 @@ main {
   background-color: var(--cultured);
 }
 
-#logo-container {
+#big-logo-container,
+#small-logo-container {
   width: 100%;
 }
 
-#logo-container > img {
+#small-logo-container {
+  display: none;
+  height: 50px;
+}
+
+#logo-container > img,
+#small-logo-container > img {
   height: 100%;
   width: 100%;
   object-fit: contain;
@@ -52,4 +59,40 @@ main {
 .sidebar-option:hover {
   background-color: var(--cardinal);
   cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+  #sidebar {
+    width: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #big-logo-container {
+    display: none;
+  }
+
+  #small-logo-container {
+    display: block;
+  }
+
+  #options-container {
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+
+  label {
+    display: none;
+  }
+
+  #content {
+    width: calc(100% - 55px);
+  }
 }
