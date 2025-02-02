@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MainFrameComponent } from "../main-frame/main-frame.component";
 import { StepComponent } from './step/step.component';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Step } from '../../model/Step.model';
-import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Recipe } from '../../model/Recipe.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
+import { RecipeIngredient } from '../../model/RecipeIngredient.model';
+import { IngredientsService } from '../../services/ingredients.service';
 
 @Component({
   selector: 'app-new-post',
@@ -28,10 +30,13 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './new-post.component.css'
 })
 export class NewPostComponent implements OnInit {
+  protected readonly ingredientsService = inject(IngredientsService);
+
   protected imageSrc: string = 'assets/default_recipe.png';
 
   protected recipe: Recipe = new Recipe();
   protected steps: Array<Step> = new Array<Step>();
+  protected ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>();
 
   get duration() {
     return this.steps.reduce((acc, s) => acc + (s.duration || 0), 0);
@@ -54,6 +59,8 @@ export class NewPostComponent implements OnInit {
       description: new FormControl<string | null>(null),
       image: new FormControl<File | null>(null)
     });
+
+    this.ingredients = new Array<RecipeIngredient>();
   }
 
   private updateRecipe(value: any) {
@@ -103,8 +110,6 @@ export class NewPostComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<any[]>) {
-    console.log(event);
-
     moveItemInArray(this.steps, event.previousIndex, event.currentIndex);
 
     this.steps.forEach((s, i) => {
@@ -124,8 +129,22 @@ export class NewPostComponent implements OnInit {
   }
 
   onStepChange(step: Step) {
+    debugger;
     const index = this.steps.findIndex(s => s.stepIndex === step.stepIndex);
     this.steps[index] = step;
+
+    const ingredients = new Map<number, RecipeIngredient>();
+    this.steps.forEach(s => {
+      s.ingredients.forEach(i => {
+        if (ingredients.has(i.ingredientId!)) {
+          ingredients.get(i.ingredientId!)!.quantity! += i.quantity!;
+        } else {
+          ingredients.set(i.ingredientId!, i);
+        }
+      });
+    });
+
+    this.ingredients = Array.from(ingredients.values());
   }
 
   onDeleteStep(index: number) {

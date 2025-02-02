@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Choose the ingredient to add</h2>
+<mat-dialog-content>
+  <form [formGroup]="addIngredientForm">
+    <mat-form-field id="ingredient">
+      <mat-label>Ingredient</mat-label>
+      <input type="text"
+        placeholder="Type to search..."
+        aria-label="Ingredient"
+        matInput
+        formControlName="ingredient"
+        [matAutocomplete]="auto">
+      <mat-autocomplete #auto="matAutocomplete">
+        @for (ingredient of filteredIngredients | async; track ingredient.id) {
+          <mat-option [value]="ingredient.name">{{ingredient.name}}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field id="quantity">
+      <mat-label>Quantity</mat-label>
+      <input type="number"
+        matInput
+        formControlName="quantity"
+        min="1"
+        placeholder="Enter ingredient quantity"
+      >
+    </mat-form-field>
+    
+    @if (ingredientToAdd.ingredientId) {
+      <mat-form-field id="unit-of-measure">
+        <mat-label>Measurement unit</mat-label>
+        <input type="text"
+          placeholder="Type to search..."
+          aria-label="Measurement unit"
+          matInput
+          formControlName="measurementUnit"
+          [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          @for (unit of filteredMeasurementUnits | async; track unit) {
+            <mat-option [value]="unit">{{unit}}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions id="dialog-actions">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-button [mat-dialog-close]="ingredientToAdd" cdkFocusInitial [disabled]="!addIngredientForm.valid">Add</button>
+</mat-dialog-actions>

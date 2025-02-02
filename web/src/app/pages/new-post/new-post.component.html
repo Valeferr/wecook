@@ -45,38 +45,12 @@
     <section id="ingredients-used">
       <h2>Ingredients</h2>
       <div id="ingredients-container">
-        <div class="ingredient">
-          <span>Egg</span>
-          <span>(2)</span>
-        </div>
-        <div class="ingredient">
-          <span>Bread</span>
-          <span>(13g)</span>
-        </div>
-        <div class="ingredient">
-          <span>Dried cherry tomatoes</span>
-          <span>(8)</span>
-        </div>
-        <div class="ingredient">
-          <span>Almonds</span>
-          <span>(30g)</span>
-        </div>
-        <div class="ingredient">
-          <span>Milk</span>
-          <span>(200ml)</span>
-        </div>
-        <div class="ingredient">
-          <span>Butter</span>
-          <span>(50g)</span>
-        </div>
-        <div class="ingredient">
-          <span>Salt</span>
-          <span>(to taste)</span>
-        </div>
-        <div class="ingredient">
-          <span>Black pepper</span>
-          <span>(to taste)</span>
-        </div>
+        @for (ingredient of ingredients; track ingredient.ingredientId) {
+          <div class="ingredient">
+            <span>{{ ingredientsService.getIngredientById(ingredient.ingredientId!)?.name}}</span>
+            <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== 'qty' ? ingredient.measurementUnit : ''}})</span>
+          </div>
+        }
       </div>
     </section>
     <section id="steps">

@@ -2,21 +2,26 @@ import { Expose } from 'class-transformer';
 
 export class Ingredient {
   @Expose()
-  public id: string;
+  public id: number;
 
   @Expose()
   public name: string;
 
   @Expose()
-  public foodType: string;
+  public type: string;
+
+  @Expose()
+  public measurementUnits: Array<string>;
 
   constructor(
-    id: string,
+    id: number,
     name: string,
-    foodType: string
+    type: string,
+    measurementUnits: Array<string>
   ) {
     this.id = id;
     this.name = name;
-    this.foodType = foodType;
+    this.type = type;
+    this.measurementUnits = measurementUnits;
   }
 }

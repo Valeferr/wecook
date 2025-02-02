@@ -1,6 +1,7 @@
 main {
   width: inherit;
-  height: 250px;
+  height: 300px;
+  min-height: 300px;
 
   display: flex;
   justify-content: flex-start;
@@ -10,12 +11,11 @@ main {
 
 #step {
   width: 90%;
-  height: 100%;
 
   border: 1px solid var(--light-silver);
   border-radius: 15px;
   
-  padding: 18px 50px 0 50px;
+  padding: 18px 50px;
 
   background-color: var(--pure-white);
   
@@ -71,7 +71,6 @@ main {
 
 form {
   width: 100%;
-  height: 100%;
 
   display: flex;
   flex-direction: column;
@@ -85,11 +84,34 @@ form {
 
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
 }
 
 #step-description {
   width: 100%;
-  height: 100%;
+  height: 150px;
+}
+
+#ingredients {
+  width: 100%;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.ingredient {
+  font-size: 15px;
+  color: var(--pure-white);
+  background-color: #1E1E1E;
+  border-radius: 25px;
+  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
 }
