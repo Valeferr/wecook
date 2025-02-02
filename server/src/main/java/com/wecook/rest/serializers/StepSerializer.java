@@ -1,6 +1,7 @@
 package com.wecook.rest.serializers;
 
 import com.google.gson.*;
+import com.wecook.model.RecipeIngredient;
 import com.wecook.model.Step;
 import com.wecook.rest.utils.CustomGson;
 
@@ -18,6 +19,13 @@ public class StepSerializer implements JsonSerializer<Step> {
         jsonObject.addProperty("duration", step.getDuration());
         jsonObject.addProperty("action", String.valueOf(step.getAction()));
         jsonObject.addProperty("stepIndex", step.getStepIndex());
+
+        JsonArray recipeIngredients = new JsonArray();
+        for (RecipeIngredient recipeIngredient : step.getIngredients()) {
+            JsonObject jsonRecipeIngredient = customGson.getGson().toJsonTree(recipeIngredient).getAsJsonObject();
+            recipeIngredients.add(jsonRecipeIngredient);
+        }
+        jsonObject.add("ingredients", recipeIngredients);
 
         return jsonObject;
     }
