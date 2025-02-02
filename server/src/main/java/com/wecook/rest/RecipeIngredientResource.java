@@ -2,6 +2,7 @@ package com.wecook.rest;
 
 import com.google.gson.JsonObject;
 import com.wecook.model.*;
+import com.wecook.model.enums.MeasurementUnits;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -22,7 +23,7 @@ public class RecipeIngredientResource extends GenericResource {
     public Response post(@Context Request context, @PathParam("recipeId") int recipeId, @PathParam("stepId") int stepId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
 
-        if (!jsonObject.has("quantity") || !jsonObject.has("unit") || !jsonObject.has("ingredientId")) {
+        if (!jsonObject.has("quantity") || !jsonObject.has("measurementUnit") || !jsonObject.has("ingredientId")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -42,15 +43,14 @@ public class RecipeIngredientResource extends GenericResource {
                 Ingredient.class,
                 jsonObject.get("ingredientId").getAsInt()
             );
-
             recipeIngredient.setIngredient(ingredient);
             recipeIngredient.setQuantity(jsonObject.get("quantity").getAsDouble());
-            recipeIngredient.setMeasurementUnit(
-                Enum.valueOf(
-                    RecipeIngredient.MeasurementUnits.class,
-                    jsonObject.get("unit").getAsString()
-                )
-            );
+
+            MeasurementUnits measurementUnits = Enum.valueOf(MeasurementUnits.class, jsonObject.get("measurementUnit").getAsString());
+            if (!ingredient.getMeasurementUnits().contains(measurementUnits)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+            recipeIngredient.setMeasurementUnit(measurementUnits);
 
             try {
                 recipeIngredient.setStep(step);
@@ -121,19 +121,22 @@ public class RecipeIngredientResource extends GenericResource {
             if (!recipeMatch || !stepMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+            Ingredient ingredient = session.get(
+                    Ingredient.class,
+                    recipeIngredient.getIngredient().getId()
+            );
 
             try {
                 if (jsonObject.has("quantity")) {
                     recipeIngredient.setQuantity(jsonObject.get("quantity").getAsDouble());
                 }
 
-                if (jsonObject.has("unit")) {
-                    recipeIngredient.setMeasurementUnit(
-                            Enum.valueOf(
-                                RecipeIngredient.MeasurementUnits.class,
-                                jsonObject.get("unit").getAsString()
-                            )
-                    );
+                if (jsonObject.has("measurementUnit")) {
+                    MeasurementUnits measurementUnits = Enum.valueOf(MeasurementUnits.class, jsonObject.get("measurementUnit").getAsString());
+                    if (!ingredient.getMeasurementUnits().contains(measurementUnits)) {
+                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }
+                    recipeIngredient.setMeasurementUnit(measurementUnits);
                 }
 
                 if (jsonObject.has("ingredient")) {

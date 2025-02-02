@@ -24,14 +24,14 @@ public class LikeResource extends GenericResource{
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context, @PathParam("postId") int postId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("standard_user")) {
+        if (!jsonObject.has("standardUserId")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
         Like like = new Like();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            int standardUserId = jsonObject.get("standard_user").getAsInt();
+            int standardUserId = jsonObject.get("standardUserId").getAsInt();
             Post post = session.get(Post.class, postId);
             StandardUser standardUser = session.get(StandardUser.class, standardUserId);
 

@@ -5,6 +5,7 @@ import com.wecook.model.Comment;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.Post;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -30,6 +31,11 @@ public class CommentResource extends GenericResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
+        String text = jsonObject.get("text").getAsString();
+        if(!InputValidation.isCommentValid(text)) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
         Comment comment = new Comment();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
@@ -41,7 +47,7 @@ public class CommentResource extends GenericResource {
             comment.setPublicationDate(LocalDate.now());
             comment.setContentStatus(Comment.States.ACTIVE);
 
-            comment.setText(jsonObject.get("text").getAsString());
+            comment.setText(text);
 
             try {
                 session.persist(comment);

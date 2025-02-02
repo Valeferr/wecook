@@ -25,8 +25,10 @@ public class PostSerializer implements JsonSerializer<Post> {
             jsonObject.addProperty("profilePicture", profilePicture);
         }
 
-        jsonObject.addProperty("recipeId", post.getRecipe().getId());
-        jsonObject.addProperty("description", post.getRecipe().getDescription());
+        if (post.getRecipe() != null) {
+            jsonObject.addProperty("recipeId", post.getRecipe().getId());
+            jsonObject.addProperty("description", post.getRecipe().getDescription());
+        }
 
         byte[] postPicture = post.getPostPicture();
         String postPictureEncoded = Base64.getEncoder().encodeToString(postPicture);

@@ -2,7 +2,11 @@ package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
 import com.wecook.model.enums.FoodTypes;
+import com.wecook.model.enums.MeasurementUnits;
 import jakarta.persistence.*;
+
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "ingredients")
@@ -28,8 +32,15 @@ public class Ingredient {
     @Expose
     private FoodTypes type;
 
-    @OneToOne(mappedBy = "ingredient")
-    private RecipeIngredient recipeIngredient;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ingredient_unit", joinColumns = @JoinColumn(name = "ingredient_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "unit", nullable = false)
+    @Expose
+    private Set<MeasurementUnits> measurementUnits;
+
+    @OneToMany(mappedBy = "ingredient")
+    private List<RecipeIngredient> recipeIngredient;
 
     public Long getId() {
         return id;
@@ -55,11 +66,19 @@ public class Ingredient {
         this.type = type;
     }
 
-    public RecipeIngredient getRecipeIngredient() {
+    public Set<MeasurementUnits> getMeasurementUnits() {
+        return measurementUnits;
+    }
+
+    public void setMeasurementUnits(Set<MeasurementUnits> measurementUnits) {
+        this.measurementUnits = measurementUnits;
+    }
+
+    public List<RecipeIngredient> getRecipeIngredient() {
         return recipeIngredient;
     }
 
-    public void setRecipeIngredient(RecipeIngredient recipeIngredient) {
+    public void setRecipeIngredient(List<RecipeIngredient> recipeIngredient) {
         this.recipeIngredient = recipeIngredient;
     }
 }

@@ -1,29 +1,13 @@
 package com.wecook.model;
 
 import com.google.gson.annotations.Expose;
+import com.wecook.model.enums.MeasurementUnits;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "recipe_ingredients")
 public class RecipeIngredient {
-    public enum MeasurementUnits {
-        CENTILITER,
-        MILLILITER,
-        LITER,
-
-        MILLIGRAM,
-        GRAM,
-        KILOGRAM,
-
-        QUANTITY,
-        TEASPOON,
-        TABLESPOON,
-        CUP,
-        PINCH,
-        DASH,
-        TIN,
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +28,7 @@ public class RecipeIngredient {
     @JoinColumn(name = "step", nullable = false)
     private Step step;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ingredient", nullable = false)
     private Ingredient ingredient;
 

@@ -3,6 +3,7 @@ package com.wecook.rest;
 import com.wecook.model.*;
 import com.wecook.model.enums.FoodCategories;
 import com.wecook.model.enums.FoodTypes;
+import com.wecook.model.enums.MeasurementUnits;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -37,7 +38,7 @@ public class ValueSetsResource extends GenericResource {
     @Path("/measurementUnits")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllMeasurementUnits(@Context Request context) {
-        List<RecipeIngredient.MeasurementUnits> measurementUnits = List.of(RecipeIngredient.MeasurementUnits.class.getEnumConstants());
+        List<MeasurementUnits> measurementUnits = List.of(MeasurementUnits.class.getEnumConstants());
 
         return Response.ok(gson.toJson(measurementUnits)).build();
     }
