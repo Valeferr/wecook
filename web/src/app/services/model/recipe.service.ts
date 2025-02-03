@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Difficulties, Recipe } from '../../model/Recipe.model';
+import { Recipe } from '../../model/Recipe.model';
 import { map, Observable } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
 import { Step } from '../../model/Step.model';
@@ -20,7 +20,7 @@ export class RecipeService {
     data: {
       title: string,
       description: string,
-      difficulty: Difficulties,
+      difficulty: string,
       category: string
     }
   ): Observable<Recipe> {
@@ -62,7 +62,7 @@ export class RecipeService {
     data: Partial<{
       title: string,
       description: string,
-      difficulty: Difficulties,
+      difficulty: string,
       category: string
     }>
   ): Observable<Recipe> {

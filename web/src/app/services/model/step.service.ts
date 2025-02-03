@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { Actions, Step } from '../../model/Step.model';
+import { Step } from '../../model/Step.model';
 import { plainToInstance } from 'class-transformer';
 import { RecipeIngredient } from '../../model/RecipeIngredient.model';
 
@@ -20,7 +20,7 @@ export class StepService {
     data: {
       description: string,
       duration: number,
-      action: Actions,
+      action: string,
       stepIndex: number
     }
   ): Observable<Step> {
@@ -58,7 +58,7 @@ export class StepService {
     data: Partial<{
       description: string,
       duration: number,
-      action: Actions,
+      action: string,
       stepIndex: number
     }>
   ): Observable<Step> {

@@ -9,7 +9,7 @@ import { plainToInstance } from 'class-transformer';
   providedIn: 'root'
 })
 export class RecipeIngredientService {
-  private readonly URL: string = 'http://localhost:8080/wecook/recipe/{recipeId}/step/{stepId}/';
+  private readonly URL: string = 'http://localhost:8080/wecook/recipe/{recipeId}/step/{stepId}/recipeIngredient';
   
   private http = inject(HttpClient);
 

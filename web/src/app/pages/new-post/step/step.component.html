@@ -26,6 +26,7 @@
             matInput
             formControlName="duration"
             min="1"
+            max="2160"
             placeholder="Enter step duration"
           >
         </mat-form-field>
@@ -33,7 +34,7 @@
         <button (click)="openIngredientsDialog()" class="action-button">Add ingredient</button>
       </div>
   
-      <mat-form-field id="step-description" class="example-full-width">
+      <mat-form-field id="step-description">
         <mat-label>Step description</mat-label>
         <textarea matInput placeholder="Write a short description..."
           cdkTextareaAutosize
@@ -45,10 +46,10 @@
       </mat-form-field>
     </form>
     <section id="ingredients">
-      @for (ingredient of this.step().ingredients; track ingredient.ingredient.id) {
+      @for (stepIngredient of this.step().ingredients; track stepIngredient.ingredient.id) {
         <div class="ingredient">
-          <span>{{ ingredientsService.getIngredientById(ingredient.ingredient.id)?.name}}</span>
-          <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== "QUANTITY" ? ingredient.measurementUnit : ''}})</span>
+          <span>{{ stepIngredient.ingredient.name }}</span>
+          <span>({{ stepIngredient.quantity }}{{stepIngredient.measurementUnit !== "QUANTITY" ? stepIngredient.measurementUnit : ''}})</span>
         </div>
       }
     </section>

@@ -14,7 +14,7 @@
             />
           </div>
           <div id="title-container">
-            <input type="text" id="title" placeholder="Recipe title..." />
+            <input type="text" id="title" placeholder="Recipe title..." formControlName="title"/>
             <div id="details-container">
               <div class="detail">
                 <span class="material-icons-outlined">timer</span>
@@ -28,18 +28,44 @@
                     aria-label="Difficulty"
                     matInput
                     formControlName="difficulty"
-                    [matAutocomplete]="auto">
-                  <mat-autocomplete #auto="matAutocomplete">
-                    @for (difficulty of filteredOptions | async; track difficulty) {
+                    [matAutocomplete]="autoDifficulty">
+                  <mat-autocomplete #autoDifficulty="matAutocomplete">
+                    @for (difficulty of filteredDifficulties | async; track difficulty) {
                       <mat-option [value]="difficulty">{{difficulty}}</mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
               </div>
+              <div class="detail">
+                <mat-form-field id="category">
+                  <mat-label>Category</mat-label>
+                  <input type="text"
+                    placeholder="Category"
+                    aria-label="Category"
+                    matInput
+                    formControlName="category"
+                    [matAutocomplete]="autoCategory">
+                  <mat-autocomplete #autoCategory="matAutocomplete">
+                    @for (category of filteredCategories | async; track category) {
+                      <mat-option [value]="category">{{category}}</mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
             </div>
+            <mat-form-field id="description">
+              <mat-label>Recipe description</mat-label>
+              <textarea matInput placeholder="Write a short description..."
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="3"
+                formControlName="description">
+              </textarea>
+            </mat-form-field>
           </div>
         </div>
-        <button type="submit" id="publish-button" class="action-button">Publish</button>
+        <button (click)="onPublish()" id="publish-button" class="action-button" [disabled]="!recipeForm.valid">Publish</button>
       </form>
     </section>
     <section id="ingredients-used">
@@ -47,7 +73,7 @@
       <div id="ingredients-container">
         @for (ingredient of ingredients; track ingredient.ingredient.id) {
           <div class="ingredient">
-            <span>{{ ingredientsService.getIngredientById(ingredient.ingredient.id)?.name}}</span>
+            <span>{{ ingredient.ingredient.name}}</span>
             <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== "QUANTITY" ? ingredient.measurementUnit : ''}})</span>
           </div>
         }

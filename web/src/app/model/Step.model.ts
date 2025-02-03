@@ -1,27 +1,6 @@
 import { Expose } from 'class-transformer';
 import { RecipeIngredient } from './RecipeIngredient.model';
 
-export enum Actions {
-  MIX = "mix",
-  CUT = "cut",
-  SLICE = "slice",
-  GRATE = "grate",
-  BLEND = "blend",
-  KNEAD = "knead",
-  COOK = "cook",
-  BOIL = "boil",
-  FRY = "fry",
-  ROAST = "roast",
-  SEASON = "season",
-  SERVE = "serve",
-  MARINATE = "marinate",
-  PEEL = "peel",
-  CHOP = "chop",
-  DRAIN = "drain",
-  GARNISH = "garnish",
-  MELT = "melt",
-}
-
 export class Step {
   @Expose()
   public id: number;
@@ -33,7 +12,7 @@ export class Step {
   public duration: number;
 
   @Expose()
-  public action: Actions;
+  public action: string;
 
   @Expose()
   public stepIndex: number;
@@ -46,7 +25,7 @@ export class Step {
     id: number,
     description: string,
     duration: number,
-    action: Actions,
+    action: string,
     ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>()
   ) {
     this.id = id;

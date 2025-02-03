@@ -10,9 +10,7 @@ import { firstValueFrom, map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RecipeIngredientService } from '../../../services/model/recipe-ingredient.service';
 import { IngredientService } from '../../../services/model/ingredient.service';
-import { ValueSetsService } from '../../../services/model/value-sets.service';
 
 @Component({
   selector: 'app-ingredients-dialog',
@@ -37,7 +35,7 @@ export class IngredientsDialogComponent implements OnInit{
   private readonly dialogRef = inject(MatDialogRef<IngredientsDialogComponent>);
   private readonly ingredientService = inject(IngredientService);
   
-  protected readonly selectedRecipeIngredient: Partial<RecipeIngredient> = {};
+  protected selectedRecipeIngredient: Partial<RecipeIngredient> = {};
 
   protected addIngredientForm!: FormGroup;
 
@@ -91,17 +89,16 @@ export class IngredientsDialogComponent implements OnInit{
     console.log(value);
     const selectedIngredient = this.ingredientsOptions.find((i) => i.name === value.ingredient);
     if (!selectedIngredient) {
-      return;
-    }
-    
-    if (selectedIngredient.id !== this.selectedRecipeIngredient.id) {
+      this.selectedRecipeIngredient = {};
       this.addIngredientForm.patchValue({ measurementUnit: null }, { emitEvent: false });
+      return;
     }
 
     this.selectedRecipeIngredient.ingredient = selectedIngredient;
     this.selectedRecipeIngredient.quantity = value.quantity;
     this.selectedRecipeIngredient.measurementUnit = value.measurementUnit;
-    // this.measurementUnits = this.selectedRecipeIngredient.ingredient.measurementUnits;
+
+    this.measurementUnits = this.selectedRecipeIngredient.ingredient!.measurementUnits;
   }
 
   protected onCancel() {

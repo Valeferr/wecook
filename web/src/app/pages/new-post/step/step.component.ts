@@ -1,16 +1,16 @@
 import { Component, inject, input, OnInit, output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Actions, Step } from '../../../model/Step.model';
+import { Step } from '../../../model/Step.model';
 import { MatDialog } from '@angular/material/dialog';
 import { IngredientsDialogComponent } from '../ingredients-dialog/ingredients-dialog.component';
 import { RecipeIngredient } from '../../../model/RecipeIngredient.model';
-import { IngredientsService } from '../../../services/model/ingredients.service';
+import { ValueSetsService } from '../../../services/model/value-sets.service';
 
 @Component({
   selector: 'app-step',
@@ -33,11 +33,11 @@ export class StepComponent implements OnInit {
   public onStepChange = output<Step>();
 
   private readonly dialog = inject(MatDialog);
-  protected readonly ingredientsService = inject(IngredientsService);
+  protected readonly valueSetsService = inject(ValueSetsService);
 
   protected stepForm: FormGroup;
 
-  protected actionOptions: Actions[] = Object.values(Actions); // TODO Get from service
+  protected actionOptions: Array<string> = new Array<string>();
   protected filteredOptions!: Observable<string[]>;
 
   constructor() {
@@ -53,7 +53,9 @@ export class StepComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.actionOptions = await firstValueFrom(this.valueSetsService.actions);
+
     this.stepForm.patchValue({
       action: this.step().action || null,
       description: this.step().description || null,
@@ -112,7 +114,6 @@ export class StepComponent implements OnInit {
     
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        console.log("new ingredient", result);
         this.addIngredient(result);
         this.onStepChange.emit(this.step());
       }

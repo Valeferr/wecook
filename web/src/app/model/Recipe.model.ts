@@ -1,12 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { Step } from "./Step.model";
 
-export enum Difficulties {
-  EASY = "EASY",
-  MEDIUM = "MEDIUM",
-  HARD = "HARD"
-}
-
 export class Recipe {
   @Expose()
   public id: number;
@@ -18,7 +12,7 @@ export class Recipe {
   public description: string;
 
   @Expose()
-  public difficulty: Difficulties;
+  public difficulty: string;
 
   @Expose()
   public category: string;
@@ -31,7 +25,7 @@ export class Recipe {
     title: string,
     description: string,
     category: string,
-    difficulty: Difficulties,
+    difficulty: string,
     steps: Array<Step> = new Array<Step>()
   ) {
     this.id = id;
