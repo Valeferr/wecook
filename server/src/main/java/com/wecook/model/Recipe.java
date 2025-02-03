@@ -27,7 +27,7 @@ public class Recipe  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private Long id;
+    private long id;
 
     @Column(name = "title", nullable = false)
     @Expose
@@ -53,11 +53,11 @@ public class Recipe  {
     @OneToOne(mappedBy = "recipe")
     private Post post;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

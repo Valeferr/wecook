@@ -14,14 +14,13 @@ import org.glassfish.grizzly.http.server.Request;
 
 import java.util.List;
 
-@Path("/")
+@Path("/valueSets")
 public class ValueSetsResource extends GenericResource {
     @GET
     @Path("/difficulties")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllDifficulties(@Context Request context) {
         List<Recipe.Difficulties> difficulties = List.of(Recipe.Difficulties.class.getEnumConstants());
-
         return Response.ok(gson.toJson(difficulties)).build();
     }
 
@@ -30,7 +29,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllActions(@Context Request context) {
         List<Step.Actions> actions = List.of(Step.Actions.class.getEnumConstants());
-
         return Response.ok(gson.toJson(actions)).build();
     }
 
@@ -39,7 +37,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllMeasurementUnits(@Context Request context) {
         List<MeasurementUnits> measurementUnits = List.of(MeasurementUnits.class.getEnumConstants());
-
         return Response.ok(gson.toJson(measurementUnits)).build();
     }
 
@@ -48,7 +45,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllAllergy(@Context Request context) {
         List<StandardUser.Allergy> allergies = List.of(StandardUser.Allergy.class.getEnumConstants());
-
         return Response.ok(gson.toJson(allergies)).build();
     }
 
@@ -57,7 +53,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFoodCategories(@Context Request context) {
         List<FoodCategories> foodCategories = List.of(FoodCategories.class.getEnumConstants());
-
         return Response.ok(gson.toJson(foodCategories)).build();
     }
 
@@ -66,7 +61,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllFoodTypes(@Context Request context) {
         List<FoodTypes> foodTypes = List.of(FoodTypes.class.getEnumConstants());
-
         return Response.ok(gson.toJson(foodTypes)).build();
     }
 
@@ -75,7 +69,6 @@ public class ValueSetsResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllReasons(@Context Request context) {
         List<Report.Reasons> reasons = List.of(Report.Reasons.class.getEnumConstants());
-
         return Response.ok(gson.toJson(reasons)).build();
     }
 }

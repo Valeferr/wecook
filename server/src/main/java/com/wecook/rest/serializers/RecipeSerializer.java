@@ -2,7 +2,6 @@ package com.wecook.rest.serializers;
 
 import com.google.gson.*;
 import com.wecook.model.Recipe;
-import com.wecook.model.RecipeIngredient;
 import com.wecook.model.Step;
 import com.wecook.rest.utils.CustomGson;
 

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Ingredient } from '../model/Ingredient.model';
+import { Ingredient } from '../../model/Ingredient.model';
 
+// TODO Delete service and use the rest-full one
 @Injectable({
   providedIn: 'root'
 })

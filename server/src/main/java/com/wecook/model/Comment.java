@@ -18,7 +18,7 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private Long id;
+    private long id;
 
     @Column(name = "publication_date")
     @Expose
@@ -43,20 +43,20 @@ public class Comment {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<CommentReport> commentReports = new HashSet<>();
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public LocalDate getPublicationDate() {
         return publicationDate;
     }
 
     public void setPublicationDate(LocalDate publicationDate) {
         this.publicationDate = publicationDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getText() {
@@ -67,20 +67,20 @@ public class Comment {
         this.text = text;
     }
 
-    public StandardUser getStandardUser() {
-        return standardUser;
-    }
-
-    public void setStandardUser(StandardUser standardUser) {
-        this.standardUser = standardUser;
-    }
-
     public States getContentStatus() {
         return contentStatus;
     }
 
     public void setContentStatus(States contentStatus) {
         this.contentStatus = contentStatus;
+    }
+
+    public StandardUser getStandardUser() {
+        return standardUser;
+    }
+
+    public void setStandardUser(StandardUser standardUser) {
+        this.standardUser = standardUser;
     }
 
     public Post getPost() {

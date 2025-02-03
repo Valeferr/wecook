@@ -45,10 +45,10 @@
       </mat-form-field>
     </form>
     <section id="ingredients">
-      @for (ingredient of this.step().ingredients; track ingredient.ingredientId) {
+      @for (ingredient of this.step().ingredients; track ingredient.ingredient.id) {
         <div class="ingredient">
-          <span>{{ ingredientsService.getIngredientById(ingredient.ingredientId!)?.name}}</span>
-          <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== 'qty' ? ingredient.measurementUnit : ''}})</span>
+          <span>{{ ingredientsService.getIngredientById(ingredient.ingredient.id)?.name}}</span>
+          <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== "QUANTITY" ? ingredient.measurementUnit : ''}})</span>
         </div>
       }
     </section>

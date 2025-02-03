@@ -1,16 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, FormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { RecipeIngredient } from '../../../model/RecipeIngredient.model';
-import { IngredientsService } from '../../../services/ingredients.service';
+import { MeasurementUnits, RecipeIngredient } from '../../../model/RecipeIngredient.model';
 import { Ingredient } from '../../../model/Ingredient.model';
-import { map, Observable, startWith } from 'rxjs';
+import { firstValueFrom, map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RecipeIngredientService } from '../../../services/model/recipe-ingredient.service';
+import { IngredientService } from '../../../services/model/ingredient.service';
+import { ValueSetsService } from '../../../services/model/value-sets.service';
 
 @Component({
   selector: 'app-ingredients-dialog',
@@ -31,23 +33,21 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './ingredients-dialog.component.html',
   styleUrl: './ingredients-dialog.component.css'
 })
-export class IngredientsDialogComponent {
+export class IngredientsDialogComponent implements OnInit{
   private readonly dialogRef = inject(MatDialogRef<IngredientsDialogComponent>);
-  private readonly ingredientService = inject(IngredientsService);
+  private readonly ingredientService = inject(IngredientService);
+  
+  protected readonly selectedRecipeIngredient: Partial<RecipeIngredient> = {};
 
-  protected ingredientToAdd: RecipeIngredient = new RecipeIngredient();
+  protected addIngredientForm!: FormGroup;
 
-  protected addIngredientForm: FormGroup;
+  protected ingredientsOptions: Array<Ingredient> = new Array<Ingredient>();
+  protected filteredIngredients!: Observable<Array<Ingredient>>;
 
-  protected ingredientsOptions: Array<Ingredient>;
-  protected filteredIngredients!: Observable<Ingredient[]>;
-
-  protected maeasurementUnits: Array<string> = new Array<string>();
-  protected filteredMeasurementUnits!: Observable<string[]>;
+  protected measurementUnits: Array<string> = new Array<string>();
+  protected filteredMeasurementUnits!: Observable<Array<string>>;
 
   constructor() {
-    this.ingredientsOptions = this.ingredientService.getIngredients();
-
     this.addIngredientForm = new FormGroup({
       ingredient: new FormControl<string | null>(null, [
         Validators.required,
@@ -58,13 +58,17 @@ export class IngredientsDialogComponent {
       ]),
       measurementUnit: new FormControl<string | null>(null, [
         Validators.required,
-        (control: AbstractControl): ValidationErrors | null => this.maeasurementUnits.includes(control.value) ? null : { valueNotInList: true }
+        (control: AbstractControl): ValidationErrors | null => this.measurementUnits.includes(control.value) ? null : { valueNotInList: true }
       ])
     });
 
     this.addIngredientForm.valueChanges.subscribe(value => {
       this.updateSelectedIngredient(value);
     });
+  }
+
+  async ngOnInit() {
+    this.ingredientsOptions = await firstValueFrom(this.ingredientService.getAll());
 
     this.filteredIngredients = this.addIngredientForm.controls['ingredient'].valueChanges.pipe(
       startWith(''),
@@ -73,28 +77,31 @@ export class IngredientsDialogComponent {
         return this.ingredientsOptions.filter(i => i.name.toLowerCase().includes(filterValue))
       }),
     );
-  }
-
-  private updateSelectedIngredient(value: any) {
-    const selectedIngredient = this.ingredientsOptions.find((i) => i.name === value.ingredient);
-    
-    if (selectedIngredient?.id !== this.ingredientToAdd.ingredientId) {
-      this.addIngredientForm.patchValue({ measurementUnit: null }, { emitEvent: false });
-    }
-    this.ingredientToAdd.ingredientId = selectedIngredient?.id;
-
-    this.ingredientToAdd.quantity = value.quantity;
-
-    this.ingredientToAdd.measurementUnit = value.measurementUnit;
-    this.maeasurementUnits = selectedIngredient?.measurementUnits || new Array<string>();
 
     this.filteredMeasurementUnits = this.addIngredientForm.controls['measurementUnit'].valueChanges.pipe(
       startWith(''),
       map((value) => {
         const filterValue = (value || '').toLowerCase();
-        return this.maeasurementUnits.filter(i => i.toLowerCase().includes(filterValue))
+        return this.measurementUnits.filter(i => i.toLowerCase().includes(filterValue));
       }),
     );
+  }
+
+  private async updateSelectedIngredient(value: any) {
+    console.log(value);
+    const selectedIngredient = this.ingredientsOptions.find((i) => i.name === value.ingredient);
+    if (!selectedIngredient) {
+      return;
+    }
+    
+    if (selectedIngredient.id !== this.selectedRecipeIngredient.id) {
+      this.addIngredientForm.patchValue({ measurementUnit: null }, { emitEvent: false });
+    }
+
+    this.selectedRecipeIngredient.ingredient = selectedIngredient;
+    this.selectedRecipeIngredient.quantity = value.quantity;
+    this.selectedRecipeIngredient.measurementUnit = value.measurementUnit;
+    // this.measurementUnits = this.selectedRecipeIngredient.ingredient.measurementUnits;
   }
 
   protected onCancel() {

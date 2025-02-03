@@ -10,14 +10,14 @@ import { ModeratorUser } from '../model/ModeratorUser.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl: string = 'http://localhost:8080/wecook';
+  private readonly apiUrl: string = 'http://localhost:8080/wecook';
 
   private http = inject(HttpClient);
   private router = inject(Router);
 
   private user: User | null = null;
 
-  constructor() { }
+  constructor() {}
 
   public register(userData: {
     email: string,

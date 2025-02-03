@@ -9,7 +9,7 @@ public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
@@ -19,11 +19,11 @@ public class Like {
     @JoinColumn(name = "post", nullable = false)
     private Post post;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

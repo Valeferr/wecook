@@ -45,7 +45,7 @@ public class Step  {
     private int duration;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="action")
+    @Column(name = "action")
     @Expose
     private Actions action;
 
@@ -96,8 +96,8 @@ public class Step  {
         return stepIndex;
     }
 
-    public void setStepIndex(int index) {
-        this.stepIndex = index;
+    public void setStepIndex(int stepIndex) {
+        this.stepIndex = stepIndex;
     }
 
     public Recipe getRecipe() {
@@ -112,12 +112,7 @@ public class Step  {
         return ingredients;
     }
 
-    public void addIngredient(RecipeIngredient recipeIngredient) {
-        this.ingredients.add(recipeIngredient);
+    public void setIngredients(List<RecipeIngredient> ingredients) {
+        this.ingredients = ingredients;
     }
-
-    public void removeIngredient(RecipeIngredient recipeIngredient) {
-        this.ingredients.remove(recipeIngredient);
-    }
-
 }

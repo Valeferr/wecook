@@ -10,7 +10,7 @@ import { Actions, Step } from '../../../model/Step.model';
 import { MatDialog } from '@angular/material/dialog';
 import { IngredientsDialogComponent } from '../ingredients-dialog/ingredients-dialog.component';
 import { RecipeIngredient } from '../../../model/RecipeIngredient.model';
-import { IngredientsService } from '../../../services/ingredients.service';
+import { IngredientsService } from '../../../services/model/ingredients.service';
 
 @Component({
   selector: 'app-step',
@@ -99,7 +99,7 @@ export class StepComponent implements OnInit {
   }
 
   private addIngredient(ingredient: RecipeIngredient): void {
-    const alreadyExistsIngredient = this.step().ingredients.find(i => i.ingredientId === ingredient.ingredientId);
+    const alreadyExistsIngredient = this.step().ingredients.find(i => i.ingredient.id === ingredient.ingredient.id);
     if (!alreadyExistsIngredient) {
       this.step().ingredients.push(ingredient);
     } else {

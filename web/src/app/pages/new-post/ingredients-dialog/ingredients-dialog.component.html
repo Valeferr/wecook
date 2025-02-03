@@ -8,10 +8,10 @@
         aria-label="Ingredient"
         matInput
         formControlName="ingredient"
-        [matAutocomplete]="auto">
-      <mat-autocomplete #auto="matAutocomplete">
+        [matAutocomplete]="autoIngredients">
+      <mat-autocomplete #autoIngredients="matAutocomplete">
         @for (ingredient of filteredIngredients | async; track ingredient.id) {
-          <mat-option [value]="ingredient.name">{{ingredient.name}}</mat-option>
+          <mat-option [value]="ingredient.name">{{ ingredient.name }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
@@ -26,7 +26,7 @@
       >
     </mat-form-field>
     
-    @if (ingredientToAdd.ingredientId) {
+    @if (selectedRecipeIngredient.ingredient) {
       <mat-form-field id="unit-of-measure">
         <mat-label>Measurement unit</mat-label>
         <input type="text"
@@ -34,10 +34,10 @@
           aria-label="Measurement unit"
           matInput
           formControlName="measurementUnit"
-          [matAutocomplete]="auto">
-        <mat-autocomplete #auto="matAutocomplete">
-          @for (unit of filteredMeasurementUnits | async; track unit) {
-            <mat-option [value]="unit">{{unit}}</mat-option>
+          [matAutocomplete]="autoUnits">
+        <mat-autocomplete #autoUnits="matAutocomplete">
+          @for (measurementUnit of filteredMeasurementUnits | async; track measurementUnit) {
+            <mat-option [value]="measurementUnit">{{ measurementUnit }}</mat-option>
           }
         </mat-autocomplete>
       </mat-form-field>
@@ -46,5 +46,5 @@
 </mat-dialog-content>
 <mat-dialog-actions id="dialog-actions">
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button [mat-dialog-close]="ingredientToAdd" cdkFocusInitial [disabled]="!addIngredientForm.valid">Add</button>
+  <button mat-button [mat-dialog-close]="selectedRecipeIngredient" cdkFocusInitial [disabled]="!addIngredientForm.valid">Add</button>
 </mat-dialog-actions>

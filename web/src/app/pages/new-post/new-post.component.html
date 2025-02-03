@@ -45,10 +45,10 @@
     <section id="ingredients-used">
       <h2>Ingredients</h2>
       <div id="ingredients-container">
-        @for (ingredient of ingredients; track ingredient.ingredientId) {
+        @for (ingredient of ingredients; track ingredient.ingredient.id) {
           <div class="ingredient">
-            <span>{{ ingredientsService.getIngredientById(ingredient.ingredientId!)?.name}}</span>
-            <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== 'qty' ? ingredient.measurementUnit : ''}})</span>
+            <span>{{ ingredientsService.getIngredientById(ingredient.ingredient.id)?.name}}</span>
+            <span>({{ ingredient.quantity }}{{ingredient.measurementUnit !== "QUANTITY" ? ingredient.measurementUnit : ''}})</span>
           </div>
         }
       </div>

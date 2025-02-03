@@ -11,7 +11,7 @@ public class SavedPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private Long id;
+    private long id;
 
     @Column(name = "save_date", nullable = false)
     @Expose
@@ -25,11 +25,11 @@ public class SavedPost {
     @JoinColumn(name = "post", nullable = false)
     private Post post;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

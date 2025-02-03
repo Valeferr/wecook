@@ -24,16 +24,16 @@ export enum Actions {
 
 export class Step {
   @Expose()
-  public id?: number;
+  public id: number;
 
   @Expose()
-  public description?: Actions;
+  public description: string;
 
   @Expose()
-  public duration?: number;
+  public duration: number;
 
   @Expose()
-  public action?: Actions;
+  public action: Actions;
 
   @Expose()
   public stepIndex: number;
@@ -43,10 +43,10 @@ export class Step {
 
   constructor(
     stepIndex: number,
-    id?: number,
-    description?: Actions,
-    duration?: number,
-    action?: Actions,
+    id: number,
+    description: string,
+    duration: number,
+    action: Actions,
     ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>()
   ) {
     this.id = id;

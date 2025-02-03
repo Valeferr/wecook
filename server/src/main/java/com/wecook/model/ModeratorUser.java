@@ -8,13 +8,13 @@ import jakarta.persistence.Table;
 @Table(name = "moderator_users")
 public class ModeratorUser extends User {
     @Column(name = "analyzed_reports", nullable = false)
-    private Long analyzedReports = 0L;
+    private long analyzedReports = 0L;
 
-    public Long getAnalyzedReports() {
+    public long getAnalyzedReports() {
         return analyzedReports;
     }
 
-    public void setAnalyzedReports(Long analyzedReports) {
+    public void setAnalyzedReports(long analyzedReports) {
         this.analyzedReports = analyzedReports;
     }
 }

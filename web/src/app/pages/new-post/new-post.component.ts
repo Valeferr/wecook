@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MainFrameComponent } from "../main-frame/main-frame.component";
 import { StepComponent } from './step/step.component';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Step } from '../../model/Step.model';
+import { Actions, Step } from '../../model/Step.model';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Recipe } from '../../model/Recipe.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,7 +11,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { RecipeIngredient } from '../../model/RecipeIngredient.model';
-import { IngredientsService } from '../../services/ingredients.service';
+import { IngredientsService } from '../../services/model/ingredients.service';
 
 @Component({
   selector: 'app-new-post',
@@ -34,7 +34,7 @@ export class NewPostComponent implements OnInit {
 
   protected imageSrc: string = 'assets/default_recipe.png';
 
-  protected recipe: Recipe = new Recipe();
+  // protected recipe: Recipe = new Recipe();
   protected steps: Array<Step> = new Array<Step>();
   protected ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>();
 
@@ -64,9 +64,9 @@ export class NewPostComponent implements OnInit {
   }
 
   private updateRecipe(value: any) {
-    this.recipe.title = value.title;
-    this.recipe.description = value.description
-    this.recipe.difficulty = value.difficulty;
+    // this.recipe.title = value.title;
+    // this.recipe.description = value.description
+    // this.recipe.difficulty = value.difficulty;
 
     if (value.image) {
       const reader = new FileReader();
@@ -94,7 +94,8 @@ export class NewPostComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.steps.push(new Step(1, this.lastUsedIndex, undefined, 1));
+    // TODO Gestire bene
+    this.steps.push(new Step(1, this.lastUsedIndex, "AA", 1, Actions.MIX));
 
     this.recipeForm.valueChanges.subscribe(value => {
       this.updateRecipe(value);
@@ -119,8 +120,9 @@ export class NewPostComponent implements OnInit {
 
   onNewStep(step: Step) {
     const index = this.steps.findIndex(s => s.stepIndex === step.stepIndex);
-
-    const newStep = new Step(step.stepIndex + 1, ++this.lastUsedIndex, undefined, 1);
+    
+    // TODO Passare bene tutto
+    const newStep = new Step(step.stepIndex + 1, ++this.lastUsedIndex, "AA", 1, Actions.MIX);
     this.steps.splice(index + 1, 0, newStep);
 
     this.steps.forEach((s, i) => {
@@ -136,10 +138,10 @@ export class NewPostComponent implements OnInit {
     const ingredients = new Map<number, RecipeIngredient>();
     this.steps.forEach(s => {
       s.ingredients.forEach(i => {
-        if (ingredients.has(i.ingredientId!)) {
-          ingredients.get(i.ingredientId!)!.quantity! += i.quantity!;
+        if (ingredients.has(i.ingredient.id!)) {
+          ingredients.get(i.ingredient.id!)!.quantity! += i.quantity!;
         } else {
-          ingredients.set(i.ingredientId!, i);
+          ingredients.set(i.ingredient.id!, i);
         }
       });
     });

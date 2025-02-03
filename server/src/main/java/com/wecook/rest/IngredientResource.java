@@ -29,7 +29,7 @@ public class IngredientResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("name") || !jsonObject.has("type") || !jsonObject.has("measurementUnit")) {
+        if (!jsonObject.has("name") || !jsonObject.has("type") || !jsonObject.has("measurementUnits")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -43,7 +43,7 @@ public class IngredientResource extends GenericResource {
                         jsonObject.get("type").getAsString())
                     );
             Set<MeasurementUnits> measurementUnits = new HashSet<>();
-            JsonArray jsonArray = jsonObject.get("measurementUnit").getAsJsonArray();
+            JsonArray jsonArray = jsonObject.get("measurementUnits").getAsJsonArray();
             for (JsonElement jsonElement : jsonArray) {
                 measurementUnits.add(
                     Enum.valueOf(
@@ -117,9 +117,9 @@ public class IngredientResource extends GenericResource {
                         jsonObject.get("recipe").getAsString()
                     );
                 }
-                if (jsonObject.has("measurementUnit")) {
+                if (jsonObject.has("measurementUnits")) {
                     Set<MeasurementUnits> measurementUnits = new HashSet<>();
-                    JsonArray jsonArray = jsonObject.get("measurementUnit").getAsJsonArray();
+                    JsonArray jsonArray = jsonObject.get("measurementUnits").getAsJsonArray();
                     for (JsonElement jsonElement : jsonArray) {
                         measurementUnits.add(
                             Enum.valueOf(

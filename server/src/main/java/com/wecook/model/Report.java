@@ -44,7 +44,7 @@ public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private Long id;
+    private long id;
 
     @Column(name = "date", nullable = false)
     @Expose
@@ -68,11 +68,11 @@ public class Report {
     @JoinColumn(name = "user")
     private StandardUser user;
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

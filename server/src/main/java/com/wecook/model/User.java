@@ -32,7 +32,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private int id;
+    private long id;
 
     @Column(name = "email", nullable = false, unique = true)
     @Expose
@@ -58,11 +58,11 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Report> reports = new HashSet<>();
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -110,7 +110,7 @@ public class User implements Serializable {
         return reports;
     }
 
-    public void setReports(Set<Report> users) {
-        this.reports = users;
+    public void setReports(Set<Report> reports) {
+        this.reports = reports;
     }
 }
