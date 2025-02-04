@@ -20,7 +20,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Path("/users")
@@ -113,8 +115,15 @@ public class UserResource extends GenericResource{
             }
 
             try {
+                if (jsonUser.has("username")) {
+                    ((StandardUser) user).setUsername(jsonUser.get("username").getAsString());
+                }
                 if (jsonUser.has("favoriteDish")) {
-                    ((StandardUser) user).setFavoriteDish(jsonUser.get("favoriteDish").getAsString());
+                    String favoriteDish = jsonUser.get("favoriteDish").getAsString();
+                    if(!InputValidation.isFavoriteDishValid(favoriteDish)) {
+                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }
+                    ((StandardUser) user).setFavoriteDish(favoriteDish);
                 }
 
                 if (jsonUser.has("foodPreference")) {
@@ -125,11 +134,21 @@ public class UserResource extends GenericResource{
                         )
                     );
                 }
+                if (jsonUser.has("profilePicture")) {
+                    System.out.println(jsonUser.get("profilePicture").getAsString());
+                    byte[] profilePicture = Base64.getDecoder().decode(jsonUser.get("profilePicture").getAsString());
+                    if (!InputValidation.isImageValid(profilePicture)) {
+                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }
+                    ((StandardUser) user).setProfilePicture(profilePicture);
+                }
                 session.merge(user);
                 transaction.commit();
             } catch (ConstraintViolationException e) {
                 transaction.rollback();
                 throw e;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 

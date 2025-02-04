@@ -5,6 +5,7 @@ import com.wecook.model.HibernateUtil;
 import com.wecook.model.Post;
 import com.wecook.model.Recipe;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -16,6 +17,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
@@ -38,7 +40,9 @@ public class PostResource extends GenericResource{
             StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
 
             byte[] postPicture = RequestParser.base64ToByteArray(jsonObject.get("postPicture").getAsString());
-
+            if (!InputValidation.isImageValid(postPicture)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
             post.setPostPicture(postPicture);
             post.setStandardUser(standardUser);
             post.setStatus(Post.States.ACTIVE);
@@ -54,6 +58,8 @@ public class PostResource extends GenericResource{
                 transaction.rollback();
                 throw e;
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return Response.status(Response.Status.CREATED)
