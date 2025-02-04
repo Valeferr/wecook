@@ -3,6 +3,7 @@ package com.wecook.rest.serializers;
 import com.google.gson.*;
 import com.wecook.model.Post;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.RequestParser;
 
 import java.lang.reflect.Type;
 import java.util.Base64;
@@ -32,8 +33,7 @@ public class PostSerializer implements JsonSerializer<Post> {
             jsonObject.addProperty("description", post.getRecipe().getDescription());
         }
 
-        byte[] postPicture = post.getPostPicture();
-        String postPictureEncoded = Base64.getEncoder().encodeToString(postPicture);
+        String postPictureEncoded = RequestParser.byteArrayToBase64(post.getPostPicture());
         jsonObject.addProperty("picture", postPictureEncoded);
 
         jsonObject.addProperty("saved", false);

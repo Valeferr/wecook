@@ -37,7 +37,7 @@ public class PostResource extends GenericResource{
             Transaction transaction = session.beginTransaction();
             StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
 
-            byte[] postPicture = Base64.getDecoder().decode(jsonObject.get("postPicture").getAsString());
+            byte[] postPicture = RequestParser.base64ToByteArray(jsonObject.get("postPicture").getAsString());
 
             post.setPostPicture(postPicture);
             post.setStandardUser(standardUser);
