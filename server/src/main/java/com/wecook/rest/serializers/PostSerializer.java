@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.wecook.model.Post;
 import com.wecook.model.StandardUser;
 import com.wecook.model.Step;
+import com.wecook.rest.utils.CustomGson;
 import com.wecook.rest.utils.RequestParser;
 
 import java.lang.reflect.Type;
@@ -14,12 +15,12 @@ public class PostSerializer implements JsonSerializer<Post> {
     @Override
     public JsonElement serialize(Post post, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
+        Gson gson = CustomGson.getInstance().getGson();
 
         jsonObject.addProperty("id", post.getId());
 
         StandardUser standardUser = post.getStandardUser();
-        jsonObject.addProperty("userUsername", standardUser.getUsername());
-        jsonObject.addProperty("userId", standardUser.getId());
+        jsonObject.add("user", gson.toJsonTree(standardUser));
 
         jsonObject.add("userPicture", JsonNull.INSTANCE);
         if (standardUser.getProfilePicture() != null) {
@@ -27,19 +28,17 @@ public class PostSerializer implements JsonSerializer<Post> {
             jsonObject.addProperty("userPicture", profilePicture);
         }
 
-        jsonObject.add("recipeId", JsonNull.INSTANCE);
-        jsonObject.add("description", JsonNull.INSTANCE);
-        jsonObject.add("recipeDuration", JsonNull.INSTANCE);
-        jsonObject.add("recipeDifficulty", JsonNull.INSTANCE);
-        jsonObject.add("recipeCategory", JsonNull.INSTANCE);
-        jsonObject.add("recipeTitle", JsonNull.INSTANCE);
+        jsonObject.add("recipe", JsonNull.INSTANCE);
         if (post.getRecipe() != null) {
-            jsonObject.addProperty("recipeId", post.getRecipe().getId());
-            jsonObject.addProperty("description", post.getRecipe().getDescription());
-            jsonObject.addProperty("recipeDuration", post.getRecipe().getSteps().stream().mapToInt(Step::getDuration).sum());
-            jsonObject.addProperty("recipeDifficulty", post.getRecipe().getDifficulty().toString());
-            jsonObject.addProperty("recipeCategory", post.getRecipe().getCategory().toString());
-            jsonObject.addProperty("recipeTitle", post.getRecipe().getTitle());
+            JsonElement recipe = gson.toJsonTree(post.getRecipe());
+            jsonObject.add("recipe", recipe);
+
+            int totalDuration = post.getRecipe().getSteps()
+                    .stream()
+                    .mapToInt(Step::getDuration)
+                    .sum();
+
+            jsonObject.add("duration", new JsonPrimitive(totalDuration));
         }
 
         String postPictureEncoded = RequestParser.byteArrayToBase64(post.getPostPicture());

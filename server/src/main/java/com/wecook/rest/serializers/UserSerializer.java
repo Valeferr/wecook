@@ -2,6 +2,8 @@ package com.wecook.rest.serializers;
 
 import com.google.gson.*;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.RequestParser;
+
 import java.lang.reflect.Type;
 import java.util.Base64;
 
@@ -26,7 +28,7 @@ public class UserSerializer implements JsonSerializer<StandardUser> {
 
         jsonObject.add("picture", JsonNull.INSTANCE);
         if (standardUser.getProfilePicture() != null) {
-            String profilePicture = Base64.getEncoder().encodeToString(standardUser.getProfilePicture());
+            String profilePicture = RequestParser.byteArrayToBase64(standardUser.getProfilePicture());
             jsonObject.addProperty("picture", profilePicture);
         }
 
