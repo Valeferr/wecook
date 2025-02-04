@@ -41,13 +41,7 @@ public class PostResource extends GenericResource{
 
             post.setPostPicture(postPicture);
             post.setStandardUser(standardUser);
-            post.setStatus(
-                Enum.valueOf(
-                    Post.States.class,
-                    jsonObject.get("postState").getAsString()
-                )
-            );
-
+            post.setStatus(Post.States.ACTIVE);
             post.setPublicationDate(LocalDate.now());
 
             Set<Post> posts = standardUser.getPosts();

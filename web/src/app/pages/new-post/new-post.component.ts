@@ -14,6 +14,8 @@ import { RecipeService } from '../../services/model/recipe.service';
 import { ValueSetsService } from '../../services/model/value-sets.service';
 import { StepService } from '../../services/model/step.service';
 import { RecipeIngredientService } from '../../services/model/recipe-ingredient.service';
+import { PostService } from '../../services/model/post.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-new-post',
@@ -32,12 +34,12 @@ import { RecipeIngredientService } from '../../services/model/recipe-ingredient.
   styleUrl: './new-post.component.css'
 })
 export class NewPostComponent implements OnInit {
-  // protected readonly ingredientService = inject(IngredientsService);
   protected readonly valueSetsService = inject(ValueSetsService);
   protected readonly recipeService = inject(RecipeService);
   protected readonly stepService = inject(StepService);
   protected readonly recipeIngredientService = inject(RecipeIngredientService);
-  // protected readonly postService = inject(Post);
+  protected readonly postService = inject(PostService);
+  protected readonly authService = inject(AuthService);
 
   protected imageSrc: string = 'assets/default_recipe.png';
 
@@ -144,7 +146,6 @@ export class NewPostComponent implements OnInit {
   onNewStep(step: Step) {
     const index = this.steps.findIndex(s => s.stepIndex === step.stepIndex);
     
-    // TODO Passare bene tutto
     const newStep = new Step(step.stepIndex + 1, ++this.lastUsedIndex, "", 1, "");
     this.steps.splice(index + 1, 0, newStep);
 
@@ -183,30 +184,49 @@ export class NewPostComponent implements OnInit {
     });
   }
 
-  onPublish() {
-    debugger;
-    this.recipeService.post({
+  private convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = (reader.result as string).split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+  
+  
+  async onPublish() {
+    const recipe = await firstValueFrom(this.recipeService.post({
       title: this.recipeForm.controls['title'].value,
       description: this.recipeForm.controls['description'].value,
       category: this.recipeForm.controls['category'].value,
       difficulty: this.recipeForm.controls['difficulty'].value,
-    }).subscribe((recipe) => {
-      this.steps.forEach((s) => {
-        this.stepService.post(recipe.id, {
-          description: s.description,
-          duration: s.duration,
-          action: s.action,
-          stepIndex: s.stepIndex
-        }).subscribe((step) => {
-          s.ingredients.forEach((i) => {
-            this.recipeIngredientService.post(recipe.id, step.id, {
-              quantity: i.quantity,
-              measurementUnit: i.measurementUnit,
-              ingredientId: i.ingredient.id,
-            }).subscribe((recipeIngredient) => console.log(recipeIngredient));
-          });
-        });
-      });
-    });
+    }));
+
+    for (const step of this.steps) {
+      const createdStep = await firstValueFrom(this.stepService.post(recipe.id, {
+        description: step.description,
+        duration: step.duration,
+        action: step.action,
+        stepIndex: step.stepIndex
+      }));
+
+      for (const ingredient of step.ingredients) {
+        await firstValueFrom(this.recipeIngredientService.post(recipe.id, createdStep.id, {
+          quantity: ingredient.quantity,
+          measurementUnit: ingredient.measurementUnit,
+          ingredientId: ingredient.ingredient.id,
+        }));
+      }
+    }
+
+    const post = await firstValueFrom(this.postService.post({
+      standardUserId: 1,
+      postPicture: await this.convertFileToBase64( this.recipeForm.controls['image'].value),
+    }));
+
+    await firstValueFrom(this.postService.put(post.id, { recipeId: recipe.id }));
   }
 }

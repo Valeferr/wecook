@@ -23,6 +23,7 @@ public class CustomGson {
                 .registerTypeAdapter(Step.class, new StepSerializer())
                 .registerTypeAdapter(RecipeIngredient.class, new RecipeIngredientSerializer())
                 .excludeFieldsWithoutExposeAnnotation()
+                .serializeNulls()
                 .create();
     }
 

@@ -16,13 +16,17 @@ public class PostSerializer implements JsonSerializer<Post> {
         jsonObject.addProperty("id", post.getId());
 
         StandardUser standardUser = post.getStandardUser();
-        jsonObject.addProperty("username", standardUser.getUsername());
-        //TODO: Remuovi quando hai la foto
+        jsonObject.addProperty("userUsername", standardUser.getUsername());
+        jsonObject.addProperty("userId", standardUser.getId());
+
+        jsonObject.add("userPicture", JsonNull.INSTANCE);
         if (standardUser.getProfilePicture() != null) {
             String profilePicture = Base64.getEncoder().encodeToString(standardUser.getProfilePicture());
-            jsonObject.addProperty("profilePicture", profilePicture);
+            jsonObject.addProperty("userPicture", profilePicture);
         }
 
+        jsonObject.add("recipeId", JsonNull.INSTANCE);
+        jsonObject.add("description", JsonNull.INSTANCE);
         if (post.getRecipe() != null) {
             jsonObject.addProperty("recipeId", post.getRecipe().getId());
             jsonObject.addProperty("description", post.getRecipe().getDescription());
@@ -30,9 +34,10 @@ public class PostSerializer implements JsonSerializer<Post> {
 
         byte[] postPicture = post.getPostPicture();
         String postPictureEncoded = Base64.getEncoder().encodeToString(postPicture);
-        jsonObject.addProperty("postPicture", postPictureEncoded);
+        jsonObject.addProperty("picture", postPictureEncoded);
 
         jsonObject.addProperty("saved", false);
+        jsonObject.addProperty("liked", false);
         jsonObject.addProperty("likes", post.getLikes().size());
 
         return jsonObject;
