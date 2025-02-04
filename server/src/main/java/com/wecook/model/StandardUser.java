@@ -47,6 +47,17 @@ public class StandardUser extends User {
     @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Post> posts = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "user_follows",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    private Set<StandardUser> following = new HashSet<>();
+
+    @ManyToMany(mappedBy = "following")
+    private Set<StandardUser> followers = new HashSet<>();
+
     public Set<Allergy> getAllergies() {
         return allergies;
     }
@@ -93,5 +104,21 @@ public class StandardUser extends User {
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
+    }
+
+    public Set<StandardUser> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(Set<StandardUser> following) {
+        this.following = following;
+    }
+
+    public Set<StandardUser> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<StandardUser> followers) {
+        this.followers = followers;
     }
 }

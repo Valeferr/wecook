@@ -190,6 +190,79 @@ public class UserResource extends GenericResource{
         return Response.ok(gson.toJson(user)).build();
     }
 
+    @PUT
+    @Path("/{id}/follow")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response followUser(@Context Request context, @PathParam("id") int id) {
+        StandardUser standardUser = new StandardUser();
+        JsonObject jsonUser = RequestParser.jsonRequestToGson(context);
+        int followedId = jsonUser.get("followedId").getAsInt();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.get(User.class, id);
+            User followed = session.get(User.class, followedId);
+
+            if (user == null || followed == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            if (!user.getRole().equals(User.Roles.STANDARD) || !followed.getRole().equals(User.Roles.STANDARD)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            standardUser = (StandardUser) user;
+            StandardUser standardFollowed = (StandardUser) followed;
+
+            if (!standardUser.getFollowing().contains(standardFollowed)) {
+                standardUser.getFollowing().add(standardFollowed);
+            }
+
+            session.merge(standardUser);
+            transaction.commit();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return Response.ok(gson.toJson(standardUser)).build();
+    }
+
+    @DELETE
+    @Path("/{id}/unfollow/{followedId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response unFollowUser(@PathParam("id") int id, @PathParam("followedId") int followedId) {
+        StandardUser standardUser = new StandardUser();
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.get(User.class, id);
+            User followed = session.get(User.class, followedId);
+
+            if (user == null || followed == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            if (!user.getRole().equals(User.Roles.STANDARD) || !followed.getRole().equals(User.Roles.STANDARD)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
+
+            standardUser = (StandardUser) user;
+            StandardUser standardFollowed = (StandardUser) followed;
+
+
+            if (standardUser.getFollowing().contains(standardFollowed)) {
+                standardUser.getFollowing().remove(standardFollowed);
+            }
+
+            session.merge(standardUser);
+            transaction.commit();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+        return Response.ok(gson.toJson(standardUser)).build();
+    }
+
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
