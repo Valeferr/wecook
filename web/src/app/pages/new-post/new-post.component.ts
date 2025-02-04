@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { MainFrameComponent } from "../main-frame/main-frame.component";
 import { StepComponent } from './step/step.component';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -46,8 +46,14 @@ export class NewPostComponent implements OnInit {
   protected steps: Array<Step> = new Array<Step>();
   protected ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>();
 
+  @ViewChildren(StepComponent) stepComponents!: QueryList<StepComponent>;
+
   get duration() {
     return this.steps.reduce((acc, s) => acc + (s.duration || 0), 0);
+  }
+
+  get areStepsValid() {
+    return this.stepComponents ? this.stepComponents.toArray().every(step => step.isValid()) : false;
   }
 
   protected difficultyOptions: Array<string> = new Array<string>();

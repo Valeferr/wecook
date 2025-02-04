@@ -65,7 +65,7 @@
             </mat-form-field>
           </div>
         </div>
-        <button (click)="onPublish()" id="publish-button" class="action-button" [disabled]="!recipeForm.valid">Publish</button>
+        <button (click)="onPublish()" id="publish-button" class="action-button" [disabled]="!recipeForm.valid || !areStepsValid">Publish</button>
       </form>
     </section>
     <section id="ingredients-used">

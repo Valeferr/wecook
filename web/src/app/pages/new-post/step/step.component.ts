@@ -119,4 +119,8 @@ export class StepComponent implements OnInit {
       }
     });
   }
+
+  public isStepValid(): boolean {
+    return this.stepForm.valid;
+  }
 }
