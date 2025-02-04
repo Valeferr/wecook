@@ -5,13 +5,13 @@ import com.wecook.model.StandardUser;
 import com.wecook.rest.utils.RequestParser;
 
 import java.lang.reflect.Type;
-import java.util.Base64;
 
-public class UserSerializer implements JsonSerializer<StandardUser> {
+public class StandardUserSerializer implements JsonSerializer<StandardUser> {
 
     @Override
     public JsonElement serialize(StandardUser standardUser, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject jsonObject = new JsonObject();
+
         JsonArray jsonArray = new JsonArray();
         for (StandardUser.Allergy allergy : standardUser.getAllergies())  {
             jsonArray.add(String.valueOf(allergy));
@@ -19,8 +19,8 @@ public class UserSerializer implements JsonSerializer<StandardUser> {
         jsonObject.add("allergies", jsonArray);
         jsonObject.addProperty("foodPreference", String.valueOf(standardUser.getFoodPreference()));
         jsonObject.addProperty("favoriteDish", standardUser.getFavoriteDish());
-        jsonObject.addProperty("following", standardUser.getFollowing().size());
-        jsonObject.addProperty("follower", standardUser.getFollowers().size());
+//        jsonObject.addProperty("following", standardUser.getFollowing().size());
+//        jsonObject.addProperty("follower", standardUser.getFollowers().size());
 
         jsonObject.addProperty("id", standardUser.getId());
         jsonObject.addProperty("username", standardUser.getUsername());
