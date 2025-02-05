@@ -129,12 +129,6 @@
   border-radius: 2%;
 }
 
-#edit-buttons {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-}
-
 #edit-buttons button {
   padding: 5px 10px;
   font-size: 16px;

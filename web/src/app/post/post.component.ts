@@ -7,6 +7,7 @@ import { ToastService } from '../services/toast.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ReportsDialogComponent } from '../reports-dialog/reports-dialog.component';
 import { ReportService } from '../services/model/report.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post',
@@ -23,6 +24,7 @@ export class PostComponent {
   private readonly toast = inject(ToastService);
   private readonly dialog = inject(MatDialog);
   private readonly reportService = inject(ReportService);
+  protected router: Router = inject(Router);
 
   public onLike() {
     this.likeService.post(this.post().id).subscribe(() => {
@@ -54,7 +56,7 @@ export class PostComponent {
 
   public onShare() {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText('http://localhost:8080/wecook/home').then(() => {
+      navigator.clipboard.writeText(window.origin + '/recipe/'+ this.post().id).then(() => {
         this.toast.showToast("Recipe url saved in your personal note", "SUCCESS");
       }).catch(err => {
         this.toast.showToast("Cannot save the ricepe url in your personal note", "WARNING");

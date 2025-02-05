@@ -3,7 +3,7 @@
     <img [src]="comment().user.picture ?? 'assets/blank_user.png'">
   </div>
   <div id="comment-container">
-    <p id="username">{{ comment().user.username }}</p>
+    <p id="username" (click)="router.navigate(['/profile', comment().user.id]);">{{ comment().user.username }}</p>
     <p>{{ comment().text }}</p>
   </div>
 </main>

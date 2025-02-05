@@ -4,28 +4,28 @@
       <div id="profile-info">
         @if (isEditing) {
           <div id="profile-photo" (click)="fileInput.click()">
-              <img [src]="imageSrc" alt="Profile Image" />
-              <input
-                type="file"
-                accept="image/*"
-                #fileInput
-                (change)="onFileSelected($event)" 
-                hidden
-              />
+            <img [src]="imageSrc" alt="Profile Image" />
+            <input
+              type="file"
+              accept="image/*"
+              #fileInput
+              (change)="onFileSelected($event)" 
+              hidden
+            />
           </div>
         } @else {
           <div id="profile-photo">
-            <img [src]="imageSrc" alt="Profile Image" />
+            <img [src]="user!.picture ?? imageSrc" alt="Profile Image" />
           </div>
         }
         <div id="personal-info">
           @if (!isEditing) {
-            <h3>{{ standardUser?.username }}</h3>
-            @if (standardUser?.favoriteDish) {
-              <p><b>Favourite Dish:</b> {{ standardUser?.favoriteDish }}</p>
+            <h3>{{ user!.username }}</h3>
+            @if (user!.favoriteDish) {
+              <p><b>Favourite Dish:</b> {{ user!.favoriteDish }}</p>
             }
-            @if (standardUser?.foodPreference) {
-              <p><b>Food Preference:</b> {{ standardUser?.foodPreference }}</p>
+            @if (user!.foodPreference) {
+              <p><b>Food Preference:</b> {{ user!.foodPreference }}</p>
             }
           } @else {
             <form [formGroup]="editForm">
@@ -66,54 +66,53 @@
                 </mat-form-field>
               </div>
             </form>
-        }
-      </div>
-      <div id="user-profile">
-        <div id="user-statistics">
-          <div class="statistic-item">
-            <h4>Posts</h4>
-            <p>8</p>
-          </div>
-          <div class="statistic-item">
-            <h4>Followers</h4>
-            <p>456</p>
-          </div>
-          <div class="statistic-item">
-            <h4>Following</h4>
-            <p>456</p>
-          </div>
+          }
         </div>
-        @if (!isEditing) {
-          <div class="profile-button">
-            <button (click)="toggleEdit()">Edit Profile</button>
+        <div id="user-profile">
+          <div id="user-statistics">
+            <div class="statistic-item">
+              <h4>Posts</h4>
+              <p>{{ user!.posts }}</p>
+            </div>
+            <div class="statistic-item">
+              <h4>Followers</h4>
+              <p>{{ user!.followers }}</p>
+            </div>
+            <div class="statistic-item">
+              <h4>Following</h4>
+              <p>{{ user!.following }}</p>
+            </div>
           </div>
-        } @else {
-          <div id="edit-buttons">
-            <button (click)="saveChanges()">Conferma</button>
-            <button (click)="cancelEdit()">Annulla</button>
+          @if (auth.getUser()?.id === user!.id) {
+            @if (!isEditing) {
+              <div class="profile-button" (click)="toggleEdit()">
+                <button>Edit Profile</button>
+              </div>
+            } @else {
+              <div class="profile-button" (click)="cancelEdit()">
+                <button>Save edits</button>
+              </div>
+              <div class="profile-button" (click)="cancelEdit()">
+                <button>Cancel edits</button>
+              </div>
+            }
+          } @else {
+            <div class="profile-button">
+              <button>Follow</button>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="post-images">
+        @for (post of posts; track post.id) { 
+          <div class="post-image" (click)="router.navigate(['/recipe', post.id]);">
+            <img [src]="post.picture" alt="Immagine post">
           </div>
         }
       </div>
     </div>
-
-    <div class="post-images">
-      <!-- TODO: @for (post of posts; track post) {} -->
-      <div class="post-image">
-        <img src="assets/food.jpg" alt="Immagine post 1">
-      </div>
-      <div class="post-image">
-        <img src="assets/food.jpg" alt="Immagine post 2">
-      </div>
-      <div class="post-image">
-        <img src="assets/food.jpg" alt="Immagine post 3">
-      </div>
-      <div class="post-image">
-        <img src="assets/food.jpg" alt="Immagine post 4">
-      </div>
-    </div>
-  </div>
-} @else if (Roles.Moderator) {
-    <div id="profile-container">
+  } @else if (Roles.Moderator) {
+    <!-- <div id="profile-container">
       <div id="profile-info">
         <div id="profile-photo">
           <img src="logo/photodefault.png" alt="Foto del profilo">
@@ -143,11 +142,10 @@
         <div class="post-images">
         </div>
       </div>
-      <!-- TODO: Sezione del grafico -->
       <div id="graph-container">
         <h4>Segnalazioni ultimi 30 giorni</h4>
         <canvas id="reportChart"></canvas>
       </div>
-    </div>
+    </div> -->
   }
 </app-main-frame>

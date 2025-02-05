@@ -80,7 +80,7 @@ export class SearchComponent {
     
 
     if (this.searchType === 'users') {
-      this.userService.searchByName(this.searchQuery).subscribe(
+      this.userService.searchByUsername(this.searchQuery).subscribe(
         (response) => {
           if(response != null) {
             this.results = response;

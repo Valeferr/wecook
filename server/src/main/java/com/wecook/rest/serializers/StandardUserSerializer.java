@@ -2,6 +2,7 @@ package com.wecook.rest.serializers;
 
 import com.google.gson.*;
 import com.wecook.model.StandardUser;
+import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.RequestParser;
 
 import java.lang.reflect.Type;
@@ -22,7 +23,13 @@ public class StandardUserSerializer implements JsonSerializer<StandardUser> {
         }
         jsonObject.add("allergies", jsonArray);
 
-        jsonObject.addProperty("foodPreference", String.valueOf(standardUser.getFoodPreference()));
+        FoodCategories foodPreference = standardUser.getFoodPreference();
+        if (foodPreference != null) {
+            jsonObject.addProperty("foodPreference", foodPreference.toString());
+        } else {
+            jsonObject.add("foodPreference", JsonNull.INSTANCE);
+        }
+
         jsonObject.addProperty("favoriteDish", standardUser.getFavoriteDish());
         jsonObject.addProperty("following", standardUser.getFollowing().size());
         jsonObject.addProperty("follower", standardUser.getFollowers().size());
@@ -31,6 +38,10 @@ public class StandardUserSerializer implements JsonSerializer<StandardUser> {
         jsonObject.addProperty("username", standardUser.getUsername());
         jsonObject.addProperty("email", standardUser.getEmail());
         jsonObject.addProperty("role", standardUser.getRole().toString());
+
+        jsonObject.addProperty("posts", standardUser.getPosts().size());
+        jsonObject.addProperty("followers", standardUser.getFollowers().size());
+        jsonObject.addProperty("following", standardUser.getFollowing().size());
 
         jsonObject.add("picture", JsonNull.INSTANCE);
         if (standardUser.getProfilePicture() != null) {

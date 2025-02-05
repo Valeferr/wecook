@@ -8,6 +8,7 @@ import { NewPostComponent } from './pages/new-post/new-post.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SavedPostsComponent } from './pages/saved-posts/saved-posts.component';
 import { RecipeComponent } from './pages/recipe/recipe.component';
+import { SearchComponent } from './pages/search/search.component';
 
 export const routes: Routes = [
   {
@@ -30,12 +31,17 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'search',
+    component: SearchComponent,
+    canActivate: [authGuard],
+  },
+  {
     path: 'saved-posts',
     component: SavedPostsComponent,
     canActivate: [authGuard]
   },
   {
-    path: 'profile',
+    path: 'profile/:userId',
     component: ProfileComponent,
     canActivate: [authGuard],
   },

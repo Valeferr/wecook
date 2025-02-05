@@ -5,6 +5,7 @@ import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { User } from '../../model/User.model';
 import { plainToInstance } from 'class-transformer';
 import { AuthService } from '../auth.service';
+import { ModeratorUser } from '../../model/ModeratorUser.model';
 
 @Injectable({
   providedIn: 'root'
@@ -24,74 +25,61 @@ export class UserService {
       Authorization: `Bearer ${this.authService.getToken()}`
     });
 
-    return this.http.post<User>(this.URL, user, { headers: headers })
-    .pipe(tap((response) => plainToInstance(User, response)),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      })
+    return this.http.post<User>(this.URL, user, { headers: headers }).pipe(
+      map((response) => plainToInstance(User, response))
     );
   }
 
-  public searchByName (
+  public get<T extends User>(
+    userId: number
+  ): Observable<T> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<T>(`${this.URL}/${userId}`, { headers: headers }).pipe(
+      map((response) => plainToInstance(User, response) as T)
+    );
+  }
+
+  public getAll<T extends User>(): Observable<Array<T>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+  
+    return this.http.get<Array<T>>(this.URL, { headers: headers }).pipe(
+      map((response) => response.map((u) => plainToInstance(User, u) as T))
+    );
+  }  
+
+  public patch<T extends User>(user: T): Observable<T> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+  
+    return this.http.patch<T>(`${this.URL}/${user.id}`, user, { headers: headers }).pipe(
+      map((response) => plainToInstance(User, response) as T)
+    );
+  }
+  
+  public delete(userId: number): Observable<void> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+  
+    return this.http.delete<void>(`${this.URL}/${userId}`, { headers: headers });
+  }
+
+  public searchByUsername (
     username: string
-  ): Observable<Array<User>> {
+  ): Observable<Array<StandardUser>> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
     
-    return this.http.post<Array<User>>(`${this.URL}/searchByName`, username ).pipe(
-      map((response) => response.map((user) => plainToInstance(User, user)))
+    return this.http.post<Array<StandardUser>>(`${this.URL}/searchByUsername`, username ).pipe(
+      map((response) => response.map((user) => plainToInstance(StandardUser, user)))
     );
-  }
-
-  public getOne (
-    userId: number
-  ): Observable<StandardUser> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getToken()}`
-    });
-
-    return this.http.get<StandardUser>(`${this.URL}/${userId}`, { headers: headers })
-    .pipe(tap((user: StandardUser) => user = user), 
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      })
-    )
-  }
-
-  public getAll(): Observable<Array<User>> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getToken()}`
-    });
-
-    return this.http.get<Array<User>>(this.URL, { headers: headers }).pipe
-    (map((response) => response.map((user) => plainToInstance(User, user)))
-    )
-  }
-
-  public patch (
-    user: StandardUser
-  ): Observable<StandardUser> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getToken()}`
-    });
-
-    return this.http.patch<StandardUser>(`${this.URL}/${user.id}`, user, { headers: headers })
-      .pipe(tap((user: StandardUser) => user = user),
-        catchError((error: HttpErrorResponse) => {
-          return throwError(() => error);
-        })
-      )
-  }
-
-  public delete (
-    userId: number
-  ): Observable<void> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${this.authService.getToken()}`
-    });
-
-    return this.http.delete<void>(`${this.URL}/${userId}`, { headers: headers });
   }
 
   //TODO Cambiare non va bene

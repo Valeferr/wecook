@@ -126,18 +126,24 @@ public class PostResource extends GenericResource{
     }
 
     @GET
-    @Path("/userPosts")
+    @Path("/userPosts/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserPosts(@Context Request context) {
-        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
-        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
-
+    public Response getUserPosts(@Context Request context, @PathParam("userId") Long userId) {
         Set<Post> posts;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             StandardUser standardUser = session.get(StandardUser.class, userId);
             posts = standardUser.getPosts();
         }
-        return Response.ok(gson.toJson(posts)).build();
+
+        JsonArray jsonArray = new JsonArray();
+        for (Post post : posts) {
+            JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
+            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId().equals(userId)));
+            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId().equals(userId)));
+            jsonArray.add(jsonObject);
+        }
+
+        return Response.ok(gson.toJson(jsonArray)).build();
     }
 
     @GET
@@ -155,8 +161,8 @@ public class PostResource extends GenericResource{
         JsonArray jsonArray = new JsonArray();
         for (Post post : posts) {
             JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
-            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId() == userId));
-            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId() == userId));
+            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId().equals(userId)));
+            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId().equals(userId)));
             jsonArray.add(jsonObject);
         }
 
@@ -166,7 +172,7 @@ public class PostResource extends GenericResource{
     @GET
     @Path("/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOne(@Context Request context, @PathParam("postId") int postId) {
+    public Response getOne(@Context Request context, @PathParam("postId") Long postId) {
         String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
         Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 

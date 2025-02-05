@@ -1,5 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Comment } from '../../../model/Comment.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-comment',
@@ -10,4 +11,6 @@ import { Comment } from '../../../model/Comment.model';
 })
 export class CommentComponent {
   public comment = input.required<Comment>();
+
+  protected router: Router = inject(Router);
 }

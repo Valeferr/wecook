@@ -5,7 +5,7 @@
         <div class="profile-picture-container">
           <img [src]="post().user.picture ?? 'assets/blank_user.png' " alt="Foto profilo" />
         </div>
-        <div class="profile-username">
+        <div class="profile-username" (click)="router.navigate(['/profile', post().user.id]);">
           <span>{{ post().user.username }}</span>
         </div>
       </div>
