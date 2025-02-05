@@ -20,8 +20,6 @@ public class PostSerializer implements JsonSerializer<Post> {
         String postPictureEncoded = RequestParser.byteArrayToBase64(post.getPostPicture());
         jsonObject.addProperty("picture", postPictureEncoded);
 
-        jsonObject.addProperty("saved", false);
-        jsonObject.addProperty("liked", false);
         jsonObject.addProperty("likes", post.getLikes().size());
 
         jsonObject.add("user", gson.toJsonTree(post.getStandardUser()));

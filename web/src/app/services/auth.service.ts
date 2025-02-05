@@ -1,10 +1,9 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable, ModelFunction } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { Roles, User } from '../model/User.model';
 import { StandardUser } from '../model/StandardUser.model';
-import { ModeratorUser } from '../model/ModeratorUser.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +17,13 @@ export class AuthService {
   private user: User | null = null;
   private token: string | null = null;
 
-  constructor() {}
+  constructor() {
+    const storageUser = localStorage.getItem('user');
+    if (storageUser) {
+      this.user = JSON.parse(storageUser);
+      this.token = localStorage.getItem('authToken');
+    }
+  }
 
   public register(userData: {
     email: string,
@@ -42,6 +47,9 @@ export class AuthService {
       tap((user: any) => {
         this.user = user;
         this.token = user.token;
+
+        localStorage.setItem('user', JSON.stringify(this.user));
+        localStorage.setItem('authToken', this.token!);
       }),
       catchError((error: HttpErrorResponse) => throwError(() => error))
     );

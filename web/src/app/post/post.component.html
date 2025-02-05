@@ -18,23 +18,22 @@
     </div>
     <div class="actions-container">
       <div class="interactions-container">
-        <span class="material-icons-outlined">favorite_border</span>
-        <span class="material-icons-outlined">chat_bubble_outline</span>
+        @if (post().liked) {
+          <span (click)="onUnlinke()" class="material-icons-outlined">favorite</span>
+        } @else {
+          <span (click)="onLike()" class="material-icons-outlined">favorite_border</span>
+        }
         <span class="material-icons-outlined">share</span>
       </div>
-      <span class="material-icons-outlined">bookmark_border</span>
+      @if (post().saved) {
+        <span (click)="onUnsave()" class="material-icons-outlined">bookmark</span>
+      } @else {
+        <span (click)="onSave()"  class="material-icons-outlined">bookmark_border</span>
+      }
     </div>
     <div class="description-container">
-      @if (post().recipe.description.length > 100) {
-        <details (toggle)="onToggleSummary($event)">
-          <summary #summary>
-            {{ post().recipe.description }}
-          </summary>
-          <p (click)="onToggleSummary($event)">
-            {{ post().recipe.description }}
-          </p>
-        </details>
-        <span>Continua a leggere</span>
+      @if (post().recipe.description.length > 200) {
+        <p>{{ post().recipe.description.slice(0, 200) + "..." }}</p>
       } @else {
         <p>{{ post().recipe.description }}</p>
       }

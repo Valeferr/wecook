@@ -11,7 +11,7 @@ public class SavedPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private long id;
+    private Long id;
 
     @Column(name = "save_date", nullable = false)
     @Expose

@@ -9,7 +9,7 @@ public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)

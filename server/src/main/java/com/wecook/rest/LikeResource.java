@@ -86,19 +86,22 @@ public class LikeResource extends GenericResource{
     }
 
     @DELETE
-    @Path("/{likeId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("postId") int postId, @PathParam("likeId") int likeId) {
-        Like like;
+    public Response delete(@Context Request context, @PathParam("postId") Long postId) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        Like like;
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
             Transaction transaction = session.beginTransaction();
             Post post = session.get(Post.class, postId);
+
             like = post.getLikes().stream()
-                    .filter((l) -> l.getId() == likeId)
+                    .filter((l) -> l.getStandardUser().getId() == userId)
                     .findFirst()
                     .orElseThrow(NotFoundException::new);
-            StandardUser standardUser = session.get(StandardUser.class, like.getStandardUser().getId());
+
+            StandardUser standardUser = session.get(StandardUser.class, userId);
 
             Set<Like> postLikes = post.getLikes();
             postLikes.remove(like);

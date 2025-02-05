@@ -91,9 +91,9 @@ public class SavedPostResource extends GenericResource{
     }
 
     @DELETE
-    @Path("/{savedPostId}")
+    @Path("/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("savedPostId") int savedPostId) {
+    public Response delete(@Context Request context, @PathParam("postId") Long postId) {
         String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
         Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
@@ -103,7 +103,7 @@ public class SavedPostResource extends GenericResource{
 
             StandardUser standardUser = session.get(StandardUser.class, userId);
             savedPost = standardUser.getSavedPosts().stream()
-                    .filter((s) -> s.getId() == savedPostId)
+                    .filter((s) -> s.getPost().getId() == postId)
                     .findFirst()
                     .orElseThrow(NotFoundException::new);
 

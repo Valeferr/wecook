@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.wecook.model.*;
 import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.InputValidation;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -34,15 +35,15 @@ public class PostResource extends GenericResource{
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("standardUserId")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
 
         Post post = new Post();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
+            StandardUser standardUser = session.get(StandardUser.class, userId);
 
             if (!InputValidation.isImageValid(jsonObject.get("postPicture").getAsString())) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
@@ -78,11 +79,9 @@ public class PostResource extends GenericResource{
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByIngredients(@Context Request context) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        JsonArray jsonArray = new JsonArray();
-        jsonArray = jsonObject.get("ingredientIds").getAsJsonArray();
+        JsonArray jsonArray = jsonObject.get("ingredientIds").getAsJsonArray();
 
         List<Post> posts = new ArrayList<>();
-
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
 
             for (JsonElement jsonElement : jsonArray) {
@@ -130,25 +129,42 @@ public class PostResource extends GenericResource{
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
         List<Post> posts;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             posts = session.createNamedQuery(Post.GET_ALL, Post.class).getResultList();
         }
 
-        return Response.ok(gson.toJson(posts)).build();
+        JsonArray jsonArray = new JsonArray();
+        for (Post post : posts) {
+            JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
+            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId() == userId));
+            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId() == userId));
+            jsonArray.add(jsonObject);
+        }
+
+        return Response.ok(gson.toJson(jsonArray)).build();
     }
 
     @GET
     @Path("/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOne(@Context Request context, @PathParam("postId") int postId) {
-        Post post;
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        Post post;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             post = session.get(Post.class, postId);
         }
 
-        return Response.ok(gson.toJson(post)).build();
+        JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
+        jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId() == userId));
+        jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId() == userId));
+
+        return Response.ok(gson.toJson(jsonObject)).build();
     }
 
     @PATCH
