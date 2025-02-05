@@ -237,6 +237,27 @@ USERS_DATA = [
     ("Ella", "Martinez")
 ]
 
+DEFAULT_USERS = [
+    {
+        "email": "s.albino2@studenti.unisa.it",
+        "username": f"simone.albino_",
+        "password": "s.albino",
+        "role": "STANDARD"
+    },
+    {
+        "email": "v.ferrentino@studenti.unisa.it",
+        "username": f"valentina.ferrentino",
+        "password": "v.ferrentino",
+        "role": "STANDARD"
+    },
+    {
+        "email": "g.semioli@studenti.unisa.it",
+        "username": f"giovanni.semioli",
+        "password": "g.semioli",
+        "role": "STANDARD"
+    }
+]
+
 RECIPES_TITLES = [
     "Spaghetti Carbonara", "Chicken Alfredo", "Chicken Parmesan", "Chicken Marsala", "Chicken Piccata", "Chicken Cacciatore",
     "Beef Stroganoff", "Lasagna Bolognese", "Fettuccine Alfredo", "Shrimp Scampi", "Eggplant Parmesan", "Pasta Primavera",
@@ -271,8 +292,6 @@ RECIPES_TITLES = [
     "Fried Ice Cream", "Halo-Halo", "Ube Cake", "Butter Mochi", "Bingsu", "Egg Tarts", "Churro Ice Cream Sandwich"
 ]
 
-import random
-
 RECIPES_DESCRIPTIONS = [
     "A classic Italian pasta dish made with eggs, cheese, pancetta, and black pepper. Spaghetti Carbonara is a simple yet flavorful dish that relies on high-quality ingredients. The pancetta is rendered until crispy, then combined with a creamy sauce made from eggs and Pecorino Romano cheese. The residual heat from the pasta helps create a luscious, silky texture without scrambling the eggs. A sprinkle of freshly ground black pepper adds a bold, peppery kick, making this dish a beloved staple in Italian cuisine.",
     "Chicken Alfredo is a creamy, indulgent pasta dish that combines tender pieces of chicken with a rich and velvety Alfredo sauce. Made from butter, heavy cream, and Parmesan cheese, the sauce clings beautifully to fettuccine, creating a comforting and satisfying meal. The chicken is typically grilled or pan-seared to golden perfection, adding depth of flavor. Garnished with fresh parsley and served with garlic bread, this dish is a go-to favorite for pasta lovers around the world.",
@@ -302,7 +321,6 @@ RECIPES_DESCRIPTIONS = [
     "Clam Chowder is a creamy and comforting soup that originates from New England. Made with fresh clams, diced potatoes, celery, onions, and a rich, creamy broth, this dish is a staple of coastal American cuisine. The combination of briny clams and velvety broth creates a harmonious blend of flavors, making it a popular choice in seafood restaurants. Often served with oyster crackers or crusty bread, Clam Chowder is the ultimate comfort food on a chilly day.",
     "Chocolate Lava Cake is a decadent dessert that features a warm, gooey chocolate center encased in a soft, fluffy cake. When sliced open, the molten chocolate flows out, creating a rich and indulgent experience. Made with high-quality dark chocolate, butter, sugar, eggs, and a hint of espresso, this dessert is often paired with vanilla ice cream or fresh berries. Its combination of crisp outer shell and liquid chocolate interior makes it an irresistible treat for chocolate lovers."
 ]
-
 
 GENERATED_USERS = []
 GENERATED_INGREDIENTS = []
@@ -452,12 +470,7 @@ async def addUsers(n):
         await asyncio.gather(*tasks)
 
     async with aiohttp.ClientSession() as session:
-        tasks = [postUser(session, {
-            "email": "s.albino2@studenti.unisa.it",
-            "username": f"simone.albino_",
-            "password": "simone.albino",
-            "role": "STANDARD"
-        })]
+        tasks = [postUser(session, user) for user in DEFAULT_USERS]
         await asyncio.gather(*tasks)
 
 async def addRecipes(n):
@@ -466,8 +479,9 @@ async def addRecipes(n):
         actions = await fetchValueSet(session, "actions")
         categories = await fetchValueSet(session, "foodCategories")
 
+        success = 0
         for i in range(n):
-            print(f"--Recipe {i + 1}/{n}")
+            print(f"\n--RECIPE {i + 1}/{n} - Success: {success}, Failed: {i - success}")
 
             imageFile = random.choice(os.listdir(IMAGE_FOLDER))
             imageBase64 = await convertFileToBase64(os.path.join(IMAGE_FOLDER, imageFile))
@@ -513,6 +527,7 @@ async def addRecipes(n):
                 continue
             
             await updatePostWithRecipe(session, post["id"], recipe["id"])
+            success += 1
 
 def main():
     print("====== Adding Ingredients ======")

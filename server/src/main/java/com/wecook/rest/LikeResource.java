@@ -5,6 +5,7 @@ import com.wecook.model.HibernateUtil;
 import com.wecook.model.Like;
 import com.wecook.model.Post;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -23,27 +24,19 @@ public class LikeResource extends GenericResource{
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context, @PathParam("postId") int postId) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("standardUserId")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
         Like like = new Like();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
-            int standardUserId = jsonObject.get("standardUserId").getAsInt();
             Post post = session.get(Post.class, postId);
-            StandardUser standardUser = session.get(StandardUser.class, standardUserId);
+            StandardUser standardUser = session.get(StandardUser.class, userId);
 
-            //controllo se il like è già stato inserito
             Set<Like> postLikes = post.getLikes();
-            boolean likeMatch = false;
-            for (Like likeSet : postLikes) {
-                likeMatch = likeSet.getStandardUser().getId() == standardUserId;
-            }
+            boolean alreadyLiked = postLikes.stream().anyMatch((l) -> l.getStandardUser().getId() == userId);
 
-
-           if (!likeMatch) {
+           if (!alreadyLiked) {
                 like.setPost(post);
                 like.setStandardUser(standardUser);
 

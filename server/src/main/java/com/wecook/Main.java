@@ -2,6 +2,7 @@ package com.wecook;
 
 import com.wecook.rest.exceptions.*;
 import com.wecook.rest.filters.CORSFilter;
+import com.wecook.rest.filters.JwtFilter;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -15,6 +16,7 @@ public class Main {
         ResourceConfig config = new ResourceConfig()
                 .packages("com.wecook.rest")
                 .register(CORSFilter.class)
+                .register(JwtFilter.class)
                 .register(ConstraintViolationExceptionMapper.class)
                 .register(JsonSyntaxExceptionMapper.class)
                 .register(NoResultExceptionMapper.class)

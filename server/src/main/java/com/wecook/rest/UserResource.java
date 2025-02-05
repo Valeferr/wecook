@@ -29,7 +29,7 @@ import java.util.Base64;
 import java.util.List;
 
 @Path("/users")
-public class UserResource extends GenericResource{
+public class UserResource extends GenericResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

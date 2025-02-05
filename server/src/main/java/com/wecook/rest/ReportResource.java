@@ -2,6 +2,7 @@ package com.wecook.rest;
 
 import com.google.gson.JsonObject;
 import com.wecook.model.*;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -21,9 +22,11 @@ public class ReportResource extends GenericResource{
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
-        if(!jsonObject.has("type") || !jsonObject.has("reason") || !jsonObject.has("standardUserId")) {
+        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+        if(!jsonObject.has("type") || !jsonObject.has("reason")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -38,7 +41,7 @@ public class ReportResource extends GenericResource{
             if (Enum.valueOf(Report.Types.class,jsonObject.get("type").getAsString()).equals(Report.Types.COMMENT)) {
                 report = new CommentReport();
             }
-            StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
+            StandardUser standardUser = session.get(StandardUser.class, userId);
 
             report.setDate(LocalDate.now());
             report.setUser(standardUser);

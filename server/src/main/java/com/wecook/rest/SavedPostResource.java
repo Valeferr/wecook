@@ -5,6 +5,7 @@ import com.wecook.model.HibernateUtil;
 import com.wecook.model.Post;
 import com.wecook.model.SavedPost;
 import com.wecook.model.StandardUser;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -18,12 +19,15 @@ import org.hibernate.exception.ConstraintViolationException;
 import java.time.LocalDate;
 import java.util.Set;
 
-@Path("user/{standardUserId}/savedPost")
+@Path("/savedPost")
 public class SavedPostResource extends GenericResource{
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response post(@Context Request context, @PathParam("standardUserId") int standardUserId) {
+    public Response post(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
         if (!jsonObject.has("postId")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -33,7 +37,7 @@ public class SavedPostResource extends GenericResource{
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             Post post = session.get(Post.class, jsonObject.get("postId").getAsInt());
-            StandardUser standardUser = session.get(StandardUser.class, standardUserId);
+            StandardUser standardUser = session.get(StandardUser.class, userId);
 
             savedPost.setSaveDate(LocalDate.now());
             savedPost.setPost(post);
@@ -55,11 +59,13 @@ public class SavedPostResource extends GenericResource{
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAll(@Context Request context, @PathParam("standardUserId") int standardUserId) {
-        Set<SavedPost> savedPosts;
+    public Response getAll(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        Set<SavedPost> savedPosts;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            StandardUser standardUser = session.get(StandardUser.class, standardUserId);
+            StandardUser standardUser = session.get(StandardUser.class, userId);
             savedPosts = standardUser.getSavedPosts();
         }
         return Response.ok(gson.toJson(savedPosts)).build();
@@ -68,11 +74,13 @@ public class SavedPostResource extends GenericResource{
     @GET
     @Path("/{savedPostId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOne(@Context Request context, @PathParam("standardUserId") int standardUserId, @PathParam("savedPostId") int savedPostId) {
-        SavedPost savedPost;
+    public Response getOne(@Context Request context, @PathParam("savedPostId") int savedPostId) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        SavedPost savedPost;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            StandardUser standardUser = session.get(StandardUser.class, standardUserId);
+            StandardUser standardUser = session.get(StandardUser.class, userId);
             savedPost = standardUser.getSavedPosts().stream()
                     .filter((s) -> s.getId() == savedPostId)
                     .findFirst()
@@ -85,13 +93,15 @@ public class SavedPostResource extends GenericResource{
     @DELETE
     @Path("/{savedPostId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("standardUserId") int standardUserId, @PathParam("savedPostId") int savedPostId) {
-        SavedPost savedPost;
+    public Response delete(@Context Request context, @PathParam("savedPostId") int savedPostId) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        SavedPost savedPost;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            StandardUser standardUser = session.get(StandardUser.class, standardUserId);
+            StandardUser standardUser = session.get(StandardUser.class, userId);
             savedPost = standardUser.getSavedPosts().stream()
                     .filter((s) -> s.getId() == savedPostId)
                     .findFirst()
@@ -118,5 +128,4 @@ public class SavedPostResource extends GenericResource{
 
         return Response.ok(gson.toJson(savedPost)).build();
     }
-
 }

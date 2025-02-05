@@ -6,6 +6,7 @@ import com.wecook.model.HibernateUtil;
 import com.wecook.model.Post;
 import com.wecook.model.StandardUser;
 import com.wecook.rest.utils.InputValidation;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -26,8 +27,11 @@ public class CommentResource extends GenericResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context, @PathParam("postId") int postId) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if(!jsonObject.has("standardUserId") || !jsonObject.has("text")) {
+        if(!jsonObject.has("text")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -40,7 +44,7 @@ public class CommentResource extends GenericResource {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             Post post = session.get(Post.class, postId);
-            StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
+            StandardUser standardUser = session.get(StandardUser.class, userId);
             comment.setPost(post);
             comment.setStandardUser(standardUser);
 

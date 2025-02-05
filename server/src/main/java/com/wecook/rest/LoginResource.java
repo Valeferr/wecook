@@ -1,8 +1,10 @@
 package com.wecook.rest;
 
+import com.google.gson.JsonObject;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.User;
 import com.wecook.rest.utils.InputValidation;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
 import jakarta.persistence.NoResultException;
@@ -14,25 +16,33 @@ import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
-@Path("/")
+@Path("/auth")
 public class LoginResource extends GenericResource {
     @Path("/login")
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context Request context) {
-        User userRequest;
-        String password, email;
+        JsonObject jsonObject;
+        try {
+            jsonObject = RequestParser.jsonRequestToGson(context);
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
 
-        userRequest = RequestParser.jsonRequestToClass(context, User.class);
-        password = SecurityUtils.sha256(userRequest.getPassword());
-        email = userRequest.getEmail().trim();
+        if (!jsonObject.has("email") || !jsonObject.has("password")) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
 
+        String email = jsonObject.get("email").getAsString().trim();
+        String password = jsonObject.get("password").getAsString();
         if (password.isEmpty() || email.isEmpty() || !InputValidation.isEmailValid(email)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        User user;
+        password = SecurityUtils.sha256(password);
 
+        User user;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createNamedQuery(User.GET_BY_EMAIL, User.class);
             query.setParameter("email", email);
@@ -45,16 +55,19 @@ public class LoginResource extends GenericResource {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        org.glassfish.grizzly.http.server.Session httpSession = context.getSession(true);
-        httpSession.setAttribute("user", user);
-        httpSession.setSessionTimeout(1440);
+        String token = JwtManager.getInstance().generateToken(user);
 
-        return Response.ok(gson.toJson(user)).build();
+        JsonObject jsonUser = gson.toJsonTree(user).getAsJsonObject();
+        jsonUser.addProperty("token", token);
+
+        return Response.ok(jsonUser.toString()).build();
     }
 
     @Path("/logout")
+    @POST
     public Response logout(@Context Request context) {
-        context.getSession().setValid(false);
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        JwtManager.getInstance().invalidateToken(authorizationToken);
         return Response.ok().build();
     }
 }
