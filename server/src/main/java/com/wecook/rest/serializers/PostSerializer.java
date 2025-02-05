@@ -1,9 +1,7 @@
 package com.wecook.rest.serializers;
 
 import com.google.gson.*;
-import com.wecook.model.Post;
-import com.wecook.model.StandardUser;
-import com.wecook.model.Step;
+import com.wecook.model.*;
 import com.wecook.rest.utils.CustomGson;
 import com.wecook.rest.utils.RequestParser;
 
@@ -18,6 +16,13 @@ public class PostSerializer implements JsonSerializer<Post> {
         Gson gson = CustomGson.getInstance().getGson();
 
         jsonObject.addProperty("id", post.getId());
+
+        String postPictureEncoded = RequestParser.byteArrayToBase64(post.getPostPicture());
+        jsonObject.addProperty("picture", postPictureEncoded);
+
+        jsonObject.addProperty("saved", false);
+        jsonObject.addProperty("liked", false);
+        jsonObject.addProperty("likes", post.getLikes().size());
 
         jsonObject.add("user", gson.toJsonTree(post.getStandardUser()));
 
@@ -34,12 +39,12 @@ public class PostSerializer implements JsonSerializer<Post> {
             jsonObject.add("duration", new JsonPrimitive(totalDuration));
         }
 
-        String postPictureEncoded = RequestParser.byteArrayToBase64(post.getPostPicture());
-        jsonObject.addProperty("picture", postPictureEncoded);
-
-        jsonObject.addProperty("saved", false);
-        jsonObject.addProperty("liked", false);
-        jsonObject.addProperty("likes", post.getLikes().size());
+        JsonArray comments = new JsonArray();
+        for (Comment comment : post.getComments()) {
+            JsonObject jsonRecipeIngredient = gson.toJsonTree(comment).getAsJsonObject();
+            comments.add(jsonRecipeIngredient);
+        }
+        jsonObject.add("comments", comments);
 
         return jsonObject;
     }
