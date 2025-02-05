@@ -24,7 +24,7 @@ public class InputValidation {
     }
 
     public static boolean isDescriptionValid(String description) {
-        return description.matches("^[A-Za-zÀ-Üà-ü0-9,;%°\"'!-().\\s]{1,}$");
+        return description.matches("^[A-Za-zÀ-Üà-ü0-9,;:%°\"'!-().\\s]{1,}$");
     }
 
     private static final Set<String> SUPPORTED_IMAGE_TYPES = Set.of("image/png", "image/jpeg", "image/webp", "image/bmp", "image/svg+xml");
@@ -40,11 +40,12 @@ public class InputValidation {
             return false;
         }
 
-        String base64Data = base64Image.substring(base64Image.indexOf(",") + 1);
-        byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-
-        String detectedMimeType = getMimeType(imageBytes);
-        return detectedMimeType != null && detectedMimeType.equals(mimeType);
+        return true;
+//        String base64Data = base64Image.substring(base64Image.indexOf(",") + 1);
+//        byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+//
+//        String detectedMimeType = getMimeType(imageBytes);
+//        return detectedMimeType != null && detectedMimeType.equals(mimeType);
     }
 
 

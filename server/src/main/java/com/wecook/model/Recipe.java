@@ -3,6 +3,7 @@ package com.wecook.model;
 import com.google.gson.annotations.Expose;
 import com.wecook.model.enums.FoodCategories;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,8 @@ public class Recipe  {
     @Expose
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 1024)
+    @Size(max = 1024, message = "Description cannot exceed 1024 characters")
     @Expose
     private String description;
 

@@ -23,7 +23,7 @@ public class RecipeResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
         Recipe recipeRequest = RequestParser.jsonRequestToClass(context, Recipe.class);
-        if (!InputValidation.isTitleValid(recipeRequest.getTitle()) || !InputValidation.isDescriptionValid(recipeRequest.getDescription()) || recipeRequest.getDescription().length() > 256) {
+        if (!InputValidation.isTitleValid(recipeRequest.getTitle()) || !InputValidation.isDescriptionValid(recipeRequest.getDescription()) || recipeRequest.getDescription().length() > 1024) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
