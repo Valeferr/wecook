@@ -126,6 +126,20 @@ public class PostResource extends GenericResource{
     }
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserPosts(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
+        Set<Post> posts;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            StandardUser standardUser = session.get(StandardUser.class, userId);
+            posts = standardUser.getPosts();
+        }
+        return Response.ok(gson.toJson(posts)).build();
+    }
+
+    @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context Request context) {
