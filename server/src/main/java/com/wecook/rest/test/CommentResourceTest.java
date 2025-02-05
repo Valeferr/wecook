@@ -3,7 +3,9 @@ package com.wecook.rest.test;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wecook.model.Comment;
+import com.wecook.model.User;
 import com.wecook.rest.CommentResource;
+import com.wecook.rest.utils.JwtManager;
 import jakarta.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
@@ -46,9 +48,17 @@ public class CommentResourceTest {
     @Mock
     private Comment mockComment;
 
+    @Mock
+    private User user;
+
     @BeforeEach
     public void setUp() {
         lenient().when(sessionFactory.openSession()).thenReturn(session);
+        User user = mock(User.class);
+        Session session = mock(Session.class);
+        lenient().doReturn(user).when(session).get(User.class, 1);
+        String token = JwtManager.getInstance().generateToken(user);
+        lenient().doReturn("Bearer "+token).when(context).getHeader("Authorization");
     }
 
     @Test
@@ -59,9 +69,10 @@ public class CommentResourceTest {
 
         String commentText = "Molto Buono";
         mockComment = new Comment();
+        lenient().when(session.get(User.class, 1)).thenReturn(user);
+        JwtManager.getInstance().generateToken(user);
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("standardUserId", 1);
         jsonObject.addProperty("text", commentText);
 
         lenient().when(context.getAttribute("entity")).thenReturn(jsonObject);

@@ -105,7 +105,7 @@ public class PostResource extends GenericResource{
     }
 
     @POST
-    @Path("/{searchByCategory}")
+    @Path("/searchByCategory")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByCategory(@Context Request context) {

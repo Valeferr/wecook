@@ -12,7 +12,7 @@ public class RecipeIngredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
-    private long id;
+    private Long id;
 
     @PositiveOrZero
     @Column(name = "quantity", nullable = false)
@@ -32,11 +32,11 @@ public class RecipeIngredient {
     @JoinColumn(name = "ingredient", nullable = false)
     private Ingredient ingredient;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
