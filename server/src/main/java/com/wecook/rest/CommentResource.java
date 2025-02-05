@@ -32,7 +32,7 @@ public class CommentResource extends GenericResource {
         }
 
         String text = jsonObject.get("text").getAsString();
-        if(!InputValidation.isCommentValid(text)) {
+        if(!InputValidation.isCommentValid(text) || text.length() > 400) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -43,9 +43,9 @@ public class CommentResource extends GenericResource {
             StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
             comment.setPost(post);
             comment.setStandardUser(standardUser);
-            //TODO: rimuovere LocalDate.now()
+
             comment.setPublicationDate(LocalDate.now());
-            comment.setContentStatus(Comment.States.ACTIVE);
+            comment.setStatus(Comment.States.ACTIVE);
 
             comment.setText(text);
 
@@ -98,8 +98,7 @@ public class CommentResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response patch(@Context Request context, @PathParam("postId") int postId, @PathParam("commentId") int commentId) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-
-        if (!jsonObject.has("contentState")) {
+        if (!jsonObject.has("state")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -112,10 +111,10 @@ public class CommentResource extends GenericResource {
                     .filter((c) -> c.getId() == commentId)
                     .findFirst()
                     .orElseThrow(NotFoundException::new);
-            comment.setContentStatus(
+            comment.setStatus(
                 Enum.valueOf(
                     Comment.States.class,
-                    jsonObject.get("contentState").getAsString()
+                    jsonObject.get("state").getAsString()
                 )
             );
 

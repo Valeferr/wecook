@@ -31,7 +31,7 @@ public class ReportResource extends GenericResource{
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
             Transaction transaction = session.beginTransaction();
 
-            //TODO: Controlla per aggiungere un post o un commento
+
             if (Enum.valueOf(Report.Types.class,jsonObject.get("type").getAsString()).equals(Report.Types.POST)) {
                 report = new PostReport();
             }
@@ -39,7 +39,7 @@ public class ReportResource extends GenericResource{
                 report = new CommentReport();
             }
             StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
-            //TODO: Rimuovere LocalDate.now()
+
             report.setDate(LocalDate.now());
             report.setUser(standardUser);
             report.setReason(

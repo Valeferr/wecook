@@ -35,7 +35,6 @@ public class SavedPostResource extends GenericResource{
             Post post = session.get(Post.class, jsonObject.get("postId").getAsInt());
             StandardUser standardUser = session.get(StandardUser.class, standardUserId);
 
-            //TODO: Rimuovere LocalDate.now()
             savedPost.setSaveDate(LocalDate.now());
             savedPost.setPost(post);
             savedPost.setStandardUser(standardUser);

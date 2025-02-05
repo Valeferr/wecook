@@ -30,7 +30,7 @@ public class Comment {
 
     @Column(name = "content_state")
     @Expose
-    private States contentStatus;
+    private States status;
 
     @ManyToOne
     @JoinColumn(name = "standard_user", nullable = false)
@@ -67,12 +67,12 @@ public class Comment {
         this.text = text;
     }
 
-    public States getContentStatus() {
-        return contentStatus;
+    public States getStatus() {
+        return status;
     }
 
-    public void setContentStatus(States contentStatus) {
-        this.contentStatus = contentStatus;
+    public void setStatus(States status) {
+        this.status = status;
     }
 
     public StandardUser getStandardUser() {

@@ -47,7 +47,7 @@ public class StandardUser extends User {
     @OneToMany(mappedBy = "standardUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Post> posts = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_follows",
         joinColumns = @JoinColumn(name = "follower_id"),
@@ -55,7 +55,7 @@ public class StandardUser extends User {
     )
     private Set<StandardUser> following = new HashSet<>();
 
-    @ManyToMany(mappedBy = "following")
+    @ManyToMany(mappedBy = "following", fetch = FetchType.EAGER)
     private Set<StandardUser> followers = new HashSet<>();
 
     public Set<Allergy> getAllergies() {

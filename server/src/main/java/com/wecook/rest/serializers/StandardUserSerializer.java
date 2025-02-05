@@ -5,6 +5,7 @@ import com.wecook.model.StandardUser;
 import com.wecook.rest.utils.RequestParser;
 
 import java.lang.reflect.Type;
+import java.util.Set;
 
 public class StandardUserSerializer implements JsonSerializer<StandardUser> {
 
@@ -13,14 +14,18 @@ public class StandardUserSerializer implements JsonSerializer<StandardUser> {
         JsonObject jsonObject = new JsonObject();
 
         JsonArray jsonArray = new JsonArray();
-        for (StandardUser.Allergy allergy : standardUser.getAllergies())  {
-            jsonArray.add(String.valueOf(allergy));
+
+        if (standardUser.getAllergies() != null){
+            for (StandardUser.Allergy allergy : standardUser.getAllergies())  {
+                jsonArray.add(String.valueOf(allergy));
+            }
         }
         jsonObject.add("allergies", jsonArray);
+
         jsonObject.addProperty("foodPreference", String.valueOf(standardUser.getFoodPreference()));
         jsonObject.addProperty("favoriteDish", standardUser.getFavoriteDish());
-//        jsonObject.addProperty("following", standardUser.getFollowing().size());
-//        jsonObject.addProperty("follower", standardUser.getFollowers().size());
+        jsonObject.addProperty("following", standardUser.getFollowing().size());
+        jsonObject.addProperty("follower", standardUser.getFollowers().size());
 
         jsonObject.addProperty("id", standardUser.getId());
         jsonObject.addProperty("username", standardUser.getUsername());
