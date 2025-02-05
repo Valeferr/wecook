@@ -126,6 +126,7 @@ public class PostResource extends GenericResource{
     }
 
     @GET
+    @Path("/userPosts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserPosts(@Context Request context) {
         String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
