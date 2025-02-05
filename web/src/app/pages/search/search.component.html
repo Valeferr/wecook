@@ -1,0 +1,47 @@
+<app-main-frame>
+  <main>
+    <header>
+      <div>
+        Search by: 
+      </div>
+      <div id="search-about">
+        <button [ngClass]="{'active': searchType === 'users'}" class="search-button" (click)="selectSearchType('users')">Users</button>
+        <button [ngClass]="{'active': searchType === 'recipes'}" class="search-button" (click)="selectSearchType('recipes')">Recipe</button>
+        <button [ngClass]="{'active': searchType === 'category'}" class="search-button" (click)="selectSearchType('category')">Category</button>
+        <button [ngClass]="{'active': searchType === 'ingredients'}" class="search-button" (click)="selectSearchType('ingredients')">Ingridient</button>
+      </div>
+      <div id="search-bar-container">
+        <form [formGroup]="searchForm">
+          @if (searchType === 'category') {
+            <mat-form-field id="foodPreference">
+              <mat-label>Food Preference</mat-label>
+              <input type="text"
+                placeholder="Food Preference"
+                aria-label="Food Preference"
+                matInput
+                formControlName="foodPreference"
+                [matAutocomplete]="autoFoodPreference">
+              <mat-autocomplete #autoFoodPreference="matAutocomplete">
+                @for (food of filteredFoodCategories | async; track food) {
+                  <mat-option [value]="food">{{food}}</mat-option>
+                }
+              </mat-autocomplete>
+            </mat-form-field>
+          } @else {
+            <input id="search-bar" type="text" 
+            placeholder="Search..."  
+            [(ngModel)]="searchQuery" 
+            >
+          }
+          <span id="search-icon" class="material-icons-outlined" (click)="search()">search</span>
+        </form>
+      </div>
+    </header>
+    <div id="results-list">
+      @for (item of results; track item.id) {
+        <app-item-search></app-item-search>
+      }
+      <app-item-search></app-item-search>
+    </div>
+  </main>
+</app-main-frame>
