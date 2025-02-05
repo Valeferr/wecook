@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Choose the reason for the report</h2>
+<mat-dialog-content>
+    <form [formGroup]="reportForm">
+      <mat-form-field id="report">
+        <mat-label>Reasons</mat-label>
+        <input type="text"
+          placeholder="Choose a reason..."
+          aria-label="reason"
+          matInput
+          formControlName="report"
+          [matAutocomplete]="autoReasons">
+        <mat-autocomplete #autoReasons="matAutocomplete">
+          @for (reason of filteredReasons | async; track reason) {
+            <mat-option [value]="reason">{{ reason }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button  class="report-button" mat-button (click)="onCancel()">Cancel</button>
+  <button class="report-button" mat-button [mat-dialog-close]="selectedReportReason" cdkFocusInitial [disabled]="!reportForm.valid">Add</button>
+</mat-dialog-actions>

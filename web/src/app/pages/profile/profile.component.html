@@ -1,0 +1,159 @@
+<app-main-frame>
+  @if (Roles.Standard) {
+    <div id="profile-container">
+      <div id="profile-info">
+        @if (isEditing) {
+          <div id="profile-photo" (click)="fileInput.click()">
+              <img [src]="imageSrc" alt="Profile Image" />
+              <input
+                type="file"
+                accept="image/*"
+                #fileInput
+                (change)="onFileSelected($event)" 
+                hidden
+              />
+          </div>
+        } @else {
+          <div id="profile-photo">
+            <img [src]="imageSrc" alt="Profile Image" />
+          </div>
+        }
+        <div id="personal-info">
+          @if (!isEditing) {
+            <h3>{{ standardUser?.username }}</h3>
+            @if (standardUser?.favoriteDish) {
+              <p><b>Favourite Dish:</b> {{ standardUser?.favoriteDish }}</p>
+            }
+            @if (standardUser?.foodPreference) {
+              <p><b>Food Preference:</b> {{ standardUser?.foodPreference }}</p>
+            }
+          } @else {
+            <form [formGroup]="editForm">
+              <div class="edit-section">
+                <mat-form-field id="username">
+                  <mat-label>Username</mat-label>
+                  <input type="text"
+                   [placeholder]="user!.username"
+                   aria-label="username"
+                   matInput
+                   formControlName="username">
+                </mat-form-field>  
+              </div>
+              <div class="edit-section">
+                <mat-form-field id="favoriteDish">
+                  <mat-label>Favorite Dish</mat-label>
+                  <input type="text"
+                   placeholder="Favorite Dish"
+                   aria-label="Favorite Dish"
+                   matInput
+                   formControlName="favoriteDish">
+                </mat-form-field>
+              </div>
+              <div class="edit-section">
+                <mat-form-field id="foodPreference">
+                  <mat-label>Food Preference</mat-label>
+                  <input type="text"
+                    placeholder="Food Preference"
+                    aria-label="Food Preference"
+                    matInput
+                    formControlName="foodPreference"
+                    [matAutocomplete]="autoFoodPreference">
+                  <mat-autocomplete #autoFoodPreference="matAutocomplete">
+                    @for (food of filteredFoodCategories | async; track food) {
+                      <mat-option [value]="food">{{food}}</mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+              </div>
+            </form>
+        }
+      </div>
+      <div id="user-profile">
+        <div id="user-statistics">
+          <div class="statistic-item">
+            <h4>Posts</h4>
+            <p>8</p>
+          </div>
+          <div class="statistic-item" (click)="followersClicked()">
+            <h4>Followers</h4>
+            <p>456</p>
+          </div>
+          <div class="statistic-item">
+            <h4>Following</h4>
+            <p>456</p>
+          </div>
+        </div>
+        @if (!isEditing) {
+          <!-- @if (user?.id === standardUser?.id) {
+            <div class="profile-button">
+              <button (click)="addFollow()">Follow</button>
+            </div>
+          } @else { -->
+            <div class="profile-button">
+              <button (click)="toggleEdit()">Edit Profile</button>
+            </div>
+          <!-- } -->
+        } @else {
+          <div id="edit-buttons">
+            <button (click)="saveChanges()">Conferma</button>
+            <button (click)="cancelEdit()">Annulla</button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="post-images">
+      <!-- TODO: @for (post of posts; track post) {} -->
+      <div class="post-image">
+        <img src="assets/food.jpg" alt="Immagine post 1">
+      </div>
+      <div class="post-image">
+        <img src="assets/food.jpg" alt="Immagine post 2">
+      </div>
+      <div class="post-image">
+        <img src="assets/food.jpg" alt="Immagine post 3">
+      </div>
+      <div class="post-image">
+        <img src="assets/food.jpg" alt="Immagine post 4">
+      </div>
+    </div>
+  </div>
+} @else if (Roles.Moderator) {
+    <div id="profile-container">
+      <div id="profile-info">
+        <div id="profile-photo">
+          <img src="logo/photodefault.png" alt="Foto del profilo">
+        </div>
+        <div id="personal-info">
+          <h3>Benvenuto {{ moderatorUser?.username }}</h3>
+          <div id="preferences">
+            <p>Segnalazioni totali: {{ moderatorUser?.id }}</p>
+          </div>
+        </div>
+        <div id="user-profile">
+          <div id="user-statistics">
+            <div class="statistic-item">
+              <h4>Segnalazioni attive</h4>
+              <p>{{ moderatorUser?.id }}</p>
+            </div>
+            <div class="statistic-item">
+              <h4>Post segnalati</h4>
+              <p>{{ moderatorUser?.id }}</p>
+            </div>
+            <div class="statistic-item">
+              <h4>Commenti segnalati</h4>
+              <p>{{ moderatorUser?.id }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="post-images">
+        </div>
+      </div>
+      <!-- TODO: Sezione del grafico -->
+      <div id="graph-container">
+        <h4>Segnalazioni ultimi 30 giorni</h4>
+        <canvas id="reportChart"></canvas>
+      </div>
+    </div>
+  }
+</app-main-frame>

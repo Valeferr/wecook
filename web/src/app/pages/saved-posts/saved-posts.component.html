@@ -1,0 +1,9 @@
+<app-main-frame>
+  <div class="post-images">
+    @for (post of posts; track post) { 
+      <div class="post-image" (click)="onClick(post)">
+        <img [src]="post.picture" alt="Immagine post">
+      </div>
+    }
+  </div>
+</app-main-frame>
