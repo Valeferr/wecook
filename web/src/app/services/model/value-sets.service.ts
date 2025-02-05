@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,34 +9,63 @@ export class ValueSetsService {
   private readonly URL: string = 'http://localhost:8080/wecook/valueSets';
   
   private http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
   constructor() { }
 
   get difficulties() {
-    return this.http.get<Array<string>>(`${this.URL}/difficulties`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/difficulties`, { headers: headers });
   }
 
   get actions() {
-    return this.http.get<Array<string>>(`${this.URL}/actions`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/actions`, { headers: headers });
   }
 
   get measurementUnits() {
-    return this.http.get<Array<string>>(`${this.URL}/measurementUnits`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/measurementUnits`, { headers: headers });
   }
 
   get allergies() {
-    return this.http.get<Array<string>>(`${this.URL}/allergies`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/allergies`, { headers: headers });
   }
 
   get foodCategories() {
-    return this.http.get<Array<string>>(`${this.URL}/foodCategories`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/foodCategories`, { headers: headers });
   }
 
   get foodTypes() {
-    return this.http.get<Array<string>>(`${this.URL}/foodTypes`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<string>>(`${this.URL}/foodTypes`, { headers: headers });
   }
 
   get reasons() {
-    return this.http.get<Array<string>>(`${this.URL}/reasons`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    
+    return this.http.get<Array<string>>(`${this.URL}/reasons`, { headers: headers });
   }
 }

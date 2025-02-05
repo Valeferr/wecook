@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { plainToInstance } from 'class-transformer';
 import { map, Observable } from 'rxjs';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,32 +11,44 @@ export class ReportService {
   private readonly URL: string = 'http://localhost:8080/wecook/report';
   
   private http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
-  constructor() { }
+  constructor() {}
 
   public post (
     data: {
-      standardUserId: number,
       type: string,
       reason: string
     }
   ): Observable<Report> {
-    return this.http.post<Report>(`${this.URL}`, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.post<Report>(`${this.URL}`, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Report, response))      
     );
   }
 
-  public getOne (
+  public get (
     reportId: number,
   ): Observable<Report> {
-     return this.http.get<Report>(`${this.URL}/${reportId}`, { withCredentials: true }).pipe(
-        map((response) => plainToInstance(Report, response))
-      );
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Report>(`${this.URL}/${reportId}`, { headers: headers }).pipe(
+      map((response) => plainToInstance(Report, response))
+    );
   }
 
   public getAll (
   ): Observable<Array<Report>> {
-    return this.http.get<Array<Report>>(`${this.URL}`, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<Report>>(`${this.URL}`, { headers: headers }).pipe(
       map((response) => response.map((report) => plainToInstance(Report, report)))
     )
   }
@@ -43,32 +56,48 @@ export class ReportService {
   public patch (
     reportId: number,
   ): Observable<Report> {
-     return this.http.patch<Report>(`${this.URL}/${reportId}`, { withCredentials: true }).pipe(
-        map((response) => plainToInstance(Report, response))
-      );
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.patch<Report>(`${this.URL}/${reportId}`, { headers: headers }).pipe(
+      map((response) => plainToInstance(Report, response))
+    );
   }
 
   public putPost (
     reportId: number,
     postId: number
   ): Observable<Report> {
-     return this.http.put<Report>(`${this.URL}/${reportId}/post`, postId, { withCredentials: true }).pipe(
-        map((response) => plainToInstance(Report, response))
-      );
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.put<Report>(`${this.URL}/${reportId}/post`, postId, { headers: headers }).pipe(
+      map((response) => plainToInstance(Report, response))
+    );
   }
 
   public putComment (
     reportId: number,
     commentId: number
   ): Observable<Report> {
-     return this.http.put<Report>(`${this.URL}/${reportId}/comment`, commentId, { withCredentials: true }).pipe(
-        map((response) => plainToInstance(Report, response))
-      );
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.put<Report>(`${this.URL}/${reportId}/comment`, commentId, { headers: headers }).pipe(
+      map((response) => plainToInstance(Report, response))
+    );
   }
 
   public deletePost (
     reportId: number,
   ): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${reportId}/post`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.delete<void>(`${this.URL}/${reportId}/post`, { headers: headers });
   }
 }

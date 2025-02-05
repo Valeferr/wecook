@@ -63,8 +63,7 @@ export class ProfileComponent {
       ]),
     });
   }
-
-  //TODO: follow
+  
   public addFollow() {
     this.userService.followUser(this.user!.id).subscribe(
       (response) => this.handleUpdateSuccess(response),
@@ -140,6 +139,7 @@ export class ProfileComponent {
     console.log('Dati aggiornati con successo:', response);
     this.isEditing = false;
     this.standardUser = response;
+    this.toast.showToast('Data updated successfully.', 'SUCCESS');
   }
 
   private handleUpdateError(error: any) {

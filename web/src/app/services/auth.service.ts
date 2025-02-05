@@ -10,19 +10,13 @@ import { ModeratorUser } from '../model/ModeratorUser.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl: string = 'http://localhost:8080/wecook';
+  private readonly apiUrl: string = 'http://localhost:8080/wecook/auth';
 
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private user: User | null = new User(
-    1,
-    "",
-    "",
-    "",
-    Roles.Standard,
-    ""
-  )
+  private user: User | null = null;
+  private token: string | null = null;
 
   constructor() {}
 
@@ -32,21 +26,23 @@ export class AuthService {
     password: string,
     role: Roles
   }): Observable<StandardUser> {
-    return this.http.post<StandardUser>(`${this.apiUrl}/users`, userData, { withCredentials: true });
+    return this.http.post<StandardUser>(`${this.apiUrl}/users`, userData, { headers: headers });
   }
 
-  public login(credentials: {email: string, password: string}): Observable<User> {
-    return this.http.post<StandardUser | ModeratorUser>(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
-      tap((user: StandardUser | ModeratorUser) => this.user = user),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      })
+  public login(credentials: { email: string; password: string }): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/login`, credentials, { headers: headers }).pipe(
+      tap((user: any) => {
+        this.user = user;
+        this.token = user.token;
+      }),
+      catchError((error: HttpErrorResponse) => throwError(() => error))
     );
   }
 
   public logout(): void {
-    this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe(() => {
+    this.http.post(`${this.apiUrl}/logout`, {}, { headers: headers }).subscribe(() => {
       this.user = null;
+      this.token = null;
       this.router.navigate(['/login']);
     })
   }
@@ -55,11 +51,11 @@ export class AuthService {
     return this.user;
   }
 
-  public getRole(): Roles | null {
-    return this.user ? this.user.role : null;
+  public getToken(): string | null {
+    return this.token;
   }
 
   public isLogged(): boolean {
-    return this.user !== null;
+    return this.token !== null;
   }
 }

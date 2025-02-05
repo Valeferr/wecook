@@ -8,7 +8,7 @@
     </div>
 
     <div id="options-container">
-      @switch (auth.getRole()) {
+      @switch (auth.getUser()?.role) {
         @case (Roles.Standard) {
           <div class="sidebar-option">
             <a (click)="navigateTo('/home')">

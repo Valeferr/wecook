@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Ingredient } from '../../model/Ingredient.model';
 import { MeasurementUnits } from '../../model/RecipeIngredient.model';
 import { map, Observable } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,9 @@ export class IngredientService {
   private readonly URL: string = 'http://localhost:8080/wecook/ingredient';
 
   private http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
-  constructor() { }
+  constructor() {}
 
   public post(
     data: {
@@ -22,7 +24,11 @@ export class IngredientService {
       measurementUnits: Array<MeasurementUnits>
     }
   ): Observable<Ingredient> {
-    return this.http.post<Ingredient>(this.URL, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.post<Ingredient>(this.URL, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Ingredient, response))
     );
   }
@@ -30,13 +36,21 @@ export class IngredientService {
   public get(
     ingredientId: number
   ): Observable<Ingredient> {
-    return this.http.get<Ingredient>(`${this.URL}/${ingredientId}`, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Ingredient>(`${this.URL}/${ingredientId}`, { headers: headers }).pipe(
       map((response) => plainToInstance(Ingredient, response))
     );
   }
 
   public getAll(): Observable<Array<Ingredient>> {
-    return this.http.get<Array<Ingredient>>(this.URL, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<Ingredient>>(this.URL, { headers: headers }).pipe(
       map((response) => response.map((ingredient) => plainToInstance(Ingredient, ingredient)))
     );
   }
@@ -49,7 +63,11 @@ export class IngredientService {
       measurementUnits: Array<MeasurementUnits>
     }>
   ): Observable<Ingredient> {
-    return this.http.patch<Ingredient>(`${this.URL}/${ingredientId}`, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.patch<Ingredient>(`${this.URL}/${ingredientId}`, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Ingredient, response))
     );
   }
@@ -57,6 +75,10 @@ export class IngredientService {
   public delete(
     ingredientId: number
   ): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${ingredientId}`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.delete<void>(`${this.URL}/${ingredientId}`, { headers: headers });
   }
 }

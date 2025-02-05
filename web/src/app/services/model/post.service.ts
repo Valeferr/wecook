@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Post } from '../../model/Post.model';
 import { map, Observable } from 'rxjs';
 import { plainToInstance } from 'class-transformer';
 import { Comment } from '../../model/Comment.model';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +13,20 @@ export class PostService {
 private readonly URL: string = 'http://localhost:8080/wecook/post';
 
   private http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
-  constructor() { }
+  constructor() {}
 
   public post(
     data: {
-      standardUserId: number,
       postPicture: string,
     }
   ): Observable<Post> {
-    return this.http.post<Post>(this.URL, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.post<Post>(this.URL, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Post, response))
     );
   }
@@ -29,7 +34,11 @@ private readonly URL: string = 'http://localhost:8080/wecook/post';
   public get(
     postId: number
   ): Observable<Post> {
-    return this.http.get<Post>(`${this.URL}/${postId}`, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Post>(`${this.URL}/${postId}`, { headers: headers }).pipe(
       map((response) => {
         const post = plainToInstance(Post, response);
         post.comments = post.comments.map(comment => plainToInstance(Comment, comment));
@@ -39,7 +48,11 @@ private readonly URL: string = 'http://localhost:8080/wecook/post';
   }
 
   public getAll(): Observable<Array<Post>> {
-    return this.http.get<Array<Post>>(this.URL, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.get<Array<Post>>(this.URL, { headers: headers }).pipe(
       map((response) => response.map((p) => {
         const post = plainToInstance(Post, p);
         post.comments = p.comments.map(comment => plainToInstance(Comment, comment));
@@ -54,13 +67,21 @@ private readonly URL: string = 'http://localhost:8080/wecook/post';
       postPicture: string,
     }>
   ): Observable<Post> {
-    return this.http.patch<Post>(`${this.URL}/${postId}`, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.patch<Post>(`${this.URL}/${postId}`, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Post, response))
     );
   }
 
   public delete(postId: number): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${postId}`, { withCredentials: true });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.delete<void>(`${this.URL}/${postId}`, { headers: headers });
   }
 
   public put(
@@ -69,7 +90,11 @@ private readonly URL: string = 'http://localhost:8080/wecook/post';
       recipeId: number,
     }
   ): Observable<Post> {
-    return this.http.put<Post>(`${this.URL}/${postId}`, data, { withCredentials: true }).pipe(
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+
+    return this.http.put<Post>(`${this.URL}/${postId}`, data, { headers: headers }).pipe(
       map((response) => plainToInstance(Post, response))
     );
   }

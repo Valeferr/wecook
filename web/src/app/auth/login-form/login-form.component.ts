@@ -1,10 +1,9 @@
 import { Component, inject, output } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StandardUser } from '../../model/StandardUser.model';
-import { ModeratorUser } from '../../model/ModeratorUser.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
+import { User } from '../../model/User.model';
 
 @Component({
   selector: 'app-login-form',
@@ -52,7 +51,7 @@ export class LoginFormComponent {
       email: this.email,
       password: this.password,
     }).subscribe({
-      next: (user: StandardUser | ModeratorUser) => {
+      next: (user: User) => {
         const navigateTo = this.route.snapshot.queryParams['returnUrl'] || '/home';
         this.router.navigate([navigateTo]);  
       },
