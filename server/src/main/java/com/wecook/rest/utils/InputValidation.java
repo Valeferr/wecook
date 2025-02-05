@@ -20,7 +20,7 @@ public class InputValidation {
     }
 
     public static boolean isTitleValid(String title) {
-        return title.matches("[A-Za-zÀ-Üà-ü\\s]{1,}$");
+        return title.matches("[A-Za-zÀ-Üà-ü'\\s]{1,}$");
     }
 
     public static boolean isDescriptionValid(String description) {

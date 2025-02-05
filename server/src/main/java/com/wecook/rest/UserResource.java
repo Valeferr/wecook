@@ -11,6 +11,9 @@ import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -66,6 +69,26 @@ public class UserResource extends GenericResource{
         return Response.status(Response.Status.CREATED)
                 .entity(gson.toJson(user))
                 .build();
+    }
+
+    @POST
+    @Path("/searchByName")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByName(@Context Request context) {
+        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+        String username = jsonObject.get("username").getAsString();
+
+        List<User> users;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+            Root<User> user = criteriaQuery.from(User.class);
+            criteriaQuery.select(user).where(builder.like(user.get("username"), username + "%"));
+            users = session.createQuery(criteriaQuery).getResultList();
+        }
+
+        return Response.ok(gson.toJson(users)).build();
     }
 
     @GET

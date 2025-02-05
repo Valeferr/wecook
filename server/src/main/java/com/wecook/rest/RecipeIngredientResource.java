@@ -172,6 +172,10 @@ public class RecipeIngredientResource extends GenericResource {
             if (!recipeMatch || !stepMatch) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
+            Step step = recipeIngredient.getStep();
+            step.getIngredients().remove(recipeIngredient);
+            Ingredient ingredient = recipeIngredient.getIngredient();
+            ingredient.getRecipeIngredient().remove(recipeIngredient);
 
             try {
                 session.remove(recipeIngredient);
