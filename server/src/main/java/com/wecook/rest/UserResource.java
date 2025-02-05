@@ -136,10 +136,10 @@ public class UserResource extends GenericResource{
                 }
                 if (jsonUser.has("profilePicture")) {
                     System.out.println(jsonUser.get("profilePicture").getAsString());
-                    byte[] profilePicture = Base64.getDecoder().decode(jsonUser.get("profilePicture").getAsString());
-                    if (!InputValidation.isImageValid(profilePicture)) {
+                    if (!InputValidation.isImageValid(jsonUser.get("profilePicture").getAsString())) {
                         return Response.status(Response.Status.BAD_REQUEST).build();
                     }
+                    byte[] profilePicture = Base64.getDecoder().decode(jsonUser.get("profilePicture").getAsString());
                     ((StandardUser) user).setProfilePicture(profilePicture);
                 }
                 session.merge(user);

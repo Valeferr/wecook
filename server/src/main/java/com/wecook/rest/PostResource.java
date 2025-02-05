@@ -39,10 +39,10 @@ public class PostResource extends GenericResource{
             Transaction transaction = session.beginTransaction();
             StandardUser standardUser = session.get(StandardUser.class, jsonObject.get("standardUserId").getAsInt());
 
-            byte[] postPicture = RequestParser.base64ToByteArray(jsonObject.get("postPicture").getAsString());
-            if (!InputValidation.isImageValid(postPicture)) {
+            if (!InputValidation.isImageValid(jsonObject.get("postPicture").getAsString())) {
                 return Response.status(Response.Status.BAD_REQUEST).build();
             }
+            byte[] postPicture = RequestParser.base64ToByteArray(jsonObject.get("postPicture").getAsString());
             post.setPostPicture(postPicture);
             post.setStandardUser(standardUser);
             post.setStatus(Post.States.ACTIVE);
@@ -137,7 +137,9 @@ public class PostResource extends GenericResource{
             Transaction transaction = session.beginTransaction();
             post = session.get(Post.class, postId);
             Recipe recipe = session.get(Recipe.class, jsonObject.get("recipeId").getAsInt());
-
+            if (recipe.getSteps().isEmpty()) {
+                return Response.status(Response.Status.NOT_ACCEPTABLE).build();
+            }
             post.setRecipe(recipe);
             try {
                 session.merge(recipe);

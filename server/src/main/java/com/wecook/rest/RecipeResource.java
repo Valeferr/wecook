@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.wecook.model.HibernateUtil;
 import com.wecook.model.Recipe;
 import com.wecook.model.enums.FoodCategories;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -22,7 +23,9 @@ public class RecipeResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
         Recipe recipeRequest = RequestParser.jsonRequestToClass(context, Recipe.class);
-
+        if (!InputValidation.isTitleValid(recipeRequest.getTitle()) || !InputValidation.isDescriptionValid(recipeRequest.getDescription()) || recipeRequest.getDescription().length() > 256) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 

@@ -62,7 +62,9 @@ public class RecipeIngredientResource extends GenericResource {
             }
         }
 
-        return Response.ok(gson.toJson(recipeIngredient)).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(gson.toJson(recipeIngredient))
+                .build();
     }
 
     @GET

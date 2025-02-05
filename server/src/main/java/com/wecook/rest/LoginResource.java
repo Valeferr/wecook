@@ -5,6 +5,7 @@ import com.wecook.model.User;
 import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
+import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -16,7 +17,6 @@ import org.hibernate.query.Query;
 @Path("/")
 public class LoginResource extends GenericResource {
     @Path("/login")
-    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response login(@Context Request context) {
@@ -37,8 +37,10 @@ public class LoginResource extends GenericResource {
             Query<User> query = session.createNamedQuery(User.GET_BY_EMAIL, User.class);
             query.setParameter("email", email);
             user = query.getSingleResult();
-        }
 
+        }catch (NoResultException e) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         if (!user.getPassword().equals(password)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -51,7 +53,6 @@ public class LoginResource extends GenericResource {
     }
 
     @Path("/logout")
-    @GET
     public Response logout(@Context Request context) {
         context.getSession().setValid(false);
         return Response.ok().build();

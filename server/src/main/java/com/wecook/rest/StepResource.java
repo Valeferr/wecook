@@ -2,6 +2,7 @@ package com.wecook.rest;
 
 import com.google.gson.JsonObject;
 import com.wecook.model.*;
+import com.wecook.rest.utils.InputValidation;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -30,6 +31,9 @@ public class StepResource extends GenericResource {
 
             recipe.getSteps().add(step);
             step.setRecipe(recipe);
+            if (step.getDescription().length() > 256 || !InputValidation.isDescriptionValid(step.getDescription()) || step.getAction() == null || (step.getDuration() < 1 || step.getDuration() > 1440)) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
             try {
                 session.persist(step);
                 transaction.commit();
@@ -39,7 +43,9 @@ public class StepResource extends GenericResource {
             }
         }
 
-        return Response.ok(gson.toJson(step)).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(gson.toJson(step))
+                .build();
     }
 
     @GET

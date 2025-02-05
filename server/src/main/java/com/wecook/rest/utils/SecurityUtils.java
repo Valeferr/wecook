@@ -32,6 +32,16 @@ public class SecurityUtils {
 
         return hashString;
     }
+
+    public static String extractMimeType(String base64Image) {
+        int startIndex = base64Image.indexOf(":") + 1;
+        int endIndex = base64Image.indexOf(";");
+        if (startIndex < 0 || endIndex < 0 || startIndex >= endIndex) {
+            return null;
+        }
+        return base64Image.substring(startIndex, endIndex);
+    }
+
     public static String getMimeType(byte[] data) throws IOException {
         try (ByteArrayInputStream bais = new ByteArrayInputStream(data)) {
             return URLConnection.guessContentTypeFromStream(bais);
