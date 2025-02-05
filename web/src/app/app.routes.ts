@@ -6,6 +6,7 @@ import { ErrorComponent } from './error/error.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NewPostComponent } from './pages/new-post/new-post.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { SavedPostsComponent } from './pages/saved-posts/saved-posts.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,11 @@ export const routes: Routes = [
     path: 'new-post',
     component: NewPostComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'saved-posts',
+    component: SavedPostsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'profile',

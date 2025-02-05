@@ -3,6 +3,7 @@ import { PostDetailsComponent } from "./post-details/post-details.component";
 import { Post } from '../model/Post.model';
 import { LikeService } from '../services/model/like.service';
 import { SavedPostService } from '../services/model/saved-post.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-post',
@@ -16,6 +17,7 @@ export class PostComponent {
 
   private readonly likeService = inject(LikeService);
   private readonly savedPostService = inject(SavedPostService);
+  private readonly toast = inject(ToastService);
 
   public onLike() {
     this.likeService.post(this.post().id).subscribe(() => {
@@ -43,5 +45,17 @@ export class PostComponent {
     this.savedPostService.delete(this.post().id).subscribe(() => {
       this.post().saved = false;
     })
+  }
+
+  public onShare() {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText('http://localhost:8080/wecook/home').then(() => {
+        this.toast.showToast("Recipe url saved in your personal note", "SUCCESS");
+      }).catch(err => {
+        this.toast.showToast("Cannot save the ricepe url in your personal note", "WARNING");
+      });
+    } else {
+      console.error("Clipboard API non supportata");
+    }
   }
 }

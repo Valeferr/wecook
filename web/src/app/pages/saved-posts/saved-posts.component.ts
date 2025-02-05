@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MainFrameComponent } from "../main-frame/main-frame.component";
 import { Post } from '../../model/Post.model';
-import { PostService } from '../../services/model/post.service';
 import { Router } from '@angular/router';
+import { SavedPostService } from '../../services/model/saved-post.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-saved-posts',
@@ -11,31 +12,19 @@ import { Router } from '@angular/router';
   templateUrl: './saved-posts.component.html',
   styleUrl: './saved-posts.component.css'
 })
-export class SavedPostsComponent {
-  protected readonly postService: PostService = inject(PostService);
+export class SavedPostsComponent implements OnInit {
+  protected readonly savedPostService = inject(SavedPostService);
   protected readonly router: Router = inject(Router);
 
-  posts: Post[] = [];
+  protected savedPosts: Array<Post> = new Array<Post>();
 
   constructor() { }
 
-  ngOnInit(): void {
-    this.loadSavedPosts();
-  }
-  //TODO
-  private loadSavedPosts(): void {
-    // this.postService.getSavedPosts().subscribe({
-    //   next: (posts: Post[]) => {
-    //     this.posts = posts;
-    //   },
-    //   error: (err) => {
-    //     console.error('Errore nel caricamento dei post salvati:', err);
-    //   }
-    // });
+  async ngOnInit() {
+    this.savedPosts = await firstValueFrom(this.savedPostService.getAll());
   }
 
   onClick(post: Post): void {
     this.router.navigate(['/post', post.id]);
   }
-  
 }

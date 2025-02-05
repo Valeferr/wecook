@@ -38,6 +38,12 @@ main {
 
 #options-container {
   margin-top: 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
 }
 
 #logout-option {
@@ -45,20 +51,24 @@ main {
   bottom: 20px;
 }
 
-.sidebar-option a,
-.sidebar-option span {
+.sidebar-option {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
   color: var(--pure-white);
-  font-size: 2rem;
+  cursor: pointer;
 }
 
-.sidebar-option > a {
-  display: flex;
-  align-items: center;
+.sidebar-option > span,
+.sidebar-option > label {
+  font-size: 1.8rem;
 }
 
 .sidebar-option:hover {
   background-color: var(--cardinal);
-  cursor: pointer;
 }
 
 @media (max-width: 1000px) {

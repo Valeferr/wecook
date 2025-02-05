@@ -22,6 +22,15 @@ export class AuthService {
     if (storageUser) {
       this.user = JSON.parse(storageUser);
       this.token = localStorage.getItem('authToken');
+
+      const tokenExpiration = new Date(localStorage.getItem('tokenExpiration')!);
+      if (new Date() > tokenExpiration) {
+        this.user = null;
+        this.token = null;
+        localStorage.removeItem('user');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('tokenExpiration');
+      }
     }
   }
 
@@ -50,6 +59,10 @@ export class AuthService {
 
         localStorage.setItem('user', JSON.stringify(this.user));
         localStorage.setItem('authToken', this.token!);
+
+        const tokenExpiration = new Date();
+        tokenExpiration.setDate(tokenExpiration.getDate() + 1);
+        localStorage.setItem('tokenExpiration', tokenExpiration.toISOString());
       }),
       catchError((error: HttpErrorResponse) => throwError(() => error))
     );

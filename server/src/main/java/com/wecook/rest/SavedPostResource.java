@@ -18,6 +18,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Path("/savedPost")
 public class SavedPostResource extends GenericResource{
@@ -63,10 +64,10 @@ public class SavedPostResource extends GenericResource{
         String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
         Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
-        Set<SavedPost> savedPosts;
+        Set<Post> savedPosts;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             StandardUser standardUser = session.get(StandardUser.class, userId);
-            savedPosts = standardUser.getSavedPosts();
+            savedPosts = standardUser.getSavedPosts().stream().map(SavedPost::getPost).collect(Collectors.toSet());
         }
         return Response.ok(gson.toJson(savedPosts)).build();
     }

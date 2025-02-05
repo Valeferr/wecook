@@ -23,7 +23,7 @@
         } @else {
           <span (click)="onLike()" class="material-icons-outlined">favorite_border</span>
         }
-        <span class="material-icons-outlined">share</span>
+        <span (click)="onShare()" class="material-icons-outlined">share</span>
       </div>
       @if (post().saved) {
         <span (click)="onUnsave()" class="material-icons-outlined">bookmark</span>

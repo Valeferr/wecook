@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
   styleUrl: './main-frame.component.css'
 })
 export class MainFrameComponent {
-  auth: AuthService = inject(AuthService);
+  protected readonly auth: AuthService = inject(AuthService);
   router: Router = inject(Router);
   
   Roles = Roles;

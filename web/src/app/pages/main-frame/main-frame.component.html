@@ -10,65 +10,46 @@
     <div id="options-container">
       @switch (auth.getUser()?.role) {
         @case (Roles.Standard) {
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/home')">
+          <div class="sidebar-option" (click)="navigateTo('/home')">
               <span class="material-icons-outlined">home</span>
               <label>Home</label> 
-            </a>
           </div>
-          <!-- TODO: saved posts page -->
-          <div class="sidebar-option">
-            <a routerLink="/saved-posts" routerLinkActive="active">
-              <span class="material-icons-outlined">turned_in_not</span>
-              <label>Saved recipes</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/saved-posts')">
+            <span class="material-icons-outlined">turned_in_not</span>
+            <label>Saved recipes</label>
           </div>
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/new-post')">
-              <span class="material-icons-outlined">add_circle_outline</span>
-              <label>New recipe</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/new-post')">
+            <span class="material-icons-outlined">add_circle_outline</span>
+            <label>New recipe</label>
           </div>
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/search')">
-              <span class="material-icons-outlined">search</span>
-              <label>Search</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/search')">
+            <span class="material-icons-outlined">search</span>
+            <label>Search</label>
           </div>
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/profile')">
-              <span class="material-icons-outlined">person</span>
-              <label>Account</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/profile')">
+            <span class="material-icons-outlined">person</span>
+            <label>Account</label>
           </div>
         }
         @case (Roles.Moderator) {
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/profile')">
-              <span class="material-icons-outlined">home</span>
-              <label>Home</label> 
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/profile')">
+            <span class="material-icons-outlined">home</span>
+            <label>Home</label> 
           </div>
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/comments')">
-              <span class="material-icons-outlined">forum</span>
-              <label>Comments</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/comments')">
+            <span class="material-icons-outlined">forum</span>
+            <label>Comments</label>
           </div>
-          <div class="sidebar-option">
-            <a (click)="navigateTo('/posts')">
-              <span class="material-icons-outlined">image</span>
-              <label>Posts</label>
-            </a>
+          <div class="sidebar-option" (click)="navigateTo('/posts')">
+            <span class="material-icons-outlined">image</span>
+            <label>Posts</label>
           </div>
         }
       }
     </div>
-    <div id="logout-option" class="sidebar-option">
-      <a routerLink="/login" routerLinkActive="active">
-        <span class="material-icons-outlined">logout</span>
-        <label>Log out</label>
-      </a>
+    <div id="logout-option" class="sidebar-option" (click)="auth.logout()">
+      <span class="material-icons-outlined">logout</span>
+      <label>Log out</label>
     </div>
   </div>
   <div id="content">
