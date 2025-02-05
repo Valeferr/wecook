@@ -66,7 +66,10 @@ export class ProfileComponent {
 
   //TODO: follow
   public addFollow() {
-
+    this.userService.followUser(this.user!.id).subscribe(
+      (response) => this.handleUpdateSuccess(response),
+      (error) => this.handleUpdateError(error)
+    );
   }
 
   async ngOnInit() {
@@ -107,9 +110,15 @@ export class ProfileComponent {
 
     console.log("Dati da aggiornare", JSON.stringify(updatedUser));
 
-    this.userService.updateUser(updatedUser).subscribe(
-      (response) => this.handleUpdateSuccess(response),
-      (error) => this.handleUpdateError(error)
+    this.userService.patch(updatedUser).subscribe(
+      (response) => {
+        this.handleUpdateSuccess(response) 
+        this.toast.showToast('Data updated successfully.', 'SUCCESS');
+      },
+      (error) => {
+        this.handleUpdateError(error)
+        this.toast.showToast('Data not updated. Try again', 'ERROR');
+      }
     );
   }
 
@@ -131,7 +140,6 @@ export class ProfileComponent {
     console.log('Dati aggiornati con successo:', response);
     this.isEditing = false;
     this.standardUser = response;
-    this.toast.showToast('Data updated successfully.', 'SUCCESS');
   }
 
   private handleUpdateError(error: any) {
@@ -152,10 +160,5 @@ export class ProfileComponent {
   // TODO: Funzione da implementare per il grafico (Moderatore)
   initializeChart(): void {
     const ctx = document.getElementById('reportChart') as HTMLCanvasElement;
-  }
-
-  // TODO: Funzione per visualizzare il pop-up (Follower)
-  followersClicked() {
-    
   }
 }

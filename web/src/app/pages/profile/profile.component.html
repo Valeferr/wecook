@@ -74,7 +74,7 @@
             <h4>Posts</h4>
             <p>8</p>
           </div>
-          <div class="statistic-item" (click)="followersClicked()">
+          <div class="statistic-item">
             <h4>Followers</h4>
             <p>456</p>
           </div>
@@ -84,15 +84,9 @@
           </div>
         </div>
         @if (!isEditing) {
-          <!-- @if (user?.id === standardUser?.id) {
-            <div class="profile-button">
-              <button (click)="addFollow()">Follow</button>
-            </div>
-          } @else { -->
-            <div class="profile-button">
-              <button (click)="toggleEdit()">Edit Profile</button>
-            </div>
-          <!-- } -->
+          <div class="profile-button">
+            <button (click)="toggleEdit()">Edit Profile</button>
+          </div>
         } @else {
           <div id="edit-buttons">
             <button (click)="saveChanges()">Conferma</button>
