@@ -1,7 +1,7 @@
 <app-main-frame>
   <div id="saved-posts-container">
     @for (post of savedPosts; track post.id) { 
-      <div class="saved-post" (click)="onClick(post)">
+      <div class="saved-post" (click)="router.navigate(['/recipe', post.id]);">
         <img [src]="post.picture" alt="Immagine post">
       </div>
     }

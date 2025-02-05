@@ -16,6 +16,7 @@ import { StepService } from '../../services/model/step.service';
 import { RecipeIngredientService } from '../../services/model/recipe-ingredient.service';
 import { PostService } from '../../services/model/post.service';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-post',
@@ -40,6 +41,7 @@ export class NewPostComponent implements OnInit {
   protected readonly recipeIngredientService = inject(RecipeIngredientService);
   protected readonly postService = inject(PostService);
   protected readonly authService = inject(AuthService);
+  protected readonly router = inject(Router);
 
   protected imageSrc: string = 'assets/blank_recipe.png';
 
@@ -233,5 +235,7 @@ export class NewPostComponent implements OnInit {
     }));
 
     await firstValueFrom(this.postService.put(post.id, { recipeId: recipe.id }));
+
+    this.router.navigate(['/']);
   }
 }

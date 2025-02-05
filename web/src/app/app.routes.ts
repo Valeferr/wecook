@@ -7,6 +7,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { NewPostComponent } from './pages/new-post/new-post.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { SavedPostsComponent } from './pages/saved-posts/saved-posts.component';
+import { RecipeComponent } from './pages/recipe/recipe.component';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,11 @@ export const routes: Routes = [
     path: 'new-post',
     component: NewPostComponent,
     canActivate: [authGuard],
+  },
+  {
+    path: 'recipe/:postId',
+    component: RecipeComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'saved-posts',

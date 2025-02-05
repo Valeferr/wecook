@@ -38,5 +38,5 @@
       </form>
     </div>
   </section>
-  <button id="recipe-button">Go to recipe</button>
+  <button id="recipe-button" (click)="router.navigate(['/recipe', post().id]);">Go to recipe</button>
 </main>

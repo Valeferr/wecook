@@ -1,0 +1,54 @@
+<app-main-frame>
+  <main>
+    <section id="header">
+      <div id="overview-container">
+        <div id="recipe-image-container">
+          <img [src]="post!.picture" alt="Recipe Image" />
+        </div>
+        <div id="title-container">
+          <h2>{{ post!.recipe.title }}</h2>
+          <div id="details-container">
+            <div class="detail">
+              <span class="material-icons-outlined">timer</span>
+              <span>{{ post!.duration }} min</span>
+            </div>
+            <div id="difficulty" class="detail">
+              <h3>
+                <span class="material-icons-outlined">trending_up</span>
+                {{ post!.recipe.difficulty }}
+              </h3>
+            </div>
+            <div id="detail" class="detail">
+              <h3>
+                <span class="material-icons-outlined">restaurant</span>
+                {{ post!.recipe.category.replace("_", " ") }}
+              </h3>
+            </div>
+          </div>
+          <div id="description">
+            <p>{{ post!.recipe.description }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="ingredients-used">
+      <h2>Ingredients</h2>
+      <div id="ingredients-container">
+        @for (ingredient of ingredients; track ingredient.ingredient.id) {
+          <div class="ingredient">
+            <span>{{ ingredient.ingredient.name.replace("_", " ")}}</span>
+            <span>({{ ingredient.quantity }} {{ingredient.measurementUnit !== "QUANTITY" ? ingredient.measurementUnit : ''}})</span>
+          </div>
+        }
+        </div>
+      </section>
+      <section id="steps">
+        <h2>Steps</h2>
+        <div id="steps-container">
+          @for (step of recipe?.steps; let i = $index; track step.id) {
+            <app-step [step]="step"></app-step>
+          }
+        </div>
+      </section>
+  </main>
+</app-main-frame>
