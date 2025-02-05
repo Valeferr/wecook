@@ -5,9 +5,11 @@ import com.google.gson.JsonObject;
 import com.wecook.model.Ingredient;
 import com.wecook.model.RecipeIngredient;
 import com.wecook.model.Step;
+import com.wecook.model.User;
 import com.wecook.rest.IngredientResource;
 import com.wecook.rest.RecipeIngredientResource;
 import com.wecook.rest.StepResource;
+import com.wecook.rest.utils.JwtManager;
 import jakarta.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
@@ -25,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class StepResourceTest {
@@ -58,6 +61,12 @@ public class StepResourceTest {
     @BeforeEach
     public void setUp() {
         lenient().when(sessionFactory.openSession()).thenReturn(session);
+        User user = mock(User.class);
+        Session session = mock(Session.class);
+        lenient().doReturn(user).when(session).get(User.class, 1);
+        String token = JwtManager.getInstance().generateToken(user);
+
+        lenient().doReturn("Bearer "+token).when(context).getHeader("Authorization");
     }
 
     @Test
@@ -76,7 +85,7 @@ public class StepResourceTest {
 
         JsonObject jsonRequestRecipeIngredient = new JsonObject();
         jsonRequestRecipeIngredient.addProperty("quantity", 200.0);
-        jsonRequestRecipeIngredient.addProperty("measurementUnit", "CENTILITER");
+        jsonRequestRecipeIngredient.addProperty("measurementUnit", "KILOGRAM");
         jsonRequestRecipeIngredient.addProperty("ingredientId", 1);
 
         InputStream inputStreamRecipeIngredient = new ByteArrayInputStream(jsonRequestRecipeIngredient.toString().getBytes(StandardCharsets.UTF_8));

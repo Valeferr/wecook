@@ -25,7 +25,6 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Path("/users")
@@ -72,7 +71,7 @@ public class UserResource extends GenericResource {
     }
 
     @POST
-    @Path("/searchByName")
+    @Path("/searchByUsername")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByName(@Context Request context) {

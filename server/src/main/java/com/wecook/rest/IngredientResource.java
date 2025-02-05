@@ -7,6 +7,7 @@ import com.wecook.model.HibernateUtil;
 import com.wecook.model.Ingredient;
 import com.wecook.model.enums.FoodTypes;
 import com.wecook.model.enums.MeasurementUnits;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -29,6 +30,9 @@ public class IngredientResource extends GenericResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response post(@Context Request context) {
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+
         if (!jsonObject.has("name") || !jsonObject.has("type") || !jsonObject.has("measurementUnits")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }

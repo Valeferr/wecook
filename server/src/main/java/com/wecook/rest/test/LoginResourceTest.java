@@ -4,8 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.wecook.model.User;
 import com.wecook.rest.LoginResource;
-import com.wecook.rest.utils.RequestParser;
-import jakarta.persistence.NoResultException;
 import jakarta.ws.rs.core.Response;
 import org.glassfish.grizzly.http.server.Request;
 import org.hibernate.Session;
@@ -67,17 +65,11 @@ public class LoginResourceTest {
         String jsonString = jsonRequest.toString();
         InputStream inputStream = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         lenient().when(context.getInputStream()).thenReturn(inputStream);
-        lenient().when(session.createNamedQuery(User.GET_BY_EMAIL, User.class)).thenReturn(userQuery);
-        lenient().when(userQuery.setParameter("email", "valentferrent@gmail.com")).thenReturn(userQuery);
-        lenient().when(userQuery.getSingleResult()).thenReturn(mockUser);
-        lenient().when(context.getSession(true)).thenReturn(httpSession);
 
-        try (var mockedParser = mockStatic(RequestParser.class)) {
-            mockedParser.when(() -> RequestParser.jsonRequestToClass(context, User.class)).thenReturn(mockUser);
-            Response response = loginResource.login(context);
+        Response response = loginResource.login(context);
 
-            assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        }
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+
     }
 
     @Test
@@ -92,17 +84,9 @@ public class LoginResourceTest {
         String jsonString = jsonRequest.toString();
         InputStream inputStream = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         lenient().when(context.getInputStream()).thenReturn(inputStream);
-        lenient().when(session.createNamedQuery(User.GET_BY_EMAIL, User.class)).thenReturn(userQuery);
-        lenient().when(userQuery.setParameter("email", "valentferrent@gmail.com")).thenReturn(userQuery);
-        lenient().when(userQuery.getSingleResult()).thenReturn(mockUser);
-        lenient().when(context.getSession(true)).thenReturn(httpSession);
 
-        try (var mockedParser = mockStatic(RequestParser.class)) {
-            mockedParser.when(() -> RequestParser.jsonRequestToClass(context, User.class)).thenReturn(mockUser);
-            Response response = loginResource.login(context);
-
-            assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
-        }
+        Response response = loginResource.login(context);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
     }
 
     @Test
