@@ -15,14 +15,17 @@ import { AuthService } from '../services/auth.service';
 export class ProfileComponent {
   auth: AuthService = inject(AuthService);
 
-  //esempio
-  user: StandardUser | ModeratorUser = {
-    id: 1,
-    email: 'fdgfghg',
-    username: 'Nome Cognome',
-    password: 'dsf',
-    role: Roles.Standard
-  };
+  // user: StandardUser | ModeratorUser = new StandardUser(
+  //   1,
+  //   'fdgfghg',
+  //   'Nome Cognome',
+  //   'dsf',
+  //   Roles.Standard,
+  //   'aaaaaaa',
+  //   new Array<string>(),
+  //   'meat',
+  //   'vegan'
+  // );
 
   Roles = Roles;
 

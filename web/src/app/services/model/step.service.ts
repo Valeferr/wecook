@@ -30,7 +30,10 @@ export class StepService {
     );
   }
 
-  public get(recipeId: number, stepId: number): Observable<Step> {
+  public get(
+    recipeId: number,
+    stepId: number
+  ): Observable<Step> {
     const url = this.URL.replace("{recipeId}", String(recipeId));
     return this.http.get<Step>(`${url}/${stepId}`, { withCredentials: true }).pipe(
       map((response) => {
@@ -41,7 +44,9 @@ export class StepService {
     );
   }
 
-  public getAll(recipeId: number): Observable<Array<Step>> {
+  public getAll(
+    recipeId: number
+  ): Observable<Array<Step>> {
     const url = this.URL.replace("{recipeId}", String(recipeId));
     return this.http.get<Array<Step>>(url, { withCredentials: true }).pipe(
       map((response) => response.map((s) => {
@@ -68,7 +73,10 @@ export class StepService {
     );
   }
 
-  public delete(recipeId: number, stepId: number): Observable<void> {
+  public delete(
+    recipeId: number,
+    stepId: number
+  ): Observable<void> {
     const url = this.URL.replace("{recipeId}", String(recipeId));
     return this.http.delete<void>(`${url}/${stepId}`, { withCredentials: true });
   }

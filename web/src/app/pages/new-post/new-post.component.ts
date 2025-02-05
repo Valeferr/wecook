@@ -41,7 +41,7 @@ export class NewPostComponent implements OnInit {
   protected readonly postService = inject(PostService);
   protected readonly authService = inject(AuthService);
 
-  protected imageSrc: string = 'assets/default_recipe.png';
+  protected imageSrc: string = 'assets/blank_recipe.png';
 
   protected steps: Array<Step> = new Array<Step>();
   protected ingredients: Array<RecipeIngredient> = new Array<RecipeIngredient>();
@@ -195,7 +195,7 @@ export class NewPostComponent implements OnInit {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        const base64String = (reader.result as string).split(",")[1];
+        const base64String = reader.result as string
         resolve(base64String);
       };
       reader.onerror = (error) => reject(error);

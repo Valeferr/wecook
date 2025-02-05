@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { Comment } from '../../../model/Comment.model';
 
 @Component({
   selector: 'app-comment',
@@ -8,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrl: './comment.component.css'
 })
 export class CommentComponent {
-
+  public comment = input.required<Comment>();
 }

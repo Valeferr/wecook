@@ -1,48 +1,42 @@
 <main>
   <section id="overview-section">
     <div id="header">
-      <span>Torta del bosco</span>
+      <span>{{ post().recipe.title }}</span>
     </div>
     <div id="info">
       <div class="info">
         <span class="material-icons-outlined">timer</span>
-        <span>60 min</span>
+        <span>{{ post().duration }} min</span>
       </div>
       <div class="info">
         <span class="material-icons-outlined">trending_up</span>
-        <span>Facile</span>
+        <span>{{ post().recipe.difficulty }}</span>
       </div>
     </div>
     <div id="tags-container">
       <div class="tag">
         <span class="material-icons-outlined">done</span>
-        <span>Senza glutine</span>
-      </div>
-      <div class="tag">
-        <span class="material-icons-outlined">done</span>
-        <span>Vegetariano</span>
+        <span>{{ post().recipe.category }}</span>
       </div>
     </div>
   </section>
   <section id="comments-section">
     <div id="comments-container">
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
-      <app-comment></app-comment>
+      @for (comment of post().comments; track comment.id) {
+        <app-comment [comment]="comment"></app-comment>
+      }
     </div>
     <div id="new-comment-form-container">
-      <form action="">
-        <textarea name="comment" id="comment" placeholder="Write your comment here..." required [(ngModel)]="comment"></textarea>
-        <span id="submit-comment-icon" class="material-icons-outlined">send</span>
+      <form [formGroup]="commentForm">
+        <textarea 
+          placeholder="Write your comment here..."
+          formControlName="text">
+        </textarea>
+        @if (commentForm.get('text')?.value?.length > 0) {
+          <span id="submit-comment-icon" class="material-icons-outlined" (click)="onSubmitComment()">send</span>
+        }
       </form>
     </div>
   </section>
-  <button id="recipe-button">Vai alla ricetta</button>
+  <button id="recipe-button">Go to recipe</button>
 </main>

@@ -29,8 +29,10 @@ export class RecipeService {
     );
   }
 
-  public get(id: number): Observable<Recipe> {
-    return this.http.get<Recipe>(`${this.URL}/${id}`, { withCredentials: true }).pipe(
+  public get(
+    recipeId: number
+  ): Observable<Recipe> {
+    return this.http.get<Recipe>(`${this.URL}/${recipeId}`, { withCredentials: true }).pipe(
       map((response) => {
         const recipe = plainToInstance(Recipe, response);
         recipe.steps = recipe.steps.map((s) => {
@@ -58,7 +60,7 @@ export class RecipeService {
   }
 
   public patch(
-    id: number,
+    recipeId: number,
     data: Partial<{
       title: string,
       description: string,
@@ -66,7 +68,7 @@ export class RecipeService {
       category: string
     }>
   ): Observable<Recipe> {
-    return this.http.patch<Recipe>(`${this.URL}/${id}`, data, { withCredentials: true }).pipe(
+    return this.http.patch<Recipe>(`${this.URL}/${recipeId}`, data, { withCredentials: true }).pipe(
       map((response) => {
         const recipe = plainToInstance(Recipe, response);
         recipe.steps = recipe.steps.map((step) => plainToInstance(Step, step));
@@ -75,7 +77,9 @@ export class RecipeService {
     );
   }
 
-  public delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${id}`, { withCredentials: true });
+  public delete(
+    recipeId: number
+  ): Observable<void> {
+    return this.http.delete<void>(`${this.URL}/${recipeId}`, { withCredentials: true });
   }
 }

@@ -27,8 +27,10 @@ export class IngredientService {
     );
   }
 
-  public get(id: number): Observable<Ingredient> {
-    return this.http.get<Ingredient>(`${this.URL}/${id}`, { withCredentials: true }).pipe(
+  public get(
+    ingredientId: number
+  ): Observable<Ingredient> {
+    return this.http.get<Ingredient>(`${this.URL}/${ingredientId}`, { withCredentials: true }).pipe(
       map((response) => plainToInstance(Ingredient, response))
     );
   }
@@ -40,19 +42,21 @@ export class IngredientService {
   }
 
   public patch(
-    id: number,
+    ingredientId: number,
     data: Partial<{
       name: string,
       type: string,
       measurementUnits: Array<MeasurementUnits>
     }>
   ): Observable<Ingredient> {
-    return this.http.patch<Ingredient>(`${this.URL}/${id}`, data, { withCredentials: true }).pipe(
+    return this.http.patch<Ingredient>(`${this.URL}/${ingredientId}`, data, { withCredentials: true }).pipe(
       map((response) => plainToInstance(Ingredient, response))
     );
   }
 
-  public delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.URL}/${id}`, { withCredentials: true });
+  public delete(
+    ingredientId: number
+  ): Observable<void> {
+    return this.http.delete<void>(`${this.URL}/${ingredientId}`, { withCredentials: true });
   }
 }

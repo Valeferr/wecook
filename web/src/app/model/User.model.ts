@@ -21,17 +21,22 @@ export class User {
   @Expose()
   public role: Roles;
 
+  @Expose()
+  public picture: string | null;
+
   constructor (
     id: number,
     email: string,
     username: string,
     password: string,
-    role: Roles
+    role: Roles,
+    picture: string | null
   ) {
     this.id = id;
     this.email = email;
     this.username = username;
     this.password = password;
     this.role = role;
+    this.picture = picture;
   }
 }

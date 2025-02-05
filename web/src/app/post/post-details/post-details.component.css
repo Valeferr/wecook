@@ -162,4 +162,5 @@ textarea::-webkit-scrollbar {
   position: absolute;
   bottom: 18px;
   right: 25px;
+  cursor: pointer;
 }

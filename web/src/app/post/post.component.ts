@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { PostDetailsComponent } from "./post-details/post-details.component";
+import { Post } from '../model/Post.model';
 
 @Component({
   selector: 'app-post',
@@ -9,6 +10,8 @@ import { PostDetailsComponent } from "./post-details/post-details.component";
   styleUrl: './post.component.css'
 })
 export class PostComponent {
+  public post = input.required<Post>();
+
   public onToggleSummary(event: Event): void {
     const detailsElement = (event.target as HTMLDetailsElement);
     const summaryElement = detailsElement.querySelector('summary');

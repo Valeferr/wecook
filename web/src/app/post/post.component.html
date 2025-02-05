@@ -3,10 +3,10 @@
     <div class="profile-container">
       <div class="profile-info">
         <div class="profile-picture-container">
-          <img src="assets/2.png" alt="Foto profilo" />
+          <img [src]="post().user.picture ?? 'assets/blank_user.png' " alt="Foto profilo" />
         </div>
         <div class="profile-username">
-          <span>_.valeferr._</span>
+          <span>{{ post().user.username }}</span>
         </div>
       </div>
       <div class="profile-menu">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div class="recipe-image-container">
-      <img src="assets/food.jpg" alt="Foto ricetta" />
+      <img [src]="post().picture" alt="Foto ricetta" />
     </div>
     <div class="actions-container">
       <div class="interactions-container">
@@ -25,34 +25,20 @@
       <span class="material-icons-outlined">bookmark_border</span>
     </div>
     <div class="description-container">
-      <details (toggle)="onToggleSummary($event)">
-        <summary #summary>
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-          Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
-        </summary>
-        <p (click)="onToggleSummary($event)">
-          Lorem ipsum odor amet, consectetuer adipiscing elit.
-          Sociosqu eleifend cursus efficitur erat etiam pulvinar.
-          Tempor aliquet conubia litora sodales condimentum.
-          Varius at quis vel fames consequat maecenas sociosqu nisi.
-          Augue aliquet condimentum at fermentum taciti.
-          Vel non turpis non quam convallis mus aliquam felis.
-          Orci orci id dignissim eros accumsan. Inceptos varius nec
-          platea gravida curabitur facilisis vestibulum quis.
-          
-          Curabitur amet fusce ligula feugiat himenaeos sollicitudin
-          augue porttitor. Facilisi mollis lectus nisl orci pretium
-          suscipit. Dictum suspendisse diam velit mi euismod lacinia
-          tellus. Ac cras sapien tristique placerat nibh torquent risus.
-          Nibh maecenas mauris; purus tempus ac a. Vestibulum lectus aenean
-          mi tristique mattis nisl mauris nascetur. Facilisi iaculis aenean
-          euismod dapibus mi tortor. Nulla non imperdiet dictum sed suscipit;
-          tortor fringilla orci ex. Natoque porttitor habitasse; lobortis
-          neque commodo placerat tempor.
-        </p>
-      </details>
-      <span>Continua a leggere</span>
+      @if (post().recipe.description.length > 100) {
+        <details (toggle)="onToggleSummary($event)">
+          <summary #summary>
+            {{ post().recipe.description }}
+          </summary>
+          <p (click)="onToggleSummary($event)">
+            {{ post().recipe.description }}
+          </p>
+        </details>
+        <span>Continua a leggere</span>
+      } @else {
+        <p>{{ post().recipe.description }}</p>
+      }
     </div>
   </div>
-  <app-post-details></app-post-details>
+  <app-post-details [post]="post()"></app-post-details>
 </main>

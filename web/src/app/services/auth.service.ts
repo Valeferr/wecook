@@ -15,7 +15,14 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private user: User | null = null;
+  private user: User | null = new User(
+    1,
+    "",
+    "",
+    "",
+    Roles.Standard,
+    ""
+  )
 
   constructor() {}
 
@@ -42,6 +49,10 @@ export class AuthService {
       this.user = null;
       this.router.navigate(['/login']);
     })
+  }
+
+  public getUser(): User | null {
+    return this.user;
   }
 
   public getRole(): Roles | null {

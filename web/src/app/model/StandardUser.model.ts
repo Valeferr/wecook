@@ -18,11 +18,12 @@ export class StandardUser extends User {
     username: string,
     password: string,
     role: Roles,
+    picture: string,
     allergies: Array<string>,
     foodPreference: string,
     favoriteDish: string
   ) {
-    super(id, email, username, password, role);
+    super(id, email, username, password, role, picture);
     this.allergies = allergies;
     this.foodPreference = foodPreference;
     this.favoriteDish = favoriteDish;
