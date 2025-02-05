@@ -16,6 +16,7 @@ import { ValueSetsService } from '../../services/model/value-sets.service';
 import { MatInputModule } from '@angular/material/input';
 import { UserService } from '../../services/model/user.service';
 
+//TODO: inserire le allergie
 @Component({
   selector: 'app-profile',
   standalone: true,

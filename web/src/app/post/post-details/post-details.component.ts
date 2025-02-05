@@ -4,6 +4,7 @@ import { CommentComponent } from "./comment/comment.component";
 import { Post } from '../../model/Post.model';
 import { CommentService } from '../../services/model/comment.service';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-post-details',
@@ -17,6 +18,7 @@ export class PostDetailsComponent {
 
   private readonly commentService = inject(CommentService);
   private readonly authSevice = inject(AuthService);
+  protected readonly router = inject(Router);
 
   protected commentForm: FormGroup = new FormGroup({
     text: new FormControl<string | null>(null)

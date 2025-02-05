@@ -32,6 +32,18 @@ export class UserService {
     );
   }
 
+  public searchByName (
+    username: string
+  ): Observable<Array<User>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    
+    return this.http.post<Array<User>>(`${this.URL}/searchByName`, username ).pipe(
+      map((response) => response.map((user) => plainToInstance(User, user)))
+    );
+  }
+
   public getOne (
     userId: number
   ): Observable<StandardUser> {

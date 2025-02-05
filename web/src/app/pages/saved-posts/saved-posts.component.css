@@ -30,7 +30,8 @@
 .saved-post {
   flex: 1 1 calc(33.33% - 10px);
   min-width: 250px;
-  max-width: calc(33.33% - 10px);   
+  max-width: calc(33.33% - 10px);
+  cursor: pointer;
 }
 
 .saved-post img {

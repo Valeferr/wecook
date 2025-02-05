@@ -4,6 +4,9 @@ import { Post } from '../model/Post.model';
 import { LikeService } from '../services/model/like.service';
 import { SavedPostService } from '../services/model/saved-post.service';
 import { ToastService } from '../services/toast.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ReportsDialogComponent } from '../reports-dialog/reports-dialog.component';
+import { ReportService } from '../services/model/report.service';
 
 @Component({
   selector: 'app-post',
@@ -18,6 +21,8 @@ export class PostComponent {
   private readonly likeService = inject(LikeService);
   private readonly savedPostService = inject(SavedPostService);
   private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
+  private readonly reportService = inject(ReportService);
 
   public onLike() {
     this.likeService.post(this.post().id).subscribe(() => {
@@ -57,5 +62,16 @@ export class PostComponent {
     } else {
       console.error("Clipboard API non supportata");
     }
+  }
+  
+  //TODO: da rivedere
+  protected openReportDialog(): void {
+    const dialogRef = this.dialog.open(ReportsDialogComponent);
+    
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.reportService.post(result);
+      }
+    });
   }
 }

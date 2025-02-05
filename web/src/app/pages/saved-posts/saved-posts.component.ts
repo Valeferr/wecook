@@ -23,8 +23,4 @@ export class SavedPostsComponent implements OnInit {
   async ngOnInit() {
     this.savedPosts = await firstValueFrom(this.savedPostService.getAll());
   }
-
-  onClick(post: Post): void {
-    this.router.navigate(['/post', post.id]);
-  }
 }

@@ -1,0 +1,34 @@
+<main>
+  <section id="step-header">
+    <section id="header-left">
+      <div id="step-number">
+        <h3>{{ step().stepIndex }}</h3>
+      </div>
+      <div id="info-container">
+        <div class="action">
+          <h2> 
+             <span class="material-icons-outlined">bolt</span> 
+            {{ step().action.replace("_", " ") }}
+          </h2>
+        </div>
+        <div class="action">
+          <h2>
+            <span class="material-icons-outlined">timer</span>
+            {{ step().duration }}
+          </h2>
+        </div>
+      </div>
+    </section>
+    <section id="header-right">
+      <p>{{ step().description }}</p>
+      <section id="ingredients">
+        @for (stepIngredient of this.step().ingredients; track stepIngredient.ingredient.id) {
+          <div class="ingredient">
+            <span>{{ stepIngredient.ingredient.name.replace("_", " ") }}</span>
+            <span>({{ stepIngredient.quantity }} {{stepIngredient.measurementUnit !== "QUANTITY" ? stepIngredient.measurementUnit : ''}})</span>
+          </div>
+        }
+      </section>
+    </section>
+  </section>
+</main>
