@@ -6,7 +6,8 @@ import os
 
 API_URL = "http://localhost:8080/wecook"
 IMAGE_FOLDER = "./images/food"
-NUM_RECIPES = 10
+
+AUTH_TOKEN = None
 
 # Random data
 MEASUREMENTS_UNITS = {
@@ -328,7 +329,9 @@ GENERATED_INGREDIENTS = []
 url = "http://localhost:8080/wecook"
 
 async def fetchValueSet(session, endpoint):
-    async with session.get(f"{API_URL}/valueSets/{endpoint}") as response:
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+
+    async with session.get(f"{API_URL}/valueSets/{endpoint}", headers=headers) as response:
         return await response.json() if response.status == 200 else []
     
 def getImageMimeType(filename):
@@ -363,11 +366,23 @@ def generateRandomUser():
         "role": "STANDARD"
     }
 
-import aiohttp
+async def login(session, email, password):
+    headers = {"Content-Type": "application/json"}
+    try:
+        async with session.post(f"{url}/auth/login", json={"email": email, "password":password}, headers=headers) as response:
+            if response.status in [200, 201]:
+                data = await response.json()
+                global AUTH_TOKEN
+                AUTH_TOKEN = data["token"]
+                print(f"Successfully logged: {AUTH_TOKEN}")
+            else:
+                print(f"Failed to login, Status Code: {response.status}")
+    except Exception as e:
+        print(f"Error logging in: {e}")
 
 # Senders
 async def postIngredient(session, ingredient):
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
         async with session.post(f"{url}/ingredient", json=ingredient, headers=headers, cookies={"withCredentials": "true"}) as response:
             if response.status in [200, 201]:
@@ -393,8 +408,9 @@ async def postUser(session, user):
         print(f"Error posting user {user['email']}: {e}")
 
 async def postRecipe(session, recipeData):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
-        async with session.post(f"{API_URL}/recipe", json=recipeData) as response:
+        async with session.post(f"{API_URL}/recipe", json=recipeData, headers=headers) as response:
             if response.status == 201:
                 print(f"Successfully added recipe: {recipeData['title']}")
                 return await response.json()
@@ -406,8 +422,9 @@ async def postRecipe(session, recipeData):
         return None
 
 async def postStep(session, recipeId, stepData):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
-        async with session.post(f"{API_URL}/recipe/{recipeId}/step", json=stepData) as response:
+        async with session.post(f"{API_URL}/recipe/{recipeId}/step", json=stepData, headers=headers) as response:
             if response.status in [200, 201]:
                 print(f"Successfully added step for recipe {recipeId}")
                 return await response.json()
@@ -419,8 +436,9 @@ async def postStep(session, recipeId, stepData):
         return None
 
 async def postRecipeIngredient(session, recipeId, stepId, ingredientData):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
-        async with session.post(f"{API_URL}/recipe/{recipeId}/step/{stepId}/recipeIngredient", json=ingredientData) as response:
+        async with session.post(f"{API_URL}/recipe/{recipeId}/step/{stepId}/recipeIngredient", json=ingredientData, headers=headers) as response:
             if response.status in [200, 201]:
                 print(f"Successfully added ingredient to step {stepId} of recipe {recipeId}")
                 return True
@@ -432,8 +450,9 @@ async def postRecipeIngredient(session, recipeId, stepId, ingredientData):
         return False
 
 async def postPost(session, postData):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
-        async with session.post(f"{API_URL}/post", json=postData) as response:
+        async with session.post(f"{API_URL}/post", json=postData, headers=headers) as response:
             if response.status in [200, 201]:
                 data = await response.json()
                 print(f"Successfully created post with ID: {data['id']}")
@@ -446,7 +465,7 @@ async def postPost(session, postData):
         return None
 
 async def updatePostWithRecipe(session, postId, recipeId):
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
     try:
         async with session.put(f"{API_URL}/post/{postId}", json={"recipeId": recipeId}, headers=headers) as response:
             if response.status in [200, 201]:
@@ -458,12 +477,6 @@ async def updatePostWithRecipe(session, postId, recipeId):
     except Exception as e:
         print(f"Error updating post {postId} with recipe {recipeId}: {e}")
 
-# Async jobs
-async def addIngredients():
-    async with aiohttp.ClientSession() as session:
-        tasks = [postIngredient(session, generateRandomIngredient(ingredient)) for ingredient in INGREDIENTS]
-        await asyncio.gather(*tasks)
-
 async def addUsers(n):
     async with aiohttp.ClientSession() as session:
         tasks = [postUser(session, generateRandomUser()) for _ in range(n)]
@@ -471,6 +484,15 @@ async def addUsers(n):
 
     async with aiohttp.ClientSession() as session:
         tasks = [postUser(session, user) for user in DEFAULT_USERS]
+        await asyncio.gather(*tasks)
+
+    async with aiohttp.ClientSession() as session:
+        await login(session, "s.albino2@studenti.unisa.it", "s.albino")
+
+# Async jobs
+async def addIngredients():
+    async with aiohttp.ClientSession() as session:
+        tasks = [postIngredient(session, generateRandomIngredient(ingredient)) for ingredient in INGREDIENTS]
         await asyncio.gather(*tasks)
 
 async def addRecipes(n):
@@ -530,11 +552,11 @@ async def addRecipes(n):
             success += 1
 
 def main():
-    print("====== Adding Ingredients ======")
-    asyncio.run(addIngredients())
-
     print("\n====== Adding Users ======")
     asyncio.run(addUsers(100))
+
+    print("====== Adding Ingredients ======")
+    asyncio.run(addIngredients())
 
     print("\n====== Generating Recipes ======")
     asyncio.run(addRecipes(100))

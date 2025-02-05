@@ -17,7 +17,7 @@ public class JwtFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String path = requestContext.getUriInfo().getPath();
 
-        if (path.equals("auth/login")) {
+        if (path.equals("auth/login") || (path.equals("users") && requestContext.getMethod().equals("POST"))) {
             return;
         }
 
