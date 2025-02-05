@@ -34,7 +34,7 @@ public class Step  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @Expose
-    private long id;
+    private Long id;
 
     @Column(name = "description")
     @Expose
@@ -60,11 +60,11 @@ public class Step  {
     @OneToMany(mappedBy = "step", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<RecipeIngredient> ingredients = new ArrayList<>();
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
