@@ -229,7 +229,6 @@ export class NewPostComponent implements OnInit {
     }
 
     const post = await firstValueFrom(this.postService.post({
-      standardUserId: 1,
       postPicture: await this.convertFileToBase64( this.recipeForm.controls['image'].value),
     }));
 

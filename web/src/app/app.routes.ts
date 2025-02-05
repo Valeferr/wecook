@@ -4,8 +4,8 @@ import { authGuard } from './guards/auth.guard';
 import { AuthComponent } from './auth/auth.component';
 import { ErrorComponent } from './error/error.component';
 import { HomeComponent } from './pages/home/home.component';
-import { ProfileComponent } from './profile/profile.component';
 import { NewPostComponent } from './pages/new-post/new-post.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
   {

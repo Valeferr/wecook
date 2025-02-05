@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, ModelFunction } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, Observable, tap, throwError } from 'rxjs';
@@ -26,10 +26,18 @@ export class AuthService {
     password: string,
     role: Roles
   }): Observable<StandardUser> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    
     return this.http.post<StandardUser>(`${this.apiUrl}/users`, userData, { headers: headers });
   }
 
   public login(credentials: { email: string; password: string }): Observable<User> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+    
     return this.http.post<User>(`${this.apiUrl}/login`, credentials, { headers: headers }).pipe(
       tap((user: any) => {
         this.user = user;
@@ -40,6 +48,10 @@ export class AuthService {
   }
 
   public logout(): void {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.token}`
+    });
+
     this.http.post(`${this.apiUrl}/logout`, {}, { headers: headers }).subscribe(() => {
       this.user = null;
       this.token = null;

@@ -26,7 +26,6 @@ export class PostDetailsComponent {
 
   onSubmitComment() {
     this.commentService.post(this.post().id,{
-        standardUserId: this.authSevice.getUser()!.id,
         text: this.commentForm.value.text
       }
     ).subscribe((comment) => {
