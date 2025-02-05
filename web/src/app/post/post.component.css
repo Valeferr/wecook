@@ -7,8 +7,7 @@ main {
 
 .post-container {
   height: fit-content;
-  width: 100%;
-  max-width: 500px;
+  width: 350px;
 
   display: flex;
   flex-direction: column;
