@@ -29,7 +29,7 @@ export class AuthService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.token}`
     });
-    
+
     return this.http.post<StandardUser>(`${this.apiUrl}/users`, userData, { headers: headers });
   }
 

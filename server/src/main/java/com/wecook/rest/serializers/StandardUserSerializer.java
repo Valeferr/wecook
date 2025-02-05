@@ -30,6 +30,7 @@ public class StandardUserSerializer implements JsonSerializer<StandardUser> {
         jsonObject.addProperty("id", standardUser.getId());
         jsonObject.addProperty("username", standardUser.getUsername());
         jsonObject.addProperty("email", standardUser.getEmail());
+        jsonObject.addProperty("role", standardUser.getRole().toString());
 
         jsonObject.add("picture", JsonNull.INSTANCE);
         if (standardUser.getProfilePicture() != null) {
