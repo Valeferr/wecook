@@ -1,9 +1,8 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { Roles, User } from './User.model';
 
 export class StandardUser extends User {
   @Expose()
-  @Type(() => String)
   public allergies: Array<string>;
 
   @Expose()
