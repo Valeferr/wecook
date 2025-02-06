@@ -31,8 +31,6 @@ public class StandardUserSerializer implements JsonSerializer<StandardUser> {
         }
 
         jsonObject.addProperty("favoriteDish", standardUser.getFavoriteDish());
-        jsonObject.addProperty("following", standardUser.getFollowing().size());
-        jsonObject.addProperty("follower", standardUser.getFollowers().size());
 
         jsonObject.addProperty("id", standardUser.getId());
         jsonObject.addProperty("username", standardUser.getUsername());

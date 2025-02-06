@@ -35,13 +35,12 @@ import { PostService } from '../../services/model/post.service';
 })
 export class ProfileComponent implements OnInit {
   protected readonly router = inject(Router);
+  protected readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly postService = inject(PostService);
   protected readonly userService: UserService = inject(UserService);
-
   protected readonly valueSetsService = inject(ValueSetsService);
   protected readonly auth: AuthService = inject(AuthService);
-  protected readonly route: ActivatedRoute = inject(ActivatedRoute);
-  
+
   protected filteredFoodCategories!: Observable<Array<string>>;
   protected foodOptions: Array<string> = new Array<string>;
   protected editForm: FormGroup;
@@ -56,6 +55,7 @@ export class ProfileComponent implements OnInit {
   constructor(private http: HttpClient) {
     this.editForm = new FormGroup({
       username: new FormControl<string | null>(null, [
+        Validators.minLength(6)
       ]),
       favoriteDish: new FormControl<string | null>(null, [
       ]),
@@ -66,18 +66,17 @@ export class ProfileComponent implements OnInit {
   }
 
   async ngOnInit() {
-    debugger
     const userId = Number(this.route.snapshot.paramMap.get('userId'));
     
     this.user = await firstValueFrom(this.userService.get<StandardUser>(userId));
     if (!this.user) {
       this.router.navigate(['/error'], { state: { statusCode: '404' } });
     }
+    debugger;
     
     this.posts = await firstValueFrom(this.postService.getUserPosts(this.user.id));
 
     this.foodOptions = await firstValueFrom(this.valueSetsService.foodCategories);
-  
     this.filteredFoodCategories = this.editForm.controls['foodPreference'].valueChanges.pipe(
       startWith(''),
       map((value) => {
@@ -87,39 +86,41 @@ export class ProfileComponent implements OnInit {
     );
   }
   
-  // public addFollow() {
-  //   this.userService.followUser(this.user!.id).subscribe(
-  //     (response) => this.handleUpdateSuccess(response),
-  //     (error) => this.handleUpdateError(error)
-  //   );
-  // }
+  public followUser() {
+    this.userService.followUser({
+      followedId: this.user!.id
+    }).subscribe((response) => {
+      this.user!.followers++;
+      this.user!.isFollowing = true
+    });
+  }
+
+  public unfollowUser() {
+    this.userService.unfollowUser(this.user!.id).subscribe((response) => {
+      this.user!.followers--;
+      this.user!.isFollowing = false
+    });
+  }
 
   toggleEdit() {
     this.isEditing = true;
   }
 
-  // saveChanges() {
-  //   if (!this.standardUser) return;    
+  saveProfileChanges() {
+    if (this.editForm.get('username')?.value) {
+      this.user!.username = this.editForm.get('username')?.value;
+    }
 
-  //   const updatedUser: StandardUser = {
-  //     ...this.standardUser,
-  //     username: this.editForm.get('username')?.value || this.standardUser.username,
-  //     favoriteDish: this.editForm.get('favoriteDish')?.value || this.standardUser.favoriteDish,
-  //     foodPreference: this.editForm.get('foodPreference')?.value || this.standardUser.foodPreference,
-  //   };
+    if (this.editForm.get('favoriteDish')?.value) {
+      this.user!.favoriteDish = this.editForm.get('favoriteDish')?.value;
+    }
 
-  //   console.log("Dati da aggiornare", JSON.stringify(updatedUser));
+    if (this.editForm.get('foodPreference')?.value) {
+      this.user!.foodPreference = this.editForm.get('foodPreference')?.value;
+    }
 
-  //   this.userService.patch(updatedUser).subscribe(
-  //     (response) => {
-  //       this.standardUser = response;
-  //       this.isEditing = false;
-  //     },
-  //     (error) => {
-  //       this.handleUpdateError(error)
-  //     }
-  //   );
-  // }
+    this.userService.patch(this.user!).subscribe((response) => this.toggleEdit());
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -135,21 +136,8 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  private handleUpdateError(error: any) {
-    if (error.status === 409) {
-      console.error('Errore 409: Conflitto nei dati. L\'username potrebbe essere già in uso.');
-    } else {
-      console.error('Errore durante l\'aggiornamento dei dati:', error);
-    }
-    this.cancelEdit();
-  }
-
   cancelEdit() {
     this.isEditing = false;
-  }
-
-  // TODO: Funzione da implementare per il grafico (Moderatore)
-  initializeChart(): void {
-    const ctx = document.getElementById('reportChart') as HTMLCanvasElement;
+    this.editForm.reset();
   }
 }

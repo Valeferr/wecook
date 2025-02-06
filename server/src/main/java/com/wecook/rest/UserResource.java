@@ -9,6 +9,7 @@ import com.wecook.model.StandardUser;
 import com.wecook.model.User;
 import com.wecook.model.enums.FoodCategories;
 import com.wecook.rest.utils.InputValidation;
+import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import com.wecook.rest.utils.SecurityUtils;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -93,27 +94,45 @@ public class UserResource extends GenericResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context Request context) {
-        List<User> users;
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        List<User> users;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             users = session.createNamedQuery(User.GET_ALL, User.class).getResultList();
         }
 
-        return Response.ok(gson.toJson(users)).build();
+        JsonArray jsonArray = new JsonArray();
+        for (User user : users) {
+            if (user instanceof StandardUser) {
+                JsonObject jsonUser = gson.toJsonTree(user, StandardUser.class).getAsJsonObject();
+                jsonUser.addProperty("isFollowing", ((StandardUser) user).getFollowers().stream().anyMatch(follower -> follower.getId().equals(userId)));
+                jsonArray.add(jsonUser);
+            } else {
+                jsonArray.add(gson.toJsonTree(user));
+            }
+        }
+
+        return Response.ok(gson.toJson(jsonArray)).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOne(@Context Request context, @PathParam("id") int id) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
+        
         User user;
-
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             user = session.get(User.class, id);
+            if (user instanceof StandardUser) {
+                JsonObject jsonUser = gson.toJsonTree(user, StandardUser.class).getAsJsonObject();
+                jsonUser.addProperty("isFollowing", ((StandardUser) user).getFollowers().stream().anyMatch(follower -> follower.getId().equals(userId)));
+                return Response.ok(gson.toJson(jsonUser)).build();
+            }
         }
-
         return Response.ok(gson.toJson(user)).build();
-
     }
 
     @PATCH
@@ -182,8 +201,6 @@ public class UserResource extends GenericResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response putAllergies(@Context Request context, @PathParam("id") int id) {
-        User user = null;
-
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
         JsonArray jsonAllergies = jsonObject.get("allergies").getAsJsonArray();
 
@@ -197,6 +214,7 @@ public class UserResource extends GenericResource {
             );
         }
 
+        User user = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
             user = session.get(User.class, id);
@@ -231,21 +249,26 @@ public class UserResource extends GenericResource {
         return Response.ok(gson.toJson(user)).build();
     }
 
-    @PUT
-    @Path("/{id}/follow")
+    @POST
+    @Path("/follower")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response followUser(@Context Request context, @PathParam("id") int id) {
-        StandardUser standardUser = new StandardUser();
-        JsonObject jsonUser = RequestParser.jsonRequestToGson(context);
-        int followedId = jsonUser.get("followedId").getAsInt();
+    public Response followUser(@Context Request context) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        JsonObject jsonUser = RequestParser.jsonRequestToGson(context);
+        if (!jsonUser.has("followedId")) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        StandardUser standardUser;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            User user = session.get(User.class, id);
-            User followed = session.get(User.class, followedId);
+            User user = session.get(User.class, userId);
+            User followed = session.get(User.class, jsonUser.get("followedId").getAsLong());
 
-            if (user == null || followed == null) {
+            if (followed == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
@@ -256,29 +279,30 @@ public class UserResource extends GenericResource {
             standardUser = (StandardUser) user;
             StandardUser standardFollowed = (StandardUser) followed;
 
-            if (!standardUser.getFollowing().contains(standardFollowed)) {
-                standardUser.getFollowing().add(standardFollowed);
-            }
+            standardUser.getFollowing().add(standardFollowed);
 
             session.merge(standardUser);
             transaction.commit();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+
         return Response.ok(gson.toJson(standardUser)).build();
     }
 
     @DELETE
-    @Path("/{id}/unfollow/{followedId}")
+    @Path("/follower/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response unFollowUser(@PathParam("id") int id, @PathParam("followedId") int followedId) {
-        StandardUser standardUser = new StandardUser();
+    public Response unfollowUser(@Context Request context, @PathParam("userId") Long unfollowedUserId) {
+        String authorizationToken = context.getHeader("Authorization").replaceAll("Bearer ", "");
+        Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
+        StandardUser standardUser = new StandardUser();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction transaction = session.beginTransaction();
 
-            User user = session.get(User.class, id);
-            User followed = session.get(User.class, followedId);
+            User user = session.get(User.class, userId);
+            User followed = session.get(User.class, unfollowedUserId);
 
             if (user == null || followed == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -291,16 +315,14 @@ public class UserResource extends GenericResource {
             standardUser = (StandardUser) user;
             StandardUser standardFollowed = (StandardUser) followed;
 
-
-            if (standardUser.getFollowing().contains(standardFollowed)) {
-                standardUser.getFollowing().remove(standardFollowed);
-            }
+            standardUser.getFollowing().remove(standardFollowed);
 
             session.merge(standardUser);
             transaction.commit();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+
         return Response.ok(gson.toJson(standardUser)).build();
     }
 

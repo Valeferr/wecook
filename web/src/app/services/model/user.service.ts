@@ -98,36 +98,27 @@ export class UserService {
     );
   }
 
-  //TODO Cambiare non va bene
   public followUser (
-    userId: number,
+    data: {
+      followedId: number,
+    }
   ): Observable<StandardUser> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
 
-    return this.http.delete<StandardUser>(`${this.URL}/${userId}/follow`, { headers: headers }).pipe
-    (tap((user: StandardUser) => user = user),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      })
-    )
+    return this.http.post<StandardUser>(`${this.URL}/follower`, data, { headers: headers }).pipe(
+      map((response) => plainToInstance(StandardUser, response))
+    );
   }
 
-  //TODO Cambiare non va bene
-  public unFollowUser(
+  public unfollowUser(
     userId: number,
-    followedId: number
   ): Observable<StandardUser> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
 
-    return this.http.delete<StandardUser>(`${this.URL}/${userId}/unfollow/${followedId}`).pipe
-    (tap((user: StandardUser) => user = user),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      })
-    )
+    return this.http.delete<StandardUser>(`${this.URL}/follower/${userId}`, { headers: headers });
   }
 }

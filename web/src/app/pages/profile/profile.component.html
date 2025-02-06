@@ -15,7 +15,7 @@
           </div>
         } @else {
           <div id="profile-photo">
-            <img [src]="user!.picture ?? imageSrc" alt="Profile Image" />
+            <img [src]="user!.picture ?? 'assets/blank_user.png'" alt="Profile Image" />
           </div>
         }
         <div id="personal-info">
@@ -28,7 +28,7 @@
               <p><b>Food Preference:</b> {{ user!.foodPreference }}</p>
             }
           } @else {
-            <form [formGroup]="editForm">
+            <form [formGroup]="editForm" (submit)="saveProfileChanges()">
               <div class="edit-section">
                 <mat-form-field id="username">
                   <mat-label>Username</mat-label>
@@ -59,8 +59,8 @@
                     formControlName="foodPreference"
                     [matAutocomplete]="autoFoodPreference">
                   <mat-autocomplete #autoFoodPreference="matAutocomplete">
-                    @for (food of filteredFoodCategories | async; track food) {
-                      <mat-option [value]="food">{{food}}</mat-option>
+                    @for (category of filteredFoodCategories | async; track category) {
+                      <mat-option [value]="category">{{category.replace("_", " ")}}</mat-option>
                     }
                   </mat-autocomplete>
                 </mat-form-field>
@@ -97,9 +97,15 @@
               </div>
             }
           } @else {
-            <div class="profile-button">
-              <button>Follow</button>
-            </div>
+            @if (user!.isFollowing) {
+              <div class="profile-button" (click)="unfollowUser()">
+                <button>Unfollow</button>
+              </div>
+            } @else {
+              <div class="profile-button" (click)="followUser()">
+                <button>Follow</button>
+              </div>
+            } 
           }
         </div>
       </div>
