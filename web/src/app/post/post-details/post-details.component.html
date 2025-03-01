@@ -1,7 +1,7 @@
 <main>
   <section id="overview-section">
     <div id="header">
-      <span>{{ post().recipe.title }}</span>
+      <h1>{{ post().recipe.title }}</h1>
     </div>
     <div id="info">
       <div class="info">
@@ -32,7 +32,7 @@
           placeholder="Write your comment here..."
           formControlName="text">
         </textarea>
-        @if (commentForm.get('text')?.value?.length > 0) {
+        @if (commentForm.get('text')?.valid && commentForm.get('text')?.value !== '' && commentForm.get('text')?.dirty) {
           <span id="submit-comment-icon" class="material-icons-outlined" (click)="onSubmitComment()">send</span>
         }
       </form>

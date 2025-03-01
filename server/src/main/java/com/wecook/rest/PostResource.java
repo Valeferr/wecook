@@ -10,6 +10,7 @@ import com.wecook.rest.utils.JwtManager;
 import com.wecook.rest.utils.RequestParser;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -73,79 +74,6 @@ public class PostResource extends GenericResource{
                 .build();
     }
 
-    @POST
-    @Path("/searchByIngredients")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByIngredients(@Context Request context) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        JsonArray jsonArray = jsonObject.get("ingredientIds").getAsJsonArray();
-
-        List<Post> posts = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()){
-
-            for (JsonElement jsonElement : jsonArray) {
-                int ingredientId = jsonElement.getAsInt();
-                Ingredient ingredient = session.get(Ingredient.class, ingredientId);
-
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<RecipeIngredient> recipeIngredientQuery = builder.createQuery(RecipeIngredient.class);
-                Root<RecipeIngredient> recipeIngredientRoot = recipeIngredientQuery.from(RecipeIngredient.class);
-                recipeIngredientQuery.select(recipeIngredientRoot).where(builder.equal(recipeIngredientRoot.get("ingredient"), ingredient));
-                List<RecipeIngredient> recipeIngredients = session.createQuery(recipeIngredientQuery).getResultList();
-
-                Set<Step> steps = recipeIngredients.stream().map(RecipeIngredient::getStep).collect(Collectors.toSet());
-                Set<Recipe> recipes = steps.stream().map(Step::getRecipe).collect(Collectors.toSet());
-                recipes.stream().map(Recipe::getPost).forEach(p -> posts.add(p));
-            }
-
-
-        }
-        return Response.ok(gson.toJson(posts)).build();
-    }
-
-    @POST
-    @Path("/searchByCategory")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByCategory(@Context Request context) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        FoodCategories category = Enum.valueOf(FoodCategories.class, jsonObject.get("category").getAsString());
-
-        List<Post> posts = new ArrayList<>();
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Recipe> recipeCriteriaQuery = builder.createQuery(Recipe.class);
-            Root<Recipe> recipeRoot = recipeCriteriaQuery.from(Recipe.class);
-            recipeCriteriaQuery.select(recipeRoot).where(builder.equal(recipeRoot.get("category"), category));
-            List<Recipe> recipes = session.createQuery(recipeCriteriaQuery).getResultList();
-            recipes.stream().map(Recipe::getPost).forEach(p -> posts.add(p));
-        }
-
-        return Response.ok(gson.toJson(posts)).build();
-    }
-
-    @GET
-    @Path("/userPosts/{userId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserPosts(@Context Request context, @PathParam("userId") Long userId) {
-        Set<Post> posts;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            StandardUser standardUser = session.get(StandardUser.class, userId);
-            posts = standardUser.getPosts();
-        }
-
-        JsonArray jsonArray = new JsonArray();
-        for (Post post : posts) {
-            JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
-            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId().equals(userId)));
-            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId().equals(userId)));
-            jsonArray.add(jsonObject);
-        }
-
-        return Response.ok(gson.toJson(jsonArray)).build();
-    }
-
     @GET
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -203,10 +131,10 @@ public class PostResource extends GenericResource{
 
             if (jsonObject.has("postState")) {
                 post.setStatus(
-                    Enum.valueOf(
-                        Post.States.class,
-                        jsonObject.get("postState").getAsString()
-                    )
+                        Enum.valueOf(
+                                Post.States.class,
+                                jsonObject.get("postState").getAsString()
+                        )
                 );
             }
             try {
@@ -274,5 +202,87 @@ public class PostResource extends GenericResource{
         }
 
         return Response.ok(gson.toJson(post)).build();
+    }
+
+    @GET
+    @Path("/searchByTitle")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByTitle(@Context Request context, @QueryParam("title") String title) {
+        List<Post> posts;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Post> criteriaQuery = builder.createQuery(Post.class);
+            Root<Post> post = criteriaQuery.from(Post.class);
+
+            Join<Post, Recipe> recipeJoin = post.join("recipe");
+            criteriaQuery.select(post).where(builder.like(recipeJoin.get("title"), "%" + title + "%"));
+
+            posts = session.createQuery(criteriaQuery).getResultList();
+        }
+
+        return Response.ok(gson.toJson(posts)).build();
+    }
+
+    @GET
+    @Path("/searchByCategory")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByCategory(@Context Request context, @QueryParam("category") String category) {
+        List<Post> posts;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Post> criteriaQuery = builder.createQuery(Post.class);
+            Root<Post> post = criteriaQuery.from(Post.class);
+
+            Join<Post, Recipe> recipeJoin = post.join("recipe");
+            criteriaQuery.select(post).where(builder.equal(recipeJoin.get("category"), Enum.valueOf(FoodCategories.class, category)));
+
+            posts = session.createQuery(criteriaQuery).getResultList();
+        }
+
+        return Response.ok(gson.toJson(posts)).build();
+    }
+
+    @GET
+    @Path("/searchByIngredient")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByIngredient(@Context Request context, @QueryParam("ingredient") String ingredient) {
+        List<Post> posts;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Post> criteriaQuery = builder.createQuery(Post.class);
+            Root<Post> post = criteriaQuery.from(Post.class);
+
+            Join<Post, Recipe> recipeJoin = post.join("recipe");
+            Join<Recipe, Step> stepJoin = recipeJoin.join("steps");
+            Join<Step, RecipeIngredient> recipeIngredientJoin = stepJoin.join("ingredients");
+            Join<RecipeIngredient, Ingredient> ingredientJoin = recipeIngredientJoin.join("ingredient");
+
+            criteriaQuery.select(post).where(builder.equal(ingredientJoin.get("name"), ingredient));
+
+            posts = session.createQuery(criteriaQuery).getResultList();
+        }
+
+        return Response.ok(gson.toJson(posts)).build();
+    }
+
+    @GET
+    @Path("/userPosts/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserPosts(@Context Request context, @PathParam("userId") Long userId) {
+        Set<Post> posts;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            StandardUser standardUser = session.get(StandardUser.class, userId);
+            posts = standardUser.getPosts();
+        }
+
+        JsonArray jsonArray = new JsonArray();
+        for (Post post : posts) {
+            JsonObject jsonObject = gson.toJsonTree(post).getAsJsonObject();
+            jsonObject.addProperty("saved", post.getSavedPosts().stream().anyMatch(savedPost -> savedPost.getStandardUser().getId().equals(userId)));
+            jsonObject.addProperty("liked", post.getLikes().stream().anyMatch(like -> like.getStandardUser().getId().equals(userId)));
+            jsonArray.add(jsonObject);
+        }
+
+        return Response.ok(gson.toJson(jsonArray)).build();
     }
 }

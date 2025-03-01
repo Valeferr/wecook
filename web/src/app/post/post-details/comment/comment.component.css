@@ -3,6 +3,8 @@ main {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 10px;
+
+  position: relative;
 }
 
 #profile-picture-container {
@@ -23,6 +25,17 @@ main {
 
 #comment-container {
   width: 100%;
+}
+
+#username-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+}
+
+#report-icon {
+  cursor: pointer;
 }
 
 #username {

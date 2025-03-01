@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "comment_reports")
 public class CommentReport extends Report {
     @ManyToOne
-    @JoinColumn(name = "comment", nullable = false)
+    @JoinColumn(name = "comment")
     private Comment comment;
 
     public Comment getComment() {

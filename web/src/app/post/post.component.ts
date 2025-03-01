@@ -3,7 +3,6 @@ import { PostDetailsComponent } from "./post-details/post-details.component";
 import { Post } from '../model/Post.model';
 import { LikeService } from '../services/model/like.service';
 import { SavedPostService } from '../services/model/saved-post.service';
-import { ToastService } from '../services/toast.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ReportsDialogComponent } from '../reports-dialog/reports-dialog.component';
 import { ReportService } from '../services/model/report.service';
@@ -21,7 +20,6 @@ export class PostComponent {
 
   private readonly likeService = inject(LikeService);
   private readonly savedPostService = inject(SavedPostService);
-  private readonly toast = inject(ToastService);
   private readonly dialog = inject(MatDialog);
   private readonly reportService = inject(ReportService);
   protected router: Router = inject(Router);
@@ -56,23 +54,24 @@ export class PostComponent {
 
   public onShare() {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(window.origin + '/recipe/'+ this.post().id).then(() => {
-        this.toast.showToast("Recipe url saved in your personal note", "SUCCESS");
-      }).catch(err => {
-        this.toast.showToast("Cannot save the ricepe url in your personal note", "WARNING");
-      });
+      navigator.clipboard.writeText(window.origin + '/recipe/'+ this.post().id);
     } else {
       console.error("Clipboard API non supportata");
     }
   }
   
-  //TODO: da rivedere
   protected openReportDialog(): void {
     const dialogRef = this.dialog.open(ReportsDialogComponent);
-    
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.reportService.post(result);
+      console.log(result);
+      if (result !== undefined) {
+        this.reportService.post({
+          itemId: this.post().id,
+          type: 'POST',
+          reason: result
+        }).subscribe((response) => {
+          console.log(response);
+        });
       }
     });
   }

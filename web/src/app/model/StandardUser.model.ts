@@ -6,10 +6,10 @@ export class StandardUser extends User {
   public allergies: Array<string>;
 
   @Expose()
-  public foodPreference: string;
+  public foodPreference: string | null;
 
   @Expose()
-  public favoriteDish: string;
+  public favoriteDish: string | null;
 
   @Expose()
   public posts: number;
@@ -31,8 +31,8 @@ export class StandardUser extends User {
     role: Roles,
     picture: string,
     allergies: Array<string>,
-    foodPreference: string,
-    favoriteDish: string,
+    foodPreference: string | null,
+    favoriteDish: string | null,
     posts: number,
     followers: number,
     following: number,

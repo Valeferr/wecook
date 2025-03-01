@@ -1,5 +1,5 @@
 import { Component, inject, input, output } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommentComponent } from "./comment/comment.component";
 import { Post } from '../../model/Post.model';
 import { CommentService } from '../../services/model/comment.service';
@@ -21,7 +21,10 @@ export class PostDetailsComponent {
   protected readonly router = inject(Router);
 
   protected commentForm: FormGroup = new FormGroup({
-    text: new FormControl<string | null>(null)
+    text: new FormControl<string | null>(null, [
+      Validators.minLength(1),
+      Validators.maxLength(400)
+    ])
   });
 
   constructor() {}

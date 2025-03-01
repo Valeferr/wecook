@@ -152,5 +152,4 @@ public class StepResource extends GenericResource {
 
         return Response.ok(gson.toJson(step)).build();
     }
-
 }

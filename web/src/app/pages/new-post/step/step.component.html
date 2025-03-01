@@ -49,7 +49,7 @@
       @for (stepIngredient of this.step().ingredients; track stepIngredient.ingredient.id) {
         <div class="ingredient">
           <span>{{ stepIngredient.ingredient.name }}</span>
-          <span>({{ stepIngredient.quantity }}{{stepIngredient.measurementUnit !== "QUANTITY" ? stepIngredient.measurementUnit : ''}})</span>
+          <span>({{ stepIngredient.quantity }} {{stepIngredient.measurementUnit !== "QUANTITY" ? stepIngredient.measurementUnit : ''}})</span>
         </div>
       }
     </section>

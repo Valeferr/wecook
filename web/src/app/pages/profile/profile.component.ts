@@ -62,6 +62,7 @@ export class ProfileComponent implements OnInit {
       foodPreference: new FormControl<string | null>(null, [
         (control: AbstractControl): ValidationErrors | null => this.foodOptions.includes(control.value) ? null : { valueNotInList: true }
       ]),
+      picture: new FormControl<File | null>(null)
     });
   }
 
@@ -72,7 +73,6 @@ export class ProfileComponent implements OnInit {
     if (!this.user) {
       this.router.navigate(['/error'], { state: { statusCode: '404' } });
     }
-    debugger;
     
     this.posts = await firstValueFrom(this.postService.getUserPosts(this.user.id));
 
@@ -102,24 +102,58 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  toggleEdit() {
+  enableEdit() {
     this.isEditing = true;
   }
 
-  saveProfileChanges() {
+  private convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result as string
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  async onSaveProfileChanges() {
+    const editPayload: Partial<StandardUser> = {};
+    
     if (this.editForm.get('username')?.value) {
-      this.user!.username = this.editForm.get('username')?.value;
+      editPayload.username = this.editForm.get('username')?.value;
     }
 
     if (this.editForm.get('favoriteDish')?.value) {
-      this.user!.favoriteDish = this.editForm.get('favoriteDish')?.value;
+      editPayload.favoriteDish = this.editForm.get('favoriteDish')?.value;
+    } else if (this.editForm.get('favoriteDish')?.touched && this.editForm.get('favoriteDish')?.value !== this.user?.favoriteDish) {
+      editPayload.favoriteDish = "";
     }
 
     if (this.editForm.get('foodPreference')?.value) {
-      this.user!.foodPreference = this.editForm.get('foodPreference')?.value;
+      editPayload.foodPreference = this.editForm.get('foodPreference')?.value;
+    } else if (this.editForm.get('foodPreference')?.touched && this.editForm.get('foodPreference')?.value !== this.user?.foodPreference) {
+      editPayload.foodPreference = "";
     }
 
-    this.userService.patch(this.user!).subscribe((response) => this.toggleEdit());
+    if (this.editForm.get('picture')?.value) {
+      editPayload.picture = await this.convertFileToBase64( this.editForm.controls['picture'].value)
+    }
+
+    if (Object.keys(editPayload).length === 0) {
+      return;
+    }
+
+    editPayload.id = this.user!.id;
+    
+    this.userService.patch(editPayload).subscribe((response) => {
+      this.isEditing = false;
+      this.user = {
+        ...this.user!,
+        ...editPayload
+      }
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -127,6 +161,8 @@ export class ProfileComponent implements OnInit {
     
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
+
+      this.editForm.patchValue({ picture: file });
   
       const reader = new FileReader();
       reader.onload = () => {

@@ -53,7 +53,7 @@ public class User implements Serializable {
 
     @Lob
     @Column(name = "profile_picture", columnDefinition = "MEDIUMBLOB")
-    private byte[] profilePicture;
+    private byte[] picture;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<Report> reports = new HashSet<>();
@@ -99,11 +99,11 @@ public class User implements Serializable {
     }
 
     public byte[] getProfilePicture() {
-        return profilePicture;
+        return picture;
     }
 
     public void setProfilePicture(byte[] profilePicture) {
-        this.profilePicture = profilePicture;
+        this.picture = profilePicture;
     }
 
     public Set<Report> getReports() {

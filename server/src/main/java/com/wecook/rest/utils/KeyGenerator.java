@@ -1,4 +1,4 @@
-package com.wecook.rest;
+package com.wecook.rest.utils;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

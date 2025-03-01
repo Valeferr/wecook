@@ -1,0 +1,8 @@
+<main (click)="router.navigate([item().url])">
+  <div id="picture-container">
+      <img [src]="item().picture" alt="Photo">
+  </div>
+  <div id="title-container">
+      <p>{{ item().title}}</p>
+  </div>
+</main>

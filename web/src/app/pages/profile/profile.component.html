@@ -28,7 +28,7 @@
               <p><b>Food Preference:</b> {{ user!.foodPreference }}</p>
             }
           } @else {
-            <form [formGroup]="editForm" (submit)="saveProfileChanges()">
+            <form [formGroup]="editForm" (submit)="onSaveProfileChanges()">
               <div class="edit-section">
                 <mat-form-field id="username">
                   <mat-label>Username</mat-label>
@@ -85,11 +85,11 @@
           </div>
           @if (auth.getUser()?.id === user!.id) {
             @if (!isEditing) {
-              <div class="profile-button" (click)="toggleEdit()">
+              <div class="profile-button" (click)="enableEdit()">
                 <button>Edit Profile</button>
               </div>
             } @else {
-              <div class="profile-button" (click)="cancelEdit()">
+              <div class="profile-button" (click)="onSaveProfileChanges()">
                 <button>Save edits</button>
               </div>
               <div class="profile-button" (click)="cancelEdit()">

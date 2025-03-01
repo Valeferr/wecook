@@ -4,6 +4,8 @@ import { PostComponent } from '../../post/post.component';
 import { PostService } from '../../services/model/post.service';
 import { firstValueFrom } from 'rxjs';
 import { Post } from '../../model/Post.model';
+import { AuthService } from '../../services/auth.service';
+import { Roles } from '../../model/User.model';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +16,9 @@ import { Post } from '../../model/Post.model';
 })
 export class HomeComponent implements OnInit {
   private readonly postService = inject(PostService);
+  protected readonly authService = inject(AuthService);
+
+  Roles = Roles;
   public posts: Array<Post> = new Array<Post>();
   
   constructor() {}

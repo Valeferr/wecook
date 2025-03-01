@@ -56,12 +56,12 @@ public class LoginResourceTest {
     @Test
     public void testTC1LoginValid() {
         mockUser = new User();
-        mockUser.setEmail("valentferrent@gmail.com");
-        mockUser.setPassword("plumcakeCaduto@22");
+        mockUser.setEmail("s.albino2@studenti.unisa.it");
+        mockUser.setPassword("s.albino");
 
         JsonObject jsonRequest = new JsonObject();
-        jsonRequest.addProperty("email", "valentferrent@gmail.com");
-        jsonRequest.addProperty("password", "plumcakeCaduto@22");
+        jsonRequest.addProperty("email", "s.albino2@studenti.unisa.it");
+        jsonRequest.addProperty("password", "s.albino");
         String jsonString = jsonRequest.toString();
         InputStream inputStream = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         lenient().when(context.getInputStream()).thenReturn(inputStream);
@@ -75,12 +75,12 @@ public class LoginResourceTest {
     @Test
     public void testTC2LoginInvalidPasswrd() {
         mockUser = new User();
-        mockUser.setEmail("valentferrent@gmail.com");
-        mockUser.setPassword("plumcake@22");
+        mockUser.setEmail("s.albino2@studenti.unisa.it");
+        mockUser.setPassword("aprmeg");
 
         JsonObject jsonRequest = new JsonObject();
-        jsonRequest.addProperty("email", "valentferrent@gmail.com");
-        jsonRequest.addProperty("password", "plumcake@22");
+        jsonRequest.addProperty("email", "s.albino2@studenti.unisa.it");
+        jsonRequest.addProperty("password", "aprmeg");
         String jsonString = jsonRequest.toString();
         InputStream inputStream = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         lenient().when(context.getInputStream()).thenReturn(inputStream);

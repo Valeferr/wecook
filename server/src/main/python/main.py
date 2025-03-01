@@ -5,9 +5,11 @@ import base64
 import os
 
 API_URL = "http://localhost:8080/wecook"
-IMAGE_FOLDER = "./images/food"
+FOOD_IMAGE_FOLDER = "./images/food"
+PROFILE_IMAGE_FOLDER = "./images/profile"
 
-AUTH_TOKEN = None
+AUTH_TOKENS = []
+CURRENT_AUTH_TOKEN = None
 
 # Random data
 MEASUREMENTS_UNITS = {
@@ -256,6 +258,12 @@ DEFAULT_USERS = [
         "username": f"giovanni.semioli",
         "password": "g.semioli",
         "role": "STANDARD"
+    },
+    {
+        "email": "moderator@wecook.it",
+        "username": f"chef.moderator",
+        "password": "moderator",
+        "role": "MODERATOR"
     }
 ]
 
@@ -323,13 +331,67 @@ RECIPES_DESCRIPTIONS = [
     "Chocolate Lava Cake is a decadent dessert that features a warm, gooey chocolate center encased in a soft, fluffy cake. When sliced open, the molten chocolate flows out, creating a rich and indulgent experience. Made with high-quality dark chocolate, butter, sugar, eggs, and a hint of espresso, this dessert is often paired with vanilla ice cream or fresh berries. Its combination of crisp outer shell and liquid chocolate interior makes it an irresistible treat for chocolate lovers."
 ]
 
+COMMENTS = [
+    "This recipe is amazing! I made it for my family and they loved it.",
+    "I tried this recipe and it turned out great. Definitely making it again!",
+    "The flavors in this dish are so delicious. I highly recommend it.",
+    "I'm not usually a fan of this type of cuisine, but this recipe changed my mind.",
+    "The instructions were easy to follow and the end result was fantastic.",
+    "I made a few substitutions based on what I had on hand, and it still turned out delicious.",
+    "This recipe is a new favorite in our household. Thank you for sharing!",
+    "I've made this recipe multiple times and it never disappoints. So good!",
+    "The combination of flavors in this dish is perfect. I can't get enough of it.",
+    "I'm so glad I tried this recipe. It's now a regular in my meal rotation.",
+    "The presentation of this dish is beautiful, and the taste is even better.",
+    "I made this for a dinner party and everyone raved about it. Thank you for the recipe!",
+    "I love how versatile this recipe is. You can easily customize it to your preferences.",
+    "The ingredients in this recipe are simple, but the end result is anything but. So tasty!",
+    "I'm always looking for new recipes to try, and this one is a definite winner.",
+    "The step-by-step instructions made it easy to follow along and create a delicious meal.",
+    "I appreciate that this recipe uses common ingredients that I already have in my pantry.",
+    "I've never cooked this type of cuisine before, but this recipe made it approachable and fun.",
+    "The flavors in this dish are so well-balanced. I can't wait to make it again.",
+    "I made this for my family and they were impressed. It's a great recipe for special occasions.",
+    "The cooking tips and tricks included in this recipe were really helpful. I learned a lot!",
+    "I'm always on the lookout for new recipes to try, and this one did not disappoint.",
+    "I love how this recipe combines different textures and flavors to create a delicious dish.",
+    "The aroma of this dish while it was cooking was amazing. It tasted even better!",
+    "I made this recipe for a potluck and it was a hit. I'll definitely be making it again.",
+    "The ingredients in this recipe are simple, but the end result is so flavorful.",
+    "I'm not usually a fan of this type of cuisine, but this recipe has changed my mind.",
+    "I love how easy this recipe is to follow. The end result is a delicious meal.",
+    "The flavors in this dish are so vibrant and delicious. I'll be making it again soon.",
+    "I made this recipe for dinner and my family loved it. It's definitely a keeper.",
+    "I appreciate that this recipe uses ingredients that are easy to find at any grocery store.",
+    "I'm always looking for new recipes to try, and this one is a definite winner.",
+    "The step-by-step instructions in this recipe were really helpful. I felt confident making it.",
+    "I love how this recipe combines different ingredients to create a unique and tasty dish.",
+    "The presentation of this dish is beautiful, and the taste is even better.",
+    "I made this recipe for a dinner party and it was a hit. Everyone asked for the recipe!",
+    "The cooking tips and tricks included in this recipe were really helpful. I learned a lot!",
+    "I'm always on the lookout for new recipes to try, and this one did not disappoint.",
+    "I love how this recipe uses simple ingredients to create a flavorful and satisfying meal.",
+    "The aroma of this dish while it was cooking was amazing. It tasted even better!",
+    "I made this recipe for a potluck and it was a hit. I'll definitely be making it again.",
+    "The flavors in this dish are so well-balanced. I can't wait to make it again.",
+    "I made this recipe for my family and they loved it. It's a great recipe for special occasions.",
+    "I appreciate that this recipe uses common ingredients that I already have in my pantry.",
+    "I've never cooked this type of cuisine before, but this recipe made it approachable and fun.",
+    "The flavors in this dish are so delicious. I highly recommend it.",
+    "I'm so glad I tried this recipe. It's now a regular in my meal rotation.",
+    "The combination of flavors in this dish is perfect. I can't get enough of it.",
+    "I've made this recipe multiple times and it never disappoints. So good!",
+    "The instructions were easy to follow and the end result was fantastic."
+]
+
 GENERATED_USERS = []
 GENERATED_INGREDIENTS = []
+GENERATED_POSTS = [n for n in range(1, 58)]
 
 url = "http://localhost:8080/wecook"
 
 async def fetchValueSet(session, endpoint):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
 
     async with session.get(f"{API_URL}/valueSets/{endpoint}", headers=headers) as response:
         return await response.json() if response.status == 200 else []
@@ -372,9 +434,8 @@ async def login(session, email, password):
         async with session.post(f"{url}/auth/login", json={"email": email, "password":password}, headers=headers) as response:
             if response.status in [200, 201]:
                 data = await response.json()
-                global AUTH_TOKEN
-                AUTH_TOKEN = data["token"]
-                print(f"Successfully logged: {AUTH_TOKEN}")
+                AUTH_TOKENS.append(data["token"])
+                print(f"Successfully logged: {data['token']}")
             else:
                 print(f"Failed to login, Status Code: {response.status}")
     except Exception as e:
@@ -382,7 +443,7 @@ async def login(session, email, password):
 
 # Senders
 async def postIngredient(session, ingredient):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
     try:
         async with session.post(f"{url}/ingredient", json=ingredient, headers=headers, cookies={"withCredentials": "true"}) as response:
             if response.status in [200, 201]:
@@ -401,14 +462,44 @@ async def postUser(session, user):
             if response.status in [200, 201]:
                 data = await response.json()
                 GENERATED_USERS.append(data["id"])
+                await login(session, user["email"], user['password'])
                 print(f"Successfully added user: {user['email']}, ID: {data['id']}")
             else:
                 print(f"Failed to add user: {user['email']}, Status Code: {response.status}")
     except Exception as e:
         print(f"Error posting user {user['email']}: {e}")
 
+async def updateUserWithProfileImage(session, user):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
+    
+    imageFile = random.choice(os.listdir(PROFILE_IMAGE_FOLDER))
+    imagePath = os.path.join(PROFILE_IMAGE_FOLDER, imageFile)
+    
+    with open(imagePath, "rb") as file:
+        base64_string = base64.b64encode(file.read()).decode("utf-8")
+        mimeType = f"image/{'jpeg' if imageFile.lower().endswith(('jpg', 'jpeg')) else 'png'}"
+        base64Image = f"data:{mimeType};base64,{base64_string}"
+    
+    data = {
+        "picture": base64Image
+    }
+    
+    try:
+        async with session.patch(f"{API_URL}/users/{user}", json=data, headers=headers) as response:
+            if response.status in [200, 201]:
+                print(f"Successfully updated user {user} with profile image")
+            else:
+                print(f"Failed to update user {user}, Status Code: {response.status}")
+    except Exception as e:
+        print(f"Error updating user {user}: {e}")
+
+async def updateUsers():
+    async with aiohttp.ClientSession() as session:
+        tasks = [updateUserWithProfileImage(session, user) for user in GENERATED_USERS]
+        await asyncio.gather(*tasks)
+
 async def postRecipe(session, recipeData):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
     try:
         async with session.post(f"{API_URL}/recipe", json=recipeData, headers=headers) as response:
             if response.status == 201:
@@ -422,7 +513,7 @@ async def postRecipe(session, recipeData):
         return None
 
 async def postStep(session, recipeId, stepData):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
     try:
         async with session.post(f"{API_URL}/recipe/{recipeId}/step", json=stepData, headers=headers) as response:
             if response.status in [200, 201]:
@@ -436,7 +527,7 @@ async def postStep(session, recipeId, stepData):
         return None
 
 async def postRecipeIngredient(session, recipeId, stepId, ingredientData):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {random.choice(AUTH_TOKENS)}"}
     try:
         async with session.post(f"{API_URL}/recipe/{recipeId}/step/{stepId}/recipeIngredient", json=ingredientData, headers=headers) as response:
             if response.status in [200, 201]:
@@ -449,12 +540,13 @@ async def postRecipeIngredient(session, recipeId, stepId, ingredientData):
         print(f"Error posting recipe ingredient for step {stepId} of recipe {recipeId}: {e}")
         return False
 
-async def postPost(session, postData):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+async def postPost(session, postData, token):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     try:
         async with session.post(f"{API_URL}/post", json=postData, headers=headers) as response:
             if response.status in [200, 201]:
                 data = await response.json()
+                GENERATED_POSTS.append(data["id"])
                 print(f"Successfully created post with ID: {data['id']}")
                 return data
             else:
@@ -464,19 +556,33 @@ async def postPost(session, postData):
         print(f"Error posting post: {e}")
         return None
 
-async def updatePostWithRecipe(session, postId, recipeId):
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {AUTH_TOKEN}"}
+async def updatePostWithRecipe(session, postId, recipeId, token):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
     try:
         async with session.put(f"{API_URL}/post/{postId}", json={"recipeId": recipeId}, headers=headers) as response:
             if response.status in [200, 201]:
                 data = await response.json()
-                GENERATED_USERS.append(data["id"])
                 print(f"Successfully added recipe to post: Recipe: {recipeId}, ID: {data['id']}")
             else:
                 print(f"Failed to add recipe to post: Recipe: {recipeId}, Status Code: {response.status}")
     except Exception as e:
         print(f"Error updating post {postId} with recipe {recipeId}: {e}")
 
+async def postComment(session, commentData, postId, token):
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {token}"}
+    try:
+        async with session.post(f"{API_URL}/post/{postId}/comment", json=commentData, headers=headers) as response:
+            if response.status in [200, 201]:
+                data = await response.json()
+                print(f"Successfully created comment with ID: {data['id']}")
+                return data
+            else:
+                print(f"Failed to create comment, Status Code: {response.status}")
+                return None
+    except Exception as e:
+        print(f"Error posting comment: {e}")
+        return None
+    
 async def addUsers(n):
     async with aiohttp.ClientSession() as session:
         tasks = [postUser(session, generateRandomUser()) for _ in range(n)]
@@ -485,9 +591,6 @@ async def addUsers(n):
     async with aiohttp.ClientSession() as session:
         tasks = [postUser(session, user) for user in DEFAULT_USERS]
         await asyncio.gather(*tasks)
-
-    async with aiohttp.ClientSession() as session:
-        await login(session, "s.albino2@studenti.unisa.it", "s.albino")
 
 # Async jobs
 async def addIngredients():
@@ -505,8 +608,8 @@ async def addRecipes(n):
         for i in range(n):
             print(f"\n--RECIPE {i + 1}/{n} - Success: {success}, Failed: {i - success}")
 
-            imageFile = random.choice(os.listdir(IMAGE_FOLDER))
-            imageBase64 = await convertFileToBase64(os.path.join(IMAGE_FOLDER, imageFile))
+            imageFile = random.choice(os.listdir(FOOD_IMAGE_FOLDER))
+            imageBase64 = await convertFileToBase64(os.path.join(FOOD_IMAGE_FOLDER, imageFile))
 
             recipeData = {
                 "title": random.choice(RECIPES_TITLES),
@@ -532,7 +635,7 @@ async def addRecipes(n):
                 if not createdStep:
                     continue
                 
-                numIngredients = random.randint(1, 3)
+                numIngredients = random.randint(1, 5)
                 for _ in range(numIngredients):
                     ingredientType = random.choice(FOOD_TYPES)
                     ingredientUnit = random.choice(MEASUREMENTS_UNITS[ingredientType])
@@ -544,22 +647,40 @@ async def addRecipes(n):
                     await postRecipeIngredient(session, recipe["id"], createdStep["id"], ingredientData)
             
             postData = {"standardUserId": random.choice(GENERATED_USERS), "postPicture": imageBase64}
-            post = await postPost(session, postData)
+
+            token = random.choice(AUTH_TOKENS)
+
+            post = await postPost(session, postData, token)
             if not post:
                 continue
             
-            await updatePostWithRecipe(session, post["id"], recipe["id"])
+            await updatePostWithRecipe(session, post["id"], recipe["id"], token)
             success += 1
+
+async def addComments(n):
+    async with aiohttp.ClientSession() as session:
+        for _ in range(n):
+            postId = random.choice(GENERATED_POSTS)
+            commentData = {
+                "text": random.choice(COMMENTS),
+            }
+            await postComment(session, commentData, postId, random.choice(AUTH_TOKENS))
 
 def main():
     print("\n====== Adding Users ======")
-    asyncio.run(addUsers(100))
+    asyncio.run(addUsers(1000))
+
+    print("\n====== Updating Users with Profile Images ======")
+    asyncio.run(updateUsers())
 
     print("====== Adding Ingredients ======")
     asyncio.run(addIngredients())
 
     print("\n====== Generating Recipes ======")
     asyncio.run(addRecipes(100))
+
+    print("\n====== Adding Comments ======")
+    asyncio.run(addComments(300))
 
 if __name__ == '__main__':
     main()

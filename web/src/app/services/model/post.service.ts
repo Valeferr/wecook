@@ -31,15 +31,39 @@ private readonly URL: string = 'http://localhost:8080/wecook/post';
     );
   }
 
+  public searchByTitle (
+    title: string
+  ): Observable<Array<Post>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    
+    return this.http.get<Array<Post>>(`${this.URL}/searchByTitle?title=${title}`, { headers: headers }).pipe(
+      map((response) => response.map((user) => plainToInstance(Post, user)))
+    );
+  }
+
   public searchByCategory (
     category: string
   ): Observable<Array<Post>> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
+    
+    return this.http.get<Array<Post>>(`${this.URL}/searchByCategory?category=${category}`, { headers: headers }).pipe(
+      map((response) => response.map((user) => plainToInstance(Post, user)))
+    );
+  }
 
-    return this.http.post<Array<Post>>(`${this.URL}/searchByName`, category ).pipe(
-      map((response) => response.map((p) => plainToInstance(Post, p)))
+  public searchByIngredient (
+    ingredient: string
+  ): Observable<Array<Post>> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.getToken()}`
+    });
+    
+    return this.http.get<Array<Post>>(`${this.URL}/searchByIngredient?ingredient=${ingredient}`, { headers: headers }).pipe(
+      map((response) => response.map((user) => plainToInstance(Post, user)))
     );
   }
 

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { plainToInstance } from 'class-transformer';
 import { map, Observable } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { Report } from '../../model/Report.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class ReportService {
 
   public post (
     data: {
+      itemId: number,
       type: string,
       reason: string
     }
@@ -30,19 +32,19 @@ export class ReportService {
     );
   }
 
-  public get (
+  public get(
     reportId: number,
   ): Observable<Report> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
 
-    return this.http.get<Report>(`${this.URL}/${reportId}`, { headers: headers }).pipe(
+    return this.http.get(`${this.URL}/${reportId}`, { headers: headers }).pipe(
       map((response) => plainToInstance(Report, response))
     );
   }
 
-  public getAll (
+  public getAll(
   ): Observable<Array<Report>> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`

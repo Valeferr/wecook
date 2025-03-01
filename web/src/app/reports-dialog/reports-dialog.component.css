@@ -14,24 +14,13 @@ form {
   gap: 15px;
 }
 
-#dialog-actions {
+mat-dialog-actions {
   display: flex;
   justify-content: flex-end;
-  align-items: end;
+  align-items: center;
   gap: 15px;
 }
 
-.report-button {
-  background-color: var(--alizarin-crimson);
-  color: var(--pure-white);
-  padding: 5px 10px;
+mat-dialog-actions > button{
   border-radius: 10px;
-  border: none;
-  font-size: 16px;
-  font-weight: bold;
-  box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-button:hover {
-  background-color: var(--cardinal);
 }

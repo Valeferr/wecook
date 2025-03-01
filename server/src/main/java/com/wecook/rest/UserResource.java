@@ -71,26 +71,6 @@ public class UserResource extends GenericResource {
                 .build();
     }
 
-    @POST
-    @Path("/searchByUsername")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByName(@Context Request context) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        String username = jsonObject.get("username").getAsString();
-
-        List<User> users;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
-            Root<User> user = criteriaQuery.from(User.class);
-            criteriaQuery.select(user).where(builder.like(user.get("username"), username + "%"));
-            users = session.createQuery(criteriaQuery).getResultList();
-        }
-
-        return Response.ok(gson.toJson(users)).build();
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(@Context Request context) {
@@ -156,31 +136,40 @@ public class UserResource extends GenericResource {
             }
 
             try {
-                if (jsonUser.has("username")) {
+                if (jsonUser.has("username") && !jsonUser.get("username").getAsString().isEmpty()) {
                     ((StandardUser) user).setUsername(jsonUser.get("username").getAsString());
                 }
+
                 if (jsonUser.has("favoriteDish")) {
                     String favoriteDish = jsonUser.get("favoriteDish").getAsString();
-                    if(!InputValidation.isFavoriteDishValid(favoriteDish)) {
-                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    if (!favoriteDish.isEmpty()) {
+                        if(!InputValidation.isFavoriteDishValid(favoriteDish)) {
+                            return Response.status(Response.Status.BAD_REQUEST).build();
+                        }
+                        ((StandardUser) user).setFavoriteDish(favoriteDish);
+                    } else {
+                        ((StandardUser) user).setFavoriteDish(null);
                     }
-                    ((StandardUser) user).setFavoriteDish(favoriteDish);
                 }
 
                 if (jsonUser.has("foodPreference")) {
-                    ((StandardUser) user).setFoodPreference(
-                        Enum.valueOf(
-                            FoodCategories.class,
-                            jsonUser.get("foodPreference").getAsString()
-                        )
-                    );
+                    if (!jsonUser.get("foodPreference").getAsString().isEmpty()) {
+                        ((StandardUser) user).setFoodPreference(
+                                Enum.valueOf(
+                                        FoodCategories.class,
+                                        jsonUser.get("foodPreference").getAsString()
+                                )
+                        );
+                    } else {
+                        ((StandardUser) user).setFoodPreference(null);
+                    }
                 }
-                if (jsonUser.has("profilePicture")) {
-                    System.out.println(jsonUser.get("profilePicture").getAsString());
-                    if (!InputValidation.isImageValid(jsonUser.get("profilePicture").getAsString())) {
+
+                if (jsonUser.has("picture")) {
+                    if (!InputValidation.isImageValid(jsonUser.get("picture").getAsString())) {
                         return Response.status(Response.Status.BAD_REQUEST).build();
                     }
-                    byte[] profilePicture = RequestParser.base64ToByteArray(jsonUser.get("profilePicture").getAsString());
+                    byte[] profilePicture = RequestParser.base64ToByteArray(jsonUser.get("picture").getAsString());
                     ((StandardUser) user).setProfilePicture(profilePicture);
                 }
                 session.merge(user);
@@ -247,6 +236,44 @@ public class UserResource extends GenericResource {
         }
 
         return Response.ok(gson.toJson(user)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response delete(@Context Request context, @PathParam("id") int id) {
+        User user;
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            user = session.get(User.class, id);
+            Transaction transaction = session.beginTransaction();
+            try {
+                session.remove(user);
+                transaction.commit();
+            } catch (Exception e) {
+                transaction.rollback();
+                throw e;
+            }
+        }
+
+        return Response.ok(gson.toJson(user)).build();
+    }
+
+    @GET
+    @Path("/searchByUsername")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByUsername(@Context Request context, @QueryParam("username") String username) {
+        List<User> users;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+            Root<User> user = criteriaQuery.from(User.class);
+            criteriaQuery.select(user).where(builder.like(user.get("username"), "%" + username + "%"));
+            users = session.createQuery(criteriaQuery).getResultList();
+        }
+
+        return Response.ok(gson.toJson(users)).build();
     }
 
     @POST
@@ -324,26 +351,5 @@ public class UserResource extends GenericResource {
         }
 
         return Response.ok(gson.toJson(standardUser)).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@Context Request context, @PathParam("id") int id) {
-        User user;
-
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            user = session.get(User.class, id);
-            Transaction transaction = session.beginTransaction();
-            try {
-                session.remove(user);
-                transaction.commit();
-            } catch (Exception e) {
-                transaction.rollback();
-                throw e;
-            }
-        }
-
-        return Response.ok(gson.toJson(user)).build();
     }
 }

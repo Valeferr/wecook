@@ -26,7 +26,7 @@ public class ReportResource extends GenericResource{
         Long userId = JwtManager.getInstance().getUserId(authorizationToken);
 
         JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if(!jsonObject.has("type") || !jsonObject.has("reason")) {
+        if(!jsonObject.has("type") || !jsonObject.has("reason") || !jsonObject.has("id")) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
@@ -34,12 +34,13 @@ public class ReportResource extends GenericResource{
         try (Session session = HibernateUtil.getSessionFactory().openSession()){
             Transaction transaction = session.beginTransaction();
 
-
             if (Enum.valueOf(Report.Types.class,jsonObject.get("type").getAsString()).equals(Report.Types.POST)) {
                 report = new PostReport();
+                ((PostReport) report).setPost(session.get(Post.class, jsonObject.get("id").getAsInt()));
             }
             if (Enum.valueOf(Report.Types.class,jsonObject.get("type").getAsString()).equals(Report.Types.COMMENT)) {
                 report = new CommentReport();
+                ((CommentReport) report).setComment(session.get(Comment.class, jsonObject.get("id").getAsInt()));
             }
             StandardUser standardUser = session.get(StandardUser.class, userId);
 
@@ -131,65 +132,65 @@ public class ReportResource extends GenericResource{
         return Response.ok(gson.toJson(report)).build();
     }
 
-    @PUT
-    @Path("/{reportId}/post")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response putPost(@Context Request context, @PathParam("reportId") int reportId) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("postId")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
-        Report report;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()){
-            Transaction transaction = session.beginTransaction();
-            report = session.get(Report.class, reportId);
-
-            Post post = session.get(Post.class, jsonObject.get("postId").getAsInt());
-            ((PostReport) report).setPost(post);
-
-            try {
-                session.merge(report);
-                transaction.commit();
-            } catch (ConstraintViolationException e) {
-                transaction.rollback();
-                throw e;
-            }
-        }
-
-        return Response.ok(gson.toJson(report)).build();
-    }
-
-    @PUT
-    @Path("/{reportId}/comment")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response putComment(@Context Request context, @PathParam("reportId") int reportId) {
-        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
-        if (!jsonObject.has("commentId")) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-
-        Report report;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()){
-            Transaction transaction = session.beginTransaction();
-            report = session.get(Report.class, reportId);
-
-            Comment comment = session.get(Comment.class, jsonObject.get("commentId").getAsInt());
-            ((CommentReport) report).setComment(comment);
-
-            try {
-                session.merge(report);
-                transaction.commit();
-            } catch (ConstraintViolationException e) {
-                transaction.rollback();
-                throw e;
-            }
-        }
-
-        return Response.ok(gson.toJson(report)).build();
-    }
+//    @PUT
+//    @Path("/{reportId}/post")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response putPost(@Context Request context, @PathParam("reportId") int reportId) {
+//        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+//        if (!jsonObject.has("postId")) {
+//            return Response.status(Response.Status.BAD_REQUEST).build();
+//        }
+//
+//        Report report;
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()){
+//            Transaction transaction = session.beginTransaction();
+//            report = session.get(Report.class, reportId);
+//
+//            Post post = session.get(Post.class, jsonObject.get("postId").getAsInt());
+//            ((PostReport) report).setPost(post);
+//
+//            try {
+//                session.merge(report);
+//                transaction.commit();
+//            } catch (ConstraintViolationException e) {
+//                transaction.rollback();
+//                throw e;
+//            }
+//        }
+//
+//        return Response.ok(gson.toJson(report)).build();
+//    }
+//
+//    @PUT
+//    @Path("/{reportId}/comment")
+//    @Consumes(MediaType.APPLICATION_JSON)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response putComment(@Context Request context, @PathParam("reportId") int reportId) {
+//        JsonObject jsonObject = RequestParser.jsonRequestToGson(context);
+//        if (!jsonObject.has("commentId")) {
+//            return Response.status(Response.Status.BAD_REQUEST).build();
+//        }
+//
+//        Report report;
+//        try (Session session = HibernateUtil.getSessionFactory().openSession()){
+//            Transaction transaction = session.beginTransaction();
+//            report = session.get(Report.class, reportId);
+//
+//            Comment comment = session.get(Comment.class, jsonObject.get("commentId").getAsInt());
+//            ((CommentReport) report).setComment(comment);
+//
+//            try {
+//                session.merge(report);
+//                transaction.commit();
+//            } catch (ConstraintViolationException e) {
+//                transaction.rollback();
+//                throw e;
+//            }
+//        }
+//
+//        return Response.ok(gson.toJson(report)).build();
+//    }
 
     @DELETE
     @Path("/{reportId}")
@@ -212,6 +213,4 @@ public class ReportResource extends GenericResource{
 
         return Response.ok(gson.toJson(report)).build();
     }
-
-
 }

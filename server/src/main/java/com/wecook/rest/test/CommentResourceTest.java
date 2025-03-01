@@ -63,7 +63,7 @@ public class CommentResourceTest {
 
     @Test
     public void testTC1PostComment() {
-        String jsonString = "{\"standardUserId\":1,\"text\":\"Molto Buono\"}";
+        String jsonString = "{\"text\":\"Molto Buono\"}";
         InputStream inputStream = new ByteArrayInputStream(jsonString.getBytes(StandardCharsets.UTF_8));
         lenient().when(context.getInputStream()).thenReturn(inputStream);
 

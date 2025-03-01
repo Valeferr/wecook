@@ -86,7 +86,6 @@ export class IngredientsDialogComponent implements OnInit{
   }
 
   private async updateSelectedIngredient(value: any) {
-    console.log(value);
     const selectedIngredient = this.ingredientsOptions.find((i) => i.name === value.ingredient);
     if (!selectedIngredient) {
       this.selectedRecipeIngredient = {};

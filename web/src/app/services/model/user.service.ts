@@ -52,7 +52,7 @@ export class UserService {
     );
   }  
 
-  public patch<T extends User>(user: T): Observable<T> {
+  public patch<T extends User>(user: Partial<T>): Observable<T> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${this.authService.getToken()}`
     });
@@ -77,7 +77,7 @@ export class UserService {
       Authorization: `Bearer ${this.authService.getToken()}`
     });
     
-    return this.http.post<Array<StandardUser>>(`${this.URL}/searchByUsername`, username ).pipe(
+    return this.http.get<Array<StandardUser>>(`${this.URL}/searchByUsername?username=${username}`, { headers: headers }).pipe(
       map((response) => response.map((user) => plainToInstance(StandardUser, user)))
     );
   }

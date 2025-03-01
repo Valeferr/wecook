@@ -97,7 +97,7 @@ public class LikeResource extends GenericResource{
             Post post = session.get(Post.class, postId);
 
             like = post.getLikes().stream()
-                    .filter((l) -> l.getStandardUser().getId() == userId)
+                    .filter((l) -> l.getStandardUser().getId().equals(userId))
                     .findFirst()
                     .orElseThrow(NotFoundException::new);
 

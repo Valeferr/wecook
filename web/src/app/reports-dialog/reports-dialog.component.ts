@@ -8,6 +8,9 @@ import { ValueSetsService } from '../services/model/value-sets.service';
 import { firstValueFrom, map, Observable, startWith } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ReportService } from '../services/model/report.service';
+import { CommentReport } from '../model/CommentReport';
+import { PostReport } from '../model/PostReport.model';
 
 @Component({
   selector: 'app-reports-dialog',
@@ -30,14 +33,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 })
 export class ReportsDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<ReportsDialogComponent>);
-  private readonly valueSet = inject(ValueSetsService);
-  private readonly reasons = inject(ValueSetsService);
+  private readonly reportService = inject(ReportService);
+  private readonly valueSetService = inject(ValueSetsService);
 
   protected selectedReportReason: string = '';
-
+  
   protected reportForm: FormGroup;
-
-  protected reasonsOptions: string[] = [];
+  protected reasonsOptions: Array<string> = new Array<string>;
   protected filteredReasons!: Observable<Array<string>>;
 
   constructor() {
@@ -47,12 +49,16 @@ export class ReportsDialogComponent {
         (control: AbstractControl): ValidationErrors | null => this.reasonsOptions.some((i) => i === control.value) ? null : {valueNotList: true}
       ])
     })
+
+    this.reportForm.valueChanges.subscribe(value => {
+      this.selectedReportReason = value.reason;
+    });
   }
 
   async ngOnInit() {
-    this.reasonsOptions = await firstValueFrom(this.valueSet.reasons);
+    this.reasonsOptions = await firstValueFrom(this.valueSetService.reasons);
 
-    this.filteredReasons = this.reportForm.controls['report'].valueChanges.pipe(
+    this.filteredReasons = this.reportForm.controls['reason'].valueChanges.pipe(
       startWith(''),
       map((value) => {
         const filterValue = (value || '').toLowerCase();
